@@ -1,0 +1,19 @@
+/.next
+/node_modules
+/package-lock.json
+/public/images/uploads
+# Sentry Auth Token
+.sentryclirc
+.env.local
+**/public/sw.js
+**/public/workbox-*.js
+**/public/worker-*.js
+**/public/sw.js.map
+**/public/workbox-*.js.map
+**/public/worker-*.js.map
+# next-video
+videos/*
+!videos/*.json
+!videos/*.js
+!videos/*.ts
+public/_next-video

@@ -1,0 +1,51 @@
+import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { Menu } from "antd";
+import { Card, Row, Col } from "antd";
+import router from "next/router";
+import { IMG_URL } from "../../../../config";
+import Image from "next/image";
+
+const Default = () => {
+  const { collections } = useSelector(({ collections }) => collections);
+  const [collectionsData, seTcollectionsData] = useState([]);
+
+  useEffect(() => {
+    if (collections) seTcollectionsData(collections);
+  }, [collections]);
+
+  const onClickCard = (data) => {
+    router.push("/collections/" + data);
+  };
+
+  return (
+    <>
+      <Row gutter={16}>
+        {collectionsData?.length > 0
+          ? collectionsData.map((val) => (
+              <Col xs={12} sm={12} md={8} lg={6} key={val.seo}>
+                <Card
+                  hoverable
+                  className="uppercase m-4 shadow-lg"
+                  cover={
+                    <Image
+                    alt={val.title ? val.title : "Default Title"}
+                    width="150"
+                    height="150"
+                    src={val.image ? `${IMG_URL + val.image}` : "/images/default.jpg"} // Replace '/images/default.jpg' with your default image path
+                  />
+                  
+                  }
+                  onClick={() => onClickCard(val.seo)}
+                >
+                  <Card.Meta title={val.title} />
+                </Card>
+              </Col>
+            ))
+          : ""}
+      </Row>
+    </>
+  );
+};
+
+export default Default;
