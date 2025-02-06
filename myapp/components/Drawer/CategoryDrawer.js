@@ -1,4 +1,4 @@
-import { Collapse, Drawer } from 'antd'
+import { Collapse, Drawer } from '@mui/material'
 import React from 'react'
 import TagsFilter from "@/myapp/components/FilterProducts/TagsFilter";
 import PriceFilter from "@/myapp/components/FilterProducts/PriceFilter";

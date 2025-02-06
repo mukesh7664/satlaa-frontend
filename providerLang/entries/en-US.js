@@ -1,12 +1,12 @@
 
-import antdEn from "antd/locale/en_US";
+import @mui/materialEn from "@mui/material/locale/en_US";
 import enMessages from "../locales/en_US.json";
 
 const EnLang = {
   messages: {
     ...enMessages,
   },
-  antd: antdEn,
+  @mui/material: @mui/materialEn,
   locale: "en-US",
 };
 export default EnLang;

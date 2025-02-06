@@ -4,7 +4,7 @@ import { BiSolidStar } from "react-icons/bi";
 import { API_URL } from "../../../config";
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 import { GoCheckCircleFill } from "react-icons/go";
-import { Modal } from 'antd';
+import { Modal } from '@mui/material';
 import { IoClose } from "react-icons/io5";
 
 const Reviews = ({ reviews }) => {

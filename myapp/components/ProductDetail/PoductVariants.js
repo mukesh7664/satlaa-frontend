@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Divider, Radio, Form, Input } from "antd";
+import { Divider, Radio, Form, Input } from "@mui/material";
 
 import { getCart as getCart_r } from "../../../redux/reducers/Cart";
 import Price from "../Price";

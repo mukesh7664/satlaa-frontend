@@ -1,4 +1,4 @@
-import { Modal } from "antd";
+import { Modal } from "@mui/material";
 import { useState } from "react";
 import NewAddressForm from "./NewAddressForm";
 

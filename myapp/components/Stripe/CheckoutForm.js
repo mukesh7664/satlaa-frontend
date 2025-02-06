@@ -4,7 +4,7 @@ import {
    useStripe,
    useElements,
 } from "@stripe/react-stripe-js";
-import { Checkbox, Button, Form, Input } from "antd";
+import { Checkbox, Button, Form, Input } from "@mui/material";
 import router from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 // import { getCart_r, updateCart_r } from "../../../redux/actions"; 

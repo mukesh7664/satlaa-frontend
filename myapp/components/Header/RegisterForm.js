@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Input, Form, Button, Select, Divider } from "antd";
+import { Input, Form, Button, Select, Divider } from "@mui/material";
 
 
 const Default = ({ onSubmitSignup }) => {

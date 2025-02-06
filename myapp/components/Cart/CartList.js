@@ -1,7 +1,7 @@
 import axiosInstance from "@/util/axios";
 const axios = axiosInstance();
 import { useState, useEffect } from "react";
-import { Table, Popconfirm, message } from "antd";
+import { Table, Popconfirm, message } from "@mui/material";
 import Price from "../Price";
 import { DeleteOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";

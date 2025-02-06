@@ -1,7 +1,7 @@
 import axiosInstance from "@/util/axios";
 const axios = axiosInstance();
 import { useState, useEffect } from "react";
-import { Button, Divider, Input, Alert } from "antd";
+import { Button, Divider, Input, Alert } from "@mui/material";
 import Price from "../Price";
 import { useDispatch, useSelector } from "react-redux";
 import { API_URL } from "../../../config";

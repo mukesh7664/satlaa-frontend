@@ -2,7 +2,7 @@ import axiosInstance from "@/util/axios";
 const axios = axiosInstance();
 import { useState, useEffect } from "react";
 import router from "next/router";
-import { Button, Divider, message } from "antd";
+import { Button, Divider, message } from "@mui/material";
 import Price from "../Price";
 import { LockOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";

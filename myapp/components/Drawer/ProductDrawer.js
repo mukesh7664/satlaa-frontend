@@ -1,4 +1,4 @@
-import { Collapse } from "antd";
+import { Collapse } from "@mui/material";
 import dynamic from "next/dynamic";
 const { Panel } = Collapse;
 import {

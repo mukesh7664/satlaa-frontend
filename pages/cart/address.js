@@ -15,7 +15,7 @@ import { fetchData } from "../../util/fetchData";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { useState } from "react";
-import { message } from "antd";
+import { message } from "@mui/material";
 
 const Page = () => {
   const dispatch = useDispatch();

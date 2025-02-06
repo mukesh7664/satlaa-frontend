@@ -3,7 +3,7 @@ import axiosInstance from "@/util/axios";
 const axios = axiosInstance();
 import { API_URL } from "../../../../config";
 import Head from "next/head";
-import { Modal } from "antd";
+import { Modal } from "@mui/material";
 import Link from "next/link";
 import Loader from "@/components/Utils/Loader";
 import { FiShoppingBag } from "react-icons/fi";

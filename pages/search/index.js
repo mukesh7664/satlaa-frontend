@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { BiFilterAlt } from "react-icons/bi";
 import { filterProducts as filterProducts_r } from "../../redux/reducers/FilterProducts";
-import { Drawer, Collapse } from "antd";
+import { Drawer, Collapse } from "@mui/material";
 import { wrapper } from "../../redux/store";
 import axiosInstance from "../../util/axios";
 import authservice from "../../util/services/authservice";

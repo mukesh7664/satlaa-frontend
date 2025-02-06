@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { Menu } from "antd";
-import { Card, Row, Col } from "antd";
+import { Menu } from "@mui/material";
+import { Card, Row, Col } from "@mui/material";
 import router from "next/router";
 import { IMG_URL } from "../../../config";
 import Image from "next/image";

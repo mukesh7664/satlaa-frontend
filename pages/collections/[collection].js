@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { Drawer, Collapse } from "antd";
+import { Drawer, Collapse } from "@mui/material";
 
 import { FilterOutlined } from "@ant-design/icons";
 import parse from "html-react-parser";

@@ -1,4 +1,4 @@
-import { ConfigProvider } from "antd";
+import { ConfigProvider } from "@mui/material";
 import { IntlProvider } from "react-intl";
 import { useSelector } from "react-redux";
 import AppLocale from "../../../providerLang";
@@ -9,7 +9,7 @@ const LocaleProvider = (props) => {
 
   return (
     <ConfigProvider
-      locale={currentAppLocale.antd}
+      locale={currentAppLocale.@mui/material}
       theme={{
         token: {
           

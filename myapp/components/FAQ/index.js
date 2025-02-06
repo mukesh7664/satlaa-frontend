@@ -1,4 +1,4 @@
-import { Collapse } from 'antd';
+import { Collapse } from '@mui/material';
 import React from 'react'
 import { FaMinus, FaPlus } from "react-icons/fa";
 const CustomExpandIcon = ({ isActive }) =>

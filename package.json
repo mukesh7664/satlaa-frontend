@@ -12,7 +12,10 @@
     "prettier": "prettier --write ."
   },
   "dependencies": {
-    "@ant-design/icons": "^5.0.1",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^6.4.3",
+    "@mui/material": "^6.4.3",
     "@next/bundle-analyzer": "^13.5.6",
     "@reduxjs/toolkit": "^1.9.5",
     "@sentry/nextjs": "^7.56.0",
@@ -20,8 +23,7 @@
     "@stripe/stripe-js": "^1.52.1",
     "@vercel/analytics": "^1.0.1",
     "@vercel/speed-insights": "^1.0.2",
-    "antd": "^5.4.6",
-    "antd-img-crop": "^4.12.2",
+    "@mui/material-img-crop": "^4.12.2",
     "axios": "^1.4.0",
     "cookies-next": "^2.1.1",
     "cssnano": "^6.0.1",

@@ -1,5 +1,5 @@
 import React from "react";
-import { Collapse, Menu } from "antd";
+import { Collapse, Menu } from "@mui/material";
 import Link from "next/link";
 import { useSelector } from "react-redux";
 

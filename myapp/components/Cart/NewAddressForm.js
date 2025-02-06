@@ -1,6 +1,6 @@
 import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { Row, Col } from "antd";
+import { Row, Col } from "@mui/material";
 import * as Yup from "yup";
 import axiosInstance from "@/util/axios";
 const axios = axiosInstance();

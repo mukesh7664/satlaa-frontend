@@ -1,6 +1,6 @@
 import { useDispatch } from "react-redux";
-import { message } from "antd";
-import { Modal } from "antd";
+import { message } from "@mui/material";
+import { Modal } from "@mui/material";
 import LoginForm from "../Header/LoginForm";
 
 import Link from "next/link";

@@ -1,7 +1,6 @@
 import dynamic from "next/dynamic";
 import { wrapper } from "../redux/store";
 import { Provider } from "react-redux";
-import "antd/dist/reset.css";
 import "../assets/styles/global.scss";
 import { fontVariables } from "../util/fonts";
 import { useEffect } from "react";

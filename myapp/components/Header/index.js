@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 // import { login_r, isAuthenticated_r, logout_r } from "../../../redux/actions";
 
-import {  Drawer } from "antd";
+import {  Drawer } from "@mui/material";
 
 import { IMG_URL } from "../../../config";
 import Image from "next/image";

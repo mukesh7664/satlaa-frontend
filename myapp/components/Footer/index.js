@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { Divider } from "antd";
+import { Divider } from "@mui/material";
 import Link from "next/link";
 import { IMG_URL } from "../../../config";
 import Image from "next/legacy/image";
