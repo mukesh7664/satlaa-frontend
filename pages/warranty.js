@@ -4,7 +4,7 @@ import { useState } from "react";
 import axios from "axios";
 import { wrapper } from "@/redux/store";
 import { fetchData } from "@/util/fetchData";
-import { API_URL } from "../../config";
+import { API_URL } from "../config";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 const Warranty = () => {

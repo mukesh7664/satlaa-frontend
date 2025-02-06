@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { API_URL } from '../../../config';
+import { API_URL } from '../../config';
 import { badgesFetch, categoriesFetch, topmenuFetch, subcategoryFetch, stylesFetch, colorsFetch, tagsFetch, getSettings } from '../reducers';
 
 export const fetchAllStaticData = createAsyncThunk(

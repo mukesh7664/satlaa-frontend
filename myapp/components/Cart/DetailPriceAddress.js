@@ -6,7 +6,7 @@ import { Button, Divider, message } from "antd";
 import Price from "../Price";
 import { LockOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
-import { API_URL } from "../../../../config";
+import { API_URL } from "../../../config";
 import func from "../../../util/helpers/func";
 
 import { cartFetch, getCart as getCart_r } from "../../../redux/reducers/Cart";

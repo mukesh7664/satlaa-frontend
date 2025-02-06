@@ -4,7 +4,7 @@ import { message, Button, Input, Row, Col } from "antd";
 import router from "next/router";
 import AddressSelect from "./AddressSelect";
 import { useDispatch, useSelector } from "react-redux";
-import { API_URL } from "../../../../config";
+import { API_URL } from "../../../config";
 import NewAddressForm from "./NewAddressForm";
 // import { getCart_r, updateCart_r } from "../../../redux/actions";
 

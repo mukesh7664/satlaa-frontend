@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { API_URL } from '../../../config';
+import { API_URL } from '../../config';
 import { colorsFetch } from '../reducers/Colors';
 
 export const getColors_r = createAsyncThunk(

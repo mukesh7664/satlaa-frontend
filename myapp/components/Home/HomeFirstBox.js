@@ -4,7 +4,7 @@ import SwiperCore, { Navigation, Thumbs } from "swiper";
 SwiperCore.use([Navigation, Thumbs]);
 
 import Link from "next/link";
-import { IMG_URL } from "../../../../config";
+import { IMG_URL } from "../../../config";
 import Image from "next/image";
 
 const Default = ({ state = [] }) => {

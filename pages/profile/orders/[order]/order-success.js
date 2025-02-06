@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import axiosInstance from "@/util/axios";
 const axios = axiosInstance();
-import { API_URL } from "../../../../../config";
+import { API_URL } from "../../../../config";
 
 import Head from "@/myapp/core/Head";
 import Price from "@/myapp/components/Price";

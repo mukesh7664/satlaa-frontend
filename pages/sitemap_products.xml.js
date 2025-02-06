@@ -1,6 +1,6 @@
 import axiosInstance from "@/util/axios";
 const axios = axiosInstance();
-import { API_URL, WEBSITE_URL } from "../../config";
+import { API_URL, WEBSITE_URL } from "../config";
 
 const Sitemap = () => {};
 

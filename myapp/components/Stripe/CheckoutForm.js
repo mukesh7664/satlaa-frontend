@@ -13,7 +13,7 @@ import { getCart as getCart_r} from "../../../redux/reducers/Cart";
 import { cartFetch } from "../../../redux/reducers/Cart";
 import axiosInstance from "@/util/axios";
 const axios = axiosInstance();
-import { API_URL } from "../../../../config";
+import { API_URL } from "../../../config";
 
 export default function CheckoutForm({ contract }) {
    const stripe = useStripe();

@@ -4,7 +4,7 @@ import { Row, Col } from "antd";
 import * as Yup from "yup";
 import axiosInstance from "@/util/axios";
 const axios = axiosInstance();
-import { API_URL } from "../../../../config";
+import { API_URL } from "../../../config";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("Missing Name"),

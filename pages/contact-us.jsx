@@ -3,7 +3,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 import Head from "../myapp/core/Head";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { API_URL } from "../../config";
+import { API_URL } from "../config";
 import { wrapper } from "@/redux/store";
 import { fetchData } from "@/util/fetchData";
 const ContactUs = () => {

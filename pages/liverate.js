@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "@/util/axios";
 const axios = axiosInstance();
-import { API_URL } from "../../config";
+import { API_URL } from "../config";
 import { DateTime } from "luxon";
 import Head from "../myapp/core/Head";
 const Liverate = ({ rates }) => {

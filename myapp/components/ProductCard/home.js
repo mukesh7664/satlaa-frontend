@@ -3,7 +3,7 @@ import func from "../../../util/helpers/func";
 import { useSelector } from "react-redux";
 import Price from "../Price";
 import { Button } from "antd";
-import { IMG_URL } from "../../../../config";
+import { IMG_URL } from "../../../config";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import Image from "next/image";
 

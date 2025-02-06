@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import axiosInstance from "@/util/axios";
 const axios = axiosInstance();
-import { API_URL } from "../../../../../config";
+import { API_URL } from "../../../../config";
 import Head from "next/head";
 import { Modal } from "antd";
 import Link from "next/link";

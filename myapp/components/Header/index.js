@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 
 import {  Drawer } from "antd";
 
-import { IMG_URL } from "../../../../config";
+import { IMG_URL } from "../../../config";
 import Image from "next/image";
 import LeftMenu from "./LeftMenu";
 import RightMenu from "./RightMenu";

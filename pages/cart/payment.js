@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import axiosInstance from "@/util/axios";
 const axios = axiosInstance();
 import func from "../../util/helpers/func";
-import { API_URL } from "../../../config";
+import { API_URL } from "../../config";
 import { Radio, message } from "antd";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";

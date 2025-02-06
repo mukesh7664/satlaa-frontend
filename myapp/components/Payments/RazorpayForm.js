@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import axiosInstance from "@/util/axios";
 const axios = axiosInstance();
-import { API_URL } from "../../../../config";
+import { API_URL } from "../../../config";
 import { getCart as getCart_r } from "../../../redux/reducers/Cart";
 import { cartFetch } from "../../../redux/reducers/Cart";
 import Script from "next/script";

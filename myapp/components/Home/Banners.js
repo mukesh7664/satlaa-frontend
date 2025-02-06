@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { IMG_URL } from "../../../../config";
+import { IMG_URL } from "../../../config";
 import Link from "next/link";
 const Default = ({ state }) => {
   return (

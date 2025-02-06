@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { API_URL } from '../../../config';
+import { API_URL } from '../../config';
 import { subcategoryFetch } from '../reducers/SubCategory';
 
 export const getSubcategory_r = createAsyncThunk(

@@ -4,7 +4,7 @@ import { Button, Form, Input, message, Select, Drawer } from "antd";
 
 import AddressSelect from "../Cart/AddressSelect";
 import { useSelector } from "react-redux";
-import { API_URL } from "../../../../config";
+import { API_URL } from "../../../config";
 
 import AuthService from "../../../util/services/authservice";
 import axiosInstance from "@/util/axios";

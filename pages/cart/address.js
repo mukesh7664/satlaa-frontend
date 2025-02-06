@@ -1,7 +1,7 @@
 import axiosInstance from "@/util/axios";
 const axios = axiosInstance();
 
-import { API_URL } from "../../../config";
+import { API_URL } from "../../config";
 import Breadcrumbs from "../../myapp/components/Utils/BreadCrumbs";
 import authservice from "../../util/services/authservice";
 import { cartFetch, getCart } from "../../redux/reducers/Cart";

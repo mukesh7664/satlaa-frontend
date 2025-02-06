@@ -19,7 +19,7 @@ import { useRouter } from "next/router";
 import StarRating from "../Utils/StarRating";
 import Image from "next/image";
 
-import { API_URL, IMG_URL } from "../../../../config";
+import { API_URL, IMG_URL } from "../../../config";
 import { useRef } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";

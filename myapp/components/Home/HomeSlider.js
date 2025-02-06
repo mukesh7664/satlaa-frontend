@@ -8,7 +8,7 @@ SwiperCore.use([Autoplay, Pagination, EffectFade]);
 import "swiper/css/pagination";
 import "swiper/css/effect-fade";
 import Link from "next/link";
-import { IMG_URL } from "../../../../config";
+import { IMG_URL } from "../../../config";
 import Image from "next/image";
 
 const Default = ({ state = [] }) => {

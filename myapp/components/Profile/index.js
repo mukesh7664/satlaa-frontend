@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Button, Form, Input, message, Select, Divider } from "antd";
 
 import { useDispatch, useSelector } from "react-redux";
-import { API_URL } from "../../../../config";
+import { API_URL } from "../../../config";
 import AuthService from "../../../util/services/authservice";
 import { removeCookies, setCookie } from "cookies-next";
 import axiosInstance from "@/util/axios";

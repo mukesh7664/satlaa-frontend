@@ -6,7 +6,7 @@ import SwiperCore, { Navigation, Thumbs, Autoplay } from "swiper";
 SwiperCore.use([Navigation, Thumbs, Autoplay]);
 
 import Link from "next/link";
-import { IMG_URL } from "../../../../config";
+import { IMG_URL } from "../../../config";
 
 const Default = ({ state = [], title = { title: "", description: "" } }) => {
   return (

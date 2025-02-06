@@ -4,7 +4,7 @@ import Router from "next/router";
 
 import axiosInstance from "@/util/axios";
 const axios = axiosInstance();
-import { API_URL } from "../../../config";
+import { API_URL } from "../../config";
 import authservice from "../../util/services/authservice";
 import { cartFetch } from "../../redux/reducers/Cart";
 import { setIsAuthenticated, setLogin } from "../../redux/reducers/Login";

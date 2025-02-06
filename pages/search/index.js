@@ -21,7 +21,7 @@ import SubCategoryFilter from "../../myapp/components/FilterProducts/SubCategory
 import ColorFilter from "../../myapp/components/FilterProducts/ColorFilter";
 import StyleFilter from "../../myapp/components/FilterProducts/StyleFilter";
 import { fetchData } from "../../util/fetchData";
-import { API_URL } from "../../../config";
+import { API_URL } from "../../config";
 
 const Search = ({ productData }) => {
   // const { filterProducts } = useSelector(

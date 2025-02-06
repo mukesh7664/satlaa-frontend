@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import axios from "axios";
-import { API_URL } from "../../../../config";
+import { API_URL } from "../../../config";
 import { Form, Input } from "antd";
 const DeliveryTime = () => {
   const [deliveryTime, setDeliveryTime] = useState("");

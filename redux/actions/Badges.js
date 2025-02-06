@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { API_URL } from '../../../config';
+import { API_URL } from '../../config';
 import { badgesFetch } from '../reducers/Badges';
 
 export const getBadges_r = createAsyncThunk(

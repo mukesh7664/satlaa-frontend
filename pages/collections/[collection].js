@@ -12,7 +12,7 @@ import { getRunningQueriesThunk, getProducts } from "@/redux/api/productsApi";
 
 import { useRouter } from "next/router";
 import FilterSelectedTop from "@/myapp/components/FilterProducts/FilterSelectedTop";
-import { API_URL, IMG_URL } from "../../../config";
+import { API_URL, IMG_URL } from "../../config";
 import authservice from "@/util/services/authservice";
 import { cartFetch } from "@/redux/reducers/Cart";
 import { setIsAuthenticated, setLogin } from "@/redux/reducers/Login";

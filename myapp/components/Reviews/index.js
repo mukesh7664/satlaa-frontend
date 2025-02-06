@@ -1,7 +1,7 @@
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
 import { BiSolidStar } from "react-icons/bi";
-import { API_URL } from "../../../../config";
+import { API_URL } from "../../../config";
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 import { GoCheckCircleFill } from "react-icons/go";
 import { Modal } from 'antd';

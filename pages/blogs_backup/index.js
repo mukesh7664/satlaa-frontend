@@ -1,4 +1,4 @@
-import { CMS_URL } from "../../../config";
+import { CMS_URL } from "../../config";
 import { useState, useEffect, useCallback } from "react";
 import { fetchAPI } from "@/util/strapi-fetch-api";
 import { wrapper } from "@/redux/store";

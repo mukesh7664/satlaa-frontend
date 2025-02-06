@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { Menu } from "antd";
 import { Card, Row, Col } from "antd";
 import router from "next/router";
-import { IMG_URL } from "../../../../config";
+import { IMG_URL } from "../../../config";
 import Image from "next/image";
 
 const Default = () => {

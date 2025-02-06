@@ -7,7 +7,7 @@ import { fetchData } from "@/util/fetchData";
 import { message } from "antd";
 import axiosInstance from "@/util/axios";
 import { getCart } from "../redux/reducers/Cart";
-import { API_URL } from "../../config";
+import { API_URL } from "../config";
 const axios = axiosInstance();
 
 const SignInPage = () => {

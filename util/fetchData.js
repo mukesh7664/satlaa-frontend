@@ -1,6 +1,6 @@
 
 import axios from "axios";
-import { API_URL } from "../../config";
+import { API_URL } from "../config";
 import { tagsFetch } from "../redux/reducers/Tags";
 import { getSettings } from "../redux/reducers/Settings";
 import { badgesFetch } from "../redux/reducers/Badges";

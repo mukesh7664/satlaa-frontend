@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Button, Divider, Input, Alert } from "antd";
 import Price from "../Price";
 import { useDispatch, useSelector } from "react-redux";
-import { API_URL } from "../../../../config";
+import { API_URL } from "../../../config";
 import func from "../../../util/helpers/func";
 import { TagsOutlined } from "@ant-design/icons";
 import { cartFetch } from "../../../redux/reducers/Cart";

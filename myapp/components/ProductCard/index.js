@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { useSelector } from "react-redux";
 import Price from "../Price";
-import { IMG_URL } from "../../../../config";
+import { IMG_URL } from "../../../config";
 import Image from "next/image";
 import "react-loading-skeleton/dist/skeleton.css";
 import { AiFillStar } from "react-icons/ai";

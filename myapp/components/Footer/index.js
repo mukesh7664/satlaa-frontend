@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import { Divider } from "antd";
 import Link from "next/link";
-import { IMG_URL } from "../../../../config";
+import { IMG_URL } from "../../../config";
 import Image from "next/legacy/image";
 const Default = ({ footerMenu }) => {
   const { settings } = useSelector(({ settings }) => settings);

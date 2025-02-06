@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "@/util/axios";
 const axios = axiosInstance();
-import { API_URL } from "../../../config";
+import { API_URL } from "../../config";
 import { topmenuFetch } from "../reducers/Topmenu";
 
 export const getTopmenu_r = createAsyncThunk(

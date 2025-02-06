@@ -1,6 +1,6 @@
 import func from "../util/helpers/func";
 import { wrapper } from "../redux/store";
-import { API_URL } from "../../config";
+import { API_URL } from "../config";
 import Head from "../myapp/core/Head";
 import "swiper/css";
 import "swiper/css/navigation";

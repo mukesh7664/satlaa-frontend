@@ -12,7 +12,7 @@ import Download from "yet-another-react-lightbox/plugins/download";
 import { SlMagnifierAdd } from "react-icons/sl";
 
 import "swiper/css/pagination";
-import { IMG_URL } from "../../../../config";
+import { IMG_URL } from "../../../config";
 import Image from "next/image";
 import NextJsImage from "../Helper/FancyBox";
 import dynamic from "next/dynamic";

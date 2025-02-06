@@ -9,7 +9,7 @@ import AppLayout from "../myapp/core/Layout";
 // import * as fbq from "../lib/fbpixel";
 import NextNProgress from "nextjs-progressbar";
 import { useRouter } from "next/router";
-import jsonConfig from "../../config";
+import jsonConfig from "../config";
 const GTM = dynamic(() => import("../myapp/components/Utils/GTM"), {
   ssr: false,
 });

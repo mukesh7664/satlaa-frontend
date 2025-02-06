@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import Link from "next/link";
-import { API_URL } from "../../../config";
+import { API_URL } from "../../config";
 import axiosInstance from "@/util/axios";
 const axios = axiosInstance();
 import parse from "html-react-parser";

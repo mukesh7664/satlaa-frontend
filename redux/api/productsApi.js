@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { API_URL } from "../../../config";
+import { API_URL } from "../../config";
 import { HYDRATE } from "next-redux-wrapper";
 export const productsApi = createApi({
   reducerPath: "productsApi",

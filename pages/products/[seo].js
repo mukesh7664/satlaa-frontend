@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import axiosInstance from "@/util/axios";
 import TagManager from "react-gtm-module";
 import { cartFetch } from "../../redux/reducers/Cart";
-import { API_URL, IMG_URL } from "../../../config";
+import { API_URL, IMG_URL } from "../../config";
 import axios from "axios";
 import "swiper/css";
 import "swiper/css/navigation";

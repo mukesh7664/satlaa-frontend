@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { defaultLanguage } from '../../../config';
+import { defaultLanguage } from '../../config';
 
 const initialState = {
   locale: defaultLanguage,

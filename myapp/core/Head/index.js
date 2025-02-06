@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { useSelector } from "react-redux";
-import { IMG_URL } from "../../../../config";
+import { IMG_URL } from "../../../config";
 
 const Default = ({
   title = "",

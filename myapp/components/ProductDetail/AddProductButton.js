@@ -10,7 +10,7 @@ import { useState, useEffect } from "react";
 import { addProductToCart, cartFetch } from "../../../redux/reducers/Cart";
 import axiosInstance from "@/util/axios";
 const axios = axiosInstance();
-import { API_URL } from "../../../../config";
+import { API_URL } from "../../../config";
 // import RazorpayAffordability from "../../components/Payments/RazorpayAffordability";
 import { useRouter } from "next/router";
 import Loader from "@/components/Utils/Loader";

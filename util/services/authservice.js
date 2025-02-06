@@ -1,4 +1,4 @@
-import { API_URL } from "../../../config";
+import { API_URL } from "../../config";
 import axiosInstance from "@/util/axios";
 export default {
   sendOTP: (user) => {

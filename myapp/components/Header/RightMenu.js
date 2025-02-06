@@ -19,7 +19,7 @@ import AuthService from "../../../util/services/authservice";
 import { FiSearch, FiShoppingBag } from "react-icons/fi";
 import { AiOutlineUser, AiOutlineClose } from "react-icons/ai";
 import { cartFetch, getCart } from "../../../redux/reducers/Cart";
-import { API_URL } from "../../../../config";
+import { API_URL } from "../../../config";
 
 const RightMenu = ({ mode }) => {
   const [form] = Form.useForm();
