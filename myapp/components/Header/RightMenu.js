@@ -94,6 +94,7 @@ const RightMenu = ({ mode }) => {
         confirmLoading={confirmLoadingLogin}
         onCancel={() => seTopenModalLogin(false)}
         footer={null}
+        onClick={() => seTopenModalLogin(false)}
       >
         <LoginForm handleCancelLogin={() => seTopenModalLogin(false)} onSuccessfulLogin={handleSuccessfulLogin} />
       </Modal>

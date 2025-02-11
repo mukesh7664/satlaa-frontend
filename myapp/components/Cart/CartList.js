@@ -3,7 +3,7 @@ const axios = axiosInstance();
 import { useState, useEffect } from "react";
 import { Table, Popconfirm, message } from "@mui/material";
 import Price from "../Price";
-import { DeleteOutlined } from "@ant-design/icons";
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { useDispatch, useSelector } from "react-redux";
 import { API_URL } from "../../../config";
 import func from "../../../util/helpers/func";
@@ -347,7 +347,7 @@ const Default = () => {
                         }}
                       >
                         <a>
-                          <DeleteOutlined
+                          <DeleteOutlineIcon
                             style={{ fontSize: "150%", marginLeft: "15px" }}
                           />{" "}
                         </a>
@@ -504,7 +504,7 @@ const Default = () => {
                 }}
               >
                 <a>
-                  <DeleteOutlined
+                  <DeleteOutlineIcon
                     style={{ fontSize: "150%", marginLeft: "15px" }}
                   />{" "}
                 </a>

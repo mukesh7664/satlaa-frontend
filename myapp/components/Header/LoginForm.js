@@ -1,23 +1,23 @@
 import { useEffect, useState } from "react";
-import { Input, Form, Button, message, Select, Col, Row } from "antd";
+import { FormControl, Button, Alert, Select, Box, Typography, TextField, Grid, InputLabel, MenuItem, Paper, IconButton, Dialog } from "@mui/material";
+import { CheckIcon } from "@mui/icons-material/Check";
+import CloseIcon from "@mui/icons-material/Close";
 import { useRouter } from "next/router";
+import { useForm, Controller } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import Link from "next/link";
 import { setCookie } from "cookies-next";
 import AuthService from "../../../util/services/authservice";
-import {
-  setLogin,
-  setIsAuthenticated,
-  setLogout,
-} from "../../../redux/reducers/Login";
+import { setLogin, setIsAuthenticated, setLogout } from "../../../redux/reducers/Login";
 import { getCookie } from "cookies-next";
 import { cartFetch, getCart as getCart_r } from "../../../redux/reducers/Cart";
 import TagManager from "react-gtm-module";
+
 const Default = ({ onSuccessfulLogin, handleCancelLogin }) => {
-  const [form] = Form.useForm();
+  const { register, handleSubmit, watch, formState: { errors } } = useForm();
   const [step, setStep] = useState(0);
   const [phoneNumber, setPhoneNumber] = useState(null);
-  const [loading, setLoading] = useState(false); // New state variable for loader
+  const [loading, setLoading] = useState(false);
   const [gender, setGender] = useState("");
   const dispatch = useDispatch();
   const [first_name, setFirst_name] = useState("");
@@ -27,6 +27,7 @@ const Default = ({ onSuccessfulLogin, handleCancelLogin }) => {
   const [resendTimer, setResendTimer] = useState(30);
   const [showResendButton, setShowResendButton] = useState(false);
   const utmParams = getCookie("utm_params");
+
   const onSubmitPhoneForm = async (data) => {
     setLoading(true);
     AuthService.sendOTP(data).then((response) => {
@@ -46,7 +47,7 @@ const Default = ({ onSuccessfulLogin, handleCancelLogin }) => {
   };
 
   const setupTimer = () => {
-    setResendTimer(30); // Reset timer to 5 seconds
+    setResendTimer(30);
     const timer = setInterval(() => {
       setResendTimer((prevTimer) => {
         if (prevTimer <= 1) {
@@ -72,8 +73,8 @@ const Default = ({ onSuccessfulLogin, handleCancelLogin }) => {
       setLoading(false);
       if (response) {
         message.success("OTP resent successfully");
-        setShowResendButton(false); // Hide the button
-        setupTimer(); // Restart the timer
+        setShowResendButton(false);
+        setupTimer();
       } else {
         message.error("Failed to resend OTP");
       }
@@ -96,11 +97,10 @@ const Default = ({ onSuccessfulLogin, handleCancelLogin }) => {
     setLoading(true);
     try {
       const response = await AuthService.registerUser(data);
-      // Assume register is a method in AuthService to handle registration
       setLoading(false);
       let userInfo = {
-        user_name: first_name, // Assume user.name is always available
-        user_phone: "+91" + phoneNumber, // Assume user.phone is always available
+        user_name: first_name,
+        user_phone: "+91" + phoneNumber,
       };
       if (last_name) {
         userInfo.user_last_name = last_name;
@@ -113,21 +113,22 @@ const Default = ({ onSuccessfulLogin, handleCancelLogin }) => {
         event: "usersignup",
         user_info: userInfo,
         signup_method: "phone",
-        source: utmParams?.utm_source ? utmParams.utm_source : "direct", // Replace 'direct' with the actual traffic source
+        source: utmParams?.utm_source ? utmParams.utm_source : "direct",
         campaign: utmParams?.utm_campaign ? utmParams.utm_campaign : "",
         content: utmParams?.utm_content ? utmParams.utm_campaign : "",
         fbclid: utmParams?.fbclid ? utmParams.fbclid : "",
-        user_id: response.user.user_id, // Replace with the relevant campaign name
-        user_phone: "+91" + phoneNumber, // User's phone number
+        user_id: response.user.user_id,
+        user_phone: "+91" + phoneNumber,
       };
       TagManager.dataLayer({ dataLayer: null });
       TagManager.dataLayer({ dataLayer: gtm_data });
       setIsRegistered(true);
-      // Assume the server returns { success: true } on successful registration
-      setStep(1); // Proceed to OTP verification step
+      setStep(1);
     } catch (error) {
       setLoading(false);
-      message.error("Registration failed");
+      <Alert icon={<CheckIcon fontSize="inherit" />} severity="failed">
+        Registration failed
+      </Alert>
     }
   };
 
@@ -146,209 +147,293 @@ const Default = ({ onSuccessfulLogin, handleCancelLogin }) => {
         setStep(0);
         onSuccessfulLogin(user, userCart);
         handleCancelLogin();
-        // router.reload();
       } else {
-        message.error("Invalid or expired OTP");
+        <Alert icon={<CheckIcon fontSize="inherit" />} severity="failed">
+          Invalid or expired OTP
+        </Alert>
       }
     });
   };
+
   const handleChangeNumber = () => {
-    setStep(0); // Reset to step 0 to show number form again
-    setShowResendButton(false); // Hide resend button
+    setStep(0);
+    setShowResendButton(false);
   };
+
   const numberForm = () => {
+    const {
+      handleSubmit,
+      control,
+      formState: { errors },
+    } = useForm();
+    const [loading, setLoading] = useState(false);
+
+    const onSubmit = async (data) => {
+      setLoading(true);
+      await onSubmitPhoneForm(data);
+      setLoading(false);
+    };
+
     return (
-      <Form onFinish={onSubmitPhoneForm} layout="vertical" form={form}>
-        <Form.Item
-          rules={[
-            {
-              required: true,
-              message: "Please input your phone number!",
-            },
-            {
-              max: 10,
-              message: "Number must be 10 characters long",
-            },
-            {
-              min: 10,
-              message: "Number must be 10 characters long",
-            },
-          ]}
+      <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
+        <Typography variant="body1" fontFamily="Montserrat" gutterBottom>
+          Enter Mobile Number
+        </Typography>
+
+        <Controller
           name="phone"
-          label={
-            <p className="text-base font-Montserrat">Enter Mobile Number</p>
-          }
+          control={control}
+          rules={{
+            required: "Please input your phone number!",
+            minLength: { value: 10, message: "Number must be 10 characters long" },
+            maxLength: { value: 10, message: "Number must be 10 characters long" },
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <TextField
+              {...field}
+              fullWidth
+              margin="normal"
+              variant="outlined"
+              size="large"
+              type="tel"
+              inputProps={{ maxLength: 10, pattern: "[0-9]*" }}
+              error={!!error}
+              helperText={error ? error.message : null}
+            />
+          )}
+        />
+
+        <Button
+          type="submit"
+          variant="contained"
+          fullWidth
+          sx={{ mt: 2, backgroundColor: "primary.main", color: "white" }}
+          disabled={loading}
         >
-          <Input
-            size="large"
-            type="number"
-            inputMode="numeric"
-            className="mt-4"
-            maxLength={10}
-            minLength={10}
-          />
-        </Form.Item>
-        <Form.Item>
-          <Button
-            type="default"
-            className="mb-0 mt-2 w-full bg-primary text-white"
-            size="large"
-            htmlType="submit"
-            loading={loading}
-          >
-            Send OTP
-          </Button>
-        </Form.Item>
-      </Form>
+          {loading ? "Loading..." : "Send OTP"}
+        </Button>
+      </Box>
     );
   };
-  const otpForm = () => {
-    return (
-      <Form onFinish={onSubmitOTPForm} layout="vertical" form={form}>
-        <Form.Item
-          rules={[
-            {
-              required: true,
-              message: "Please input the OTP!",
-            },
-          ]}
-          name="otp"
-          label={<p>Please enter the OTP send to {phoneNumber}</p>}
-        >
-          <Input
-            size="large"
-            type="number"
-            inputMode="numeric"
-            className="mt-4"
-          />
-        </Form.Item>
 
-        <Form.Item>
-          <div className="flex items-center">
-            <Button type="link" onClick={handleChangeNumber}>
+  const otpForm = ({ phoneNumber, showResendButton, resendTimer }) => {
+    const {
+      handleSubmit,
+      control,
+      formState: { errors },
+    } = useForm();
+
+    const [loading, setLoading] = useState(false);
+
+    const onSubmit = async (data) => {
+      setLoading(true);
+      await onSubmitOTPForm(data);
+      setLoading(false);
+    };
+
+    return (
+        <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
+          <Typography variant="h6" gutterBottom textAlign="center">
+            Enter OTP
+          </Typography>
+          <Typography variant="body2" color="textSecondary" textAlign="center" gutterBottom>
+            Please enter the OTP sent to <strong>{phoneNumber}</strong>
+          </Typography>
+
+          <Controller
+            name="otp"
+            control={control}
+            rules={{ required: "Please input the OTP!" }}
+            render={({ field, fieldState: { error } }) => (
+              <TextField
+                {...field}
+                label="OTP"
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                type="tel"
+                inputProps={{ inputMode: "numeric", pattern: "[0-9]*", maxLength: 6 }}
+                error={!!error}
+                helperText={error ? error.message : null}
+              />
+            )}
+          />
+
+          <Box display="flex" justifyContent="space-between" alignItems="center" mt={2}>
+            <Button onClick={handleChangeNumber} variant="text" color="primary">
               Change No.
             </Button>
             {showResendButton ? (
-              <Button onClick={handleResendOTP} type="link">
+              <Button onClick={handleResendOTP} variant="text" color="primary">
                 Resend OTP
               </Button>
             ) : (
-              <p>Resend in {resendTimer} seconds</p>
+              <Typography variant="body2" color="textSecondary">
+                Resend in {resendTimer} seconds
+              </Typography>
             )}
-          </div>
-        </Form.Item>
-        <Form.Item>
+          </Box>
+
           <Button
-            type="default"
-            className="mb-0 w-full mt-2 bg-primary text-white"
-            size="large"
-            htmlType="submit"
-            loading={loading}
+            type="submit"
+            variant="contained"
+            fullWidth
+            className="bg-primary"
+            sx={{ mt: 3, py: 1.5, fontWeight: "bold" }}
+            disabled={loading}
           >
-            Verify OTP
+            {loading ? "Verifying..." : "Verify OTP"}
           </Button>
-        </Form.Item>
-      </Form>
+        </Box>
     );
   };
 
   const registerForm = () => {
-    return (
-      <Form onFinish={onSubmitRegistrationForm} layout="vertical">
-        <Row gutter={16}>
-          <Col span={12}>
-            <Form.Item
-              name="first_name"
-              label="First Name"
-              rules={[
-                { required: true, message: "Please input your first name" },
-              ]}
-            >
-              <Input
-                size="large"
-                onChange={(e) => setFirst_name(e.target.value)}
-                autoComplete="given-name"
-              />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item
-              name="last_name"
-              label="Last Name"
-              rules={[
-                { required: true, message: "Please input your last name!" },
-              ]}
-            >
-              <Input
-                size="large"
-                onChange={(e) => setLastName(e.target.value)}
-                autoComplete="family-name"
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Form.Item
-          name="gender"
-          label="Gender"
-          rules={[{ required: true, message: "Please select your gender!" }]}
-        >
-          <Select size="large" onChange={(value) => setGender(value)}>
-            <Select.Option value="Male">Male</Select.Option>
-            <Select.Option value="Female">Female</Select.Option>
-            <Select.Option value="Other">Other</Select.Option>
-          </Select>
-        </Form.Item>
+    const {
+      handleSubmit,
+      control,
+      formState: { errors },
+    } = useForm();
 
-        <Form.Item
-          name="email"
-          label="Email"
-          rules={[{ required: true, message: "Please enter your email" }]}
-        >
-          <Input
-            type="email"
-            size="large"
-            onChange={(e) => setEmail(e.target.value)}
-            autoComplete="email"
+    const [loading, setLoading] = useState(false);
+
+    const onSubmit = async (data) => {
+      setLoading(true);
+      await onSubmitRegistrationForm(data);
+      setLoading(false);
+    };
+
+    return (
+      <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <Controller
+              name="first_name"
+              control={control}
+              rules={{ required: "Please input your first name" }}
+              render={({ field, fieldState: { error } }) => (
+                <TextField
+                  {...field}
+                  label="First Name"
+                  fullWidth
+                  margin="normal"
+                  variant="outlined"
+                  size="large"
+                  autoComplete="given-name"
+                  error={!!error}
+                  helperText={error ? error.message : null}
+                />
+              )}
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <Controller
+              name="last_name"
+              control={control}
+              rules={{ required: "Please input your last name" }}
+              render={({ field, fieldState: { error } }) => (
+                <TextField
+                  {...field}
+                  label="Last Name"
+                  fullWidth
+                  margin="normal"
+                  variant="outlined"
+                  size="large"
+                  autoComplete="family-name"
+                  error={!!error}
+                  helperText={error ? error.message : null}
+                />
+              )}
+            />
+          </Grid>
+        </Grid>
+
+        <FormControl fullWidth margin="normal" variant="outlined">
+          <InputLabel>Gender</InputLabel>
+          <Controller
+            name="gender"
+            control={control}
+            rules={{ required: "Please select your gender!" }}
+            render={({ field }) => (
+              <Select {...field} label="Gender">
+                <MenuItem value="Male">Male</MenuItem>
+                <MenuItem value="Female">Female</MenuItem>
+                <MenuItem value="Other">Other</MenuItem>
+              </Select>
+            )}
           />
-        </Form.Item>
-        <Form.Item>
-          <Button
-            type="default"
-            className="mb-0 w-full mt-2"
-            size="large"
-            htmlType="submit"
-          >
-            Register
-          </Button>
-        </Form.Item>
-      </Form>
+        </FormControl>
+
+        <Controller
+          name="email"
+          control={control}
+          rules={{ required: "Please enter your email" }}
+          render={({ field, fieldState: { error } }) => (
+            <TextField
+              {...field}
+              label="Email"
+              fullWidth
+              margin="normal"
+              variant="outlined"
+              size="large"
+              type="email"
+              autoComplete="email"
+              error={!!error}
+              helperText={error ? error.message : null}
+            />
+          )}
+        />
+
+        <Button
+          type="submit"
+          variant="contained"
+          fullWidth
+          sx={{ mt: 2 }}
+          disabled={loading}
+        >
+          {loading ? "Registering..." : "Register"}
+        </Button>
+      </Box>
     );
   };
+
   return (
-    <div className="mb-5">
-      {isRegistered === false
-        ? registerForm()
-        : step === 0
-        ? numberForm()
-        : otpForm()}
-      <div className="mt-4">
-        By continuing, you agree to our
-        <Link
-          href="/pages/terms-conditions"
-          className="text-blue-500 hover:text-blue-700"
+      <Paper
+        elevation={3}
+        sx={{
+          width: "100%",
+          maxWidth: 400,
+          p: 4,
+          borderRadius: 2,
+          bgcolor: "white",
+          mx: "auto",
+          mt: 5,
+          boxShadow: 3,
+          position: "relative",
+          transition: "all 1s"
+        }}
+      >
+        <IconButton
+          onClick={handleCancelLogin}
+          sx={{ position: "absolute", top: 8, right: 8 }}
         >
-          &nbsp;Terms of Use&nbsp;
-        </Link>
-        and
-        <Link
-          href="/pages/privacy-policy"
-          className="text-blue-500 hover:text-blue-700"
-        >
-          &nbsp;Privacy Policy
-        </Link>
-        .
-      </div>
-    </div>
+          <CloseIcon />
+        </IconButton>
+
+        {isRegistered === false ? registerForm() : step === 0 ? numberForm() : otpForm({ phoneNumber, showResendButton, resendTimer })}
+
+        <Typography variant="body2" sx={{ mt: 4, textAlign: "center", color: "text.secondary" }}>
+          By continuing, you agree to our
+          <Link href="/pages/terms-conditions" sx={{ color: "primary.main", mx: 0.5 }}>
+            Terms of Use
+          </Link>
+          and
+          <Link href="/pages/privacy-policy" sx={{ color: "primary.main", mx: 0.5 }}>
+            Privacy Policy
+          </Link>.
+        </Typography>
+      </Paper>
   );
 };
 
