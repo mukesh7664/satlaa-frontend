@@ -1,116 +1,157 @@
 import { useState } from "react";
-import { Input, Form, Button, Select, Divider } from "@mui/material";
-
+import { useForm, Controller } from "react-hook-form";
+import { TextField, Button, Select, MenuItem, Divider } from "@mui/material";
 
 const Default = ({ onSubmitSignup }) => {
-   
-   const [form] = Form.useForm();
-   const [state, seTstate] = useState();
-   const changePrefix = (selected) => {
-      seTstate({
-         ...state,
-         prefix: selected,
-      });
+   const { control, handleSubmit, watch, getValues, formState: { errors } } = useForm({
+      defaultValues: {
+         email: "",
+         password: "",
+         confirm: "",
+         name: "",
+         phone: "",
+         prefix: "91",
+      },
+   });
+
+   const [prefix, setPrefix] = useState("91");
+
+   const handlePrefixChange = (event) => {
+      setPrefix(event.target.value);
    };
 
-   const prefixSelector = (
-      <Form.Item name="prefix" noStyle initialValue={"91"}>
-         <Select onChange={changePrefix} style={{ width: 70 }}>
-            <Select.Option value="91">+91</Select.Option>
-            <Select.Option value="1">+1</Select.Option>
-         </Select>
-      </Form.Item>
-   );
-
    return (
-      <>
-         <Form onFinish={onSubmitSignup} layout="vertical" form={form}>
-            <Form.Item
-               name="email"
-               label="E-mail"
-               rules={[
-                  {
-                     type: "email",
-                     message: "The input is not valid E-mail!",
-                  },
-                  {
-                     required: true,
-                     message: "Input is not valid",
-                  },
-               ]}
-            >
-               <Input />
-            </Form.Item>
-            <Form.Item
-               name="password"
-               label="Password"
-               rules={[
-                  {
-                     message: "Input is not valid",
-                  },
-               ]}
-               hasFeedback
-            >
-               <Input.Password />
-            </Form.Item>
-            <Form.Item
-               name="confirm"
-               label="Confirm Password"
-               dependencies={["password"]}
-               hasFeedback
-               rules={[
-                  {
-                     message: "Input is not valid",
-                  },
-                  ({ getFieldValue }) => ({
-                     validator(rule, value) {
-                        if (!value || getFieldValue("password") === value) {
-                           return Promise.resolve();
-                        }
-                        return Promise.reject(
-                           "Password Not Match"
-                        );
-                     },
-                  }),
-               ]}
-            >
-               <Input.Password />
-            </Form.Item>
-            <Form.Item
-               name="name"
-               label="Name"
-               rules={[
-                  {
-                     required: true,
-                     message: "Please fill this input.",
-                     whitespace: true,
-                  },
-               ]}
-            >
-               <Input />
-            </Form.Item>
-          
-            <Form.Item
-               name="phone"
-               label="Phone"
-               rules={[
-                  {
-                     required: true,
-                     message: "Please fill this input.",
-                  },
-               ]}
-            >
-               <Input addonBefore={prefixSelector} />
-            </Form.Item>
+      <form onSubmit={handleSubmit(onSubmitSignup)} noValidate>
+         {/* Email */}
+         <Controller
+            name="email"
+            control={control}
+            rules={{
+               required: "Email is required",
+               pattern: {
+                  value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                  message: "Invalid email address",
+               },
+            }}
+            render={({ field }) => (
+               <TextField
+                  {...field}
+                  label="E-mail"
+                  fullWidth
+                  margin="normal"
+                  error={!!errors.email}
+                  helperText={errors.email ? errors.email.message : ""}
+               />
+            )}
+         />
 
-            <Divider />
-            <Form.Item>
-               <Button type="default" className="w-full" htmlType="submit">
-                 Save
-               </Button>
-            </Form.Item>
-         </Form>
-      </>
+         {/* Password */}
+         <Controller
+            name="password"
+            control={control}
+            rules={{
+               required: "Password is required",
+               minLength: { value: 6, message: "Password must be at least 6 characters" },
+            }}
+            render={({ field }) => (
+               <TextField
+                  {...field}
+                  label="Password"
+                  type="password"
+                  fullWidth
+                  margin="normal"
+                  error={!!errors.password}
+                  helperText={errors.password ? errors.password.message : ""}
+               />
+            )}
+         />
+
+         {/* Confirm Password */}
+         <Controller
+            name="confirm"
+            control={control}
+            rules={{
+               required: "Confirm your password",
+               validate: (value) =>
+                  value === getValues("password") || "Passwords do not match",
+            }}
+            render={({ field }) => (
+               <TextField
+                  {...field}
+                  label="Confirm Password"
+                  type="password"
+                  fullWidth
+                  margin="normal"
+                  error={!!errors.confirm}
+                  helperText={errors.confirm ? errors.confirm.message : ""}
+               />
+            )}
+         />
+
+         {/* Name */}
+         <Controller
+            name="name"
+            control={control}
+            rules={{
+               required: "Name is required",
+            }}
+            render={({ field }) => (
+               <TextField
+                  {...field}
+                  label="Name"
+                  fullWidth
+                  margin="normal"
+                  error={!!errors.name}
+                  helperText={errors.name ? errors.name.message : ""}
+               />
+            )}
+         />
+
+         {/* Phone with Prefix */}
+         <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "1rem" }}>
+            {/* Country Code Select */}
+            <Controller
+               name="prefix"
+               control={control}
+               render={({ field }) => (
+                  <Select {...field} value={prefix} onChange={(e) => {
+                     field.onChange(e);
+                     handlePrefixChange(e);
+                  }}>
+                     <MenuItem value="91">+91</MenuItem>
+                     <MenuItem value="1">+1</MenuItem>
+                  </Select>
+               )}
+            />
+
+            {/* Phone Number Input */}
+            <Controller
+               name="phone"
+               control={control}
+               rules={{
+                  required: "Phone number is required",
+                  pattern: { value: /^[0-9]{10}$/, message: "Enter a valid 10-digit number" },
+               }}
+               render={({ field }) => (
+                  <TextField
+                     {...field}
+                     label="Phone"
+                     fullWidth
+                     margin="normal"
+                     error={!!errors.phone}
+                     helperText={errors.phone ? errors.phone.message : ""}
+                  />
+               )}
+            />
+         </div>
+
+         <Divider sx={{ my: 2 }} />
+
+         {/* Submit Button */}
+         <Button type="submit" variant="contained" fullWidth>
+            Save
+         </Button>
+      </form>
    );
 };
 

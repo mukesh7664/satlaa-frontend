@@ -207,7 +207,7 @@ const Default = ({ onSuccessfulLogin, handleCancelLogin }) => {
           type="submit"
           variant="contained"
           fullWidth
-          sx={{ mt: 2, backgroundColor: "primary.main", color: "white" }}
+          sx={{ mt: 2, backgroundColor: "#e76e81", color: "white" }}
           disabled={loading}
         >
           {loading ? "Loading..." : "Send OTP"}
@@ -389,7 +389,7 @@ const Default = ({ onSuccessfulLogin, handleCancelLogin }) => {
           type="submit"
           variant="contained"
           fullWidth
-          sx={{ mt: 2 }}
+          sx={{ mt: 2,background: "#e76e81" }}
           disabled={loading}
         >
           {loading ? "Registering..." : "Register"}
@@ -400,18 +400,14 @@ const Default = ({ onSuccessfulLogin, handleCancelLogin }) => {
 
   return (
       <Paper
-        elevation={3}
         sx={{
+          boxShadow: "none",
           width: "100%",
-          maxWidth: 400,
           p: 4,
-          borderRadius: 2,
           bgcolor: "white",
           mx: "auto",
-          mt: 5,
-          boxShadow: 3,
           position: "relative",
-          transition: "all 1s"
+          transition: "all 1s ease"
         }}
       >
         <IconButton
