@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Dropdown, Button, Checkbox } from "@mui/material";
+import { Menu, MenuItem, Button, Checkbox, FormControlLabel , ListItemText} from "@mui/material"; // ✅ Correct MUI components
 import filterRouteLinkGenerate from "./filterRouterLink";
 import { filterProducts as filterProducts_r } from "../../../redux/reducers/FilterProducts";
 import { productsApi } from "../../../redux/api/productsApi";
@@ -8,107 +8,110 @@ import { BiChevronDown } from "react-icons/bi";
 
 const Page = ({ isMobile }) => {
   const { colors } = useSelector(({ colors }) => colors);
-  const { filterProducts } = useSelector(
-    ({ filterProducts }) => filterProducts
-  );
-  const [state, seTstate] = useState({
-    colors: [],
-    allData: [],
-    selectedColors: filterProducts.colors,
-  });
+  const { filterProducts } = useSelector(({ filterProducts }) => filterProducts);
   const dispatch = useDispatch();
 
-  const getColors = () => {
-    const dataManipulate = [];
-    for (const i in colors) {
-      dataManipulate.push({
-        label: colors[i].title,
-        value: colors[i].seo,
-      });
-    }
-    seTstate({ ...state, colors: dataManipulate, allData: dataManipulate });
-  };
-
+  const [state, setState] = useState({
+    colors: [],
+    selectedColors: filterProducts.colors || [],
+    anchorEl: null, // Menu anchor element
+  });
 
   useEffect(() => {
-    getColors();
-    seTstate((prevState) => ({
+    if (colors) {
+      const formattedColors = colors.map((color) => ({
+        label: color.title,
+        value: color.seo,
+      }));
+      setState((prevState) => ({
+        ...prevState,
+        colors: formattedColors,
+      }));
+    }
+  }, [colors]);
+
+  useEffect(() => {
+    setState((prevState) => ({
       ...prevState,
-      selectedColors: filterProducts.colors,
+      selectedColors: filterProducts.colors || [],
     }));
   }, [filterProducts.colors]);
-  const handleMenuClick = (e) => {
-    e.preventDefault();
 
-    let selectedColors = [...state.selectedColors];
+  const handleCheckboxChange = (event) => {
+    const { checked, value } = event.target;
+    setState((prevState) => {
+      const updatedColors = checked
+        ? [...prevState.selectedColors, value]
+        : prevState.selectedColors.filter((color) => color !== value);
 
-    if (selectedColors.includes(e.target.value)) {
-      selectedColors = selectedColors.filter(
-        (tag) => tag !== e.target.value
-      );
-    } else {
-      selectedColors.push(e.target.value);
-    }
+      dispatch(productsApi.util.resetApiState());
+      dispatch(filterProducts_r({ ...filterProducts, colors: updatedColors, page: 1 }));
+      filterRouteLinkGenerate({ ...filterProducts, colors: updatedColors, page: 1 });
 
-    seTstate({ ...state, selectedColors });
-    dispatch(productsApi.util.resetApiState());
-
-    dispatch(
-      filterProducts_r({ ...filterProducts, colors: selectedColors, page: 1 })
-    );
-    filterRouteLinkGenerate({
-      ...filterProducts,
-      colors: selectedColors,
-      page: 1,
+      return { ...prevState, selectedColors: updatedColors };
     });
   };
 
-  const menuProps = {
-    items: state.colors.map((tag) => ({
-      label: (
-        <Checkbox
-          checked={state.selectedColors.includes(tag.value)}
-          onChange={handleMenuClick}
-          value={tag.value}
-        >
-          {tag.label}
-        </Checkbox>
-      ),
-      key: tag.value,
-    })),
+  const handleMenuOpen = (event) => {
+    setState((prevState) => ({ ...prevState, anchorEl: event.currentTarget }));
+  };
+
+  const handleMenuClose = () => {
+    setState((prevState) => ({ ...prevState, anchorEl: null }));
   };
 
   return (
     <>
       {isMobile ? (
-        // Mobile layout
-       
-          <div className="flex flex-col">
-            {state.colors.map((color) => (
-              <div key={color.value}>
+        // ✅ Mobile layout
+        <div className="flex flex-col">
+          {state.colors.map((color) => (
+            <FormControlLabel
+              key={color.value}
+              control={
                 <Checkbox
                   checked={state.selectedColors.includes(color.value)}
-                  onChange={handleMenuClick}
+                  onChange={handleCheckboxChange}
                   value={color.value}
-                  style={{ borderRadius: "0px", fontSize: "15px" }}
-                >
-                  {color.label}
-                </Checkbox>
-              </div>
-            ))}
-          </div>
-    
+                />
+              }
+              label={color.label}
+            />
+          ))}
+        </div>
       ) : (
-        // Desktop layout
-        <Dropdown menu={menuProps} trigger={["click","hover"]}>
+        // ✅ Desktop layout with MUI Menu dropdown
+        <>
           <Button
-            className="flex items-center justify-between px-3 py-2 border border-gray-300 bg-white shadow-sm"
-            onClick={(e) => e.preventDefault()}
+            className="flex items-center justify-between px-2 py-1 border text-black shadow-sm text-[12px]"
+            onClick={handleMenuOpen}
+            sx={{border: "1px solid black", boxShadow: "none", ":hover" : {borderColor: "#4690ff", color: '#4690ff'}}}
           >
             <span>Colors</span>
-            <BiChevronDown className="ml-1 text-lg"/>
+            <BiChevronDown className="ml-1 text-lg" />
           </Button>
-        </Dropdown>
+
+          <Menu anchorEl={state.anchorEl} open={Boolean(state.anchorEl)} onClose={handleMenuClose}>
+            {state.colors.map((color) => (
+              <MenuItem key={color.value} onClick={(e) => e.stopPropagation()} sx={{ padding: "1px 12px" }}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={state.selectedColors.includes(color.value)}
+                      onChange={handleCheckboxChange}
+                      value={color.value}
+                      sx={{
+                        transform: "scale(1)", // Reduce checkbox size
+                        "& .MuiSvgIcon-root": { fontSize: 16 }, // Smaller checkbox icon
+                      }}
+                    />
+                  }
+                  label={<ListItemText primary={color.label} sx={{ fontSize: "10px" }} />}
+                />
+              </MenuItem>
+            ))}
+          </Menu>
+        </>
       )}
     </>
   );

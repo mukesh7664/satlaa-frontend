@@ -1,121 +1,124 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Dropdown, Button, Checkbox } from "@mui/material";
+import {
+  Button,
+  Menu,
+  MenuItem,
+  Checkbox,
+  FormControlLabel,
+  ListItemText,
+} from "@mui/material";
+import { BiChevronDown } from "react-icons/bi";
 import filterRouteLinkGenerate from "./filterRouterLink";
 import { filterProducts as filterProducts_r } from "../../../redux/reducers/FilterProducts";
 import { productsApi } from "../../../redux/api/productsApi";
-import { BiChevronDown } from "react-icons/bi";
+import { useMediaQuery } from "react-responsive";
 
-const Page = ({ isMobile }) => {
+const Page = () => {
   const { styles } = useSelector(({ styles }) => styles);
-  const { filterProducts } = useSelector(
-    ({ filterProducts }) => filterProducts
-  );
-  const [state, seTstate] = useState({
-    styles: [],
-    allData: [],
-    selectedStyles: filterProducts.styles,
-  });
+  const { filterProducts } = useSelector(({ filterProducts }) => filterProducts);
   const dispatch = useDispatch();
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
 
-  const getStyles = () => {
-    const dataManipulate = [];
-    for (const i in styles) {
-      dataManipulate.push({
-        label: styles[i].title,
-        value: styles[i].seo,
-      });
-    }
-    seTstate({
-      ...state,
-      styles: dataManipulate,
-      allData: dataManipulate,
-    });
-  };
+  const [state, setState] = useState({
+    styles: [],
+    selectedStyles: filterProducts.styles || [],
+  });
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
 
   useEffect(() => {
-    getStyles();
-    seTstate((prevState) => ({
-      ...prevState,
-      selectedStyles: filterProducts.styles,
+    const formattedStyles = styles.map((style) => ({
+      label: style.title,
+      value: style.seo,
     }));
-  }, [filterProducts.styles]);
+    setState((prev) => ({
+      ...prev,
+      styles: formattedStyles,
+      selectedStyles: filterProducts.styles || [],
+    }));
+  }, [styles, filterProducts.styles]);
 
-  const handleMenuClick = (e) => {
-    e.preventDefault();
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
 
-    let selectedStyles = [...state.selectedStyles];
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
-    if (selectedStyles.includes(e.target.value)) {
-      selectedStyles = selectedStyles.filter(
-        (tag) => tag !== e.target.value
-      );
-    } else {
-      selectedStyles.push(e.target.value);
-    }
+  const handleSelection = (value) => {
+    setState((prev) => {
+      const updatedStyles = prev.selectedStyles.includes(value)
+        ? prev.selectedStyles.filter((tag) => tag !== value)
+        : [...prev.selectedStyles, value];
 
-    seTstate({ ...state, selectedStyles });
-    dispatch(productsApi.util.resetApiState());
+      dispatch(productsApi.util.resetApiState());
+      dispatch(filterProducts_r({ ...filterProducts, styles: updatedStyles, page: 1 }));
+      filterRouteLinkGenerate({ ...filterProducts, styles: updatedStyles, page: 1 });
 
-    dispatch(
-      filterProducts_r({
-        ...filterProducts,
-        styles: selectedStyles,
-        page: 1,
-      })
-    );
-    filterRouteLinkGenerate({
-      ...filterProducts,
-      styles: selectedStyles,
-      page: 1,
+      return { ...prev, selectedStyles: updatedStyles };
     });
   };
-  const menuProps = {
-    items: state.styles.map((tag) => ({
-      label: (
-        <Checkbox
-         checked={state.selectedStyles.includes(tag.value)}
-          onChange={handleMenuClick}
-          value={tag.value}
-        >
-          {tag.label}
-        </Checkbox>
-      ),
-      key: tag.value,
-    })),
-  };
-  return (
-    <>
-      {isMobile && state.styles ? (
-        // Mobile layout
 
-        <div className="text-base flex flex-col">
+  return (
+    <div>
+      {isMobile ? (
+        <div className="flex flex-col">
           {state.styles.map((subcat) => (
-            <div key={subcat.value}>
-              <Checkbox
-               checked={state.selectedStyles.includes(subcat.value)}
-                onChange={handleMenuClick}
-                value={subcat.value}
-                style={{ borderRadius: "0px", fontSize: "15px" }}
-              >
-                {subcat.label}
-              </Checkbox>
-            </div>
+            <FormControlLabel
+              key={subcat.value}
+              control={
+                <Checkbox
+                  checked={state.selectedStyles.includes(subcat.value)}
+                  onChange={() => handleSelection(subcat.value)}
+                />
+              }
+              label={subcat.label}
+            />
           ))}
         </div>
       ) : (
-        // Desktop layout
-        <Dropdown menu={menuProps} trigger={["click","hover"]}>
+        <>
           <Button
-            className="flex items-center justify-between px-3 py-2 border border-gray-300 bg-white shadow-sm"
-            onClick={(e) => e.preventDefault()}
+            onClick={handleClick}
+            variant="contained"
+            endIcon={<BiChevronDown />}
+            className="w-full bg-white text-black px-2 text-[12px]"
+            sx={{border: "1px solid black", boxShadow: "none", ":hover" : {borderColor: "#4690ff", color: '#4690ff', boxShadow: "none"}}}
           >
-            <span>Styles</span>
-            <BiChevronDown className="ml-1 text-lg"/>
+            Styles
           </Button>
-        </Dropdown>
+
+          <Menu
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+            keepMounted
+          >
+            {state.styles.map((tag) => (
+              <MenuItem key={tag.value} onClick={(e) => e.stopPropagation()} sx={{ padding: "1px 29px" }}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={state.selectedStyles.includes(tag.value)}
+                      onChange={() => handleSelection(tag.value)}
+                      sx={{
+                        transform: "scale(1)", // Reduce checkbox size
+                        "& .MuiSvgIcon-root": { fontSize: 16 }, // Smaller checkbox icon
+                      }}
+                    />
+                  }
+                  label={<ListItemText primary={tag.label} sx={{ fontSize: "10px" }} />}
+                />
+              </MenuItem>
+            ))}
+          </Menu>
+        </>
       )}
-    </>
+    </div>
   );
 };
 

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import router from "next/router";
 import { Modal, Divider, message, Button } from "@mui/material";
 import Price from "../Price";
-import { CheckSquareOutlined } from "@ant-design/icons";
+import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlined';
 import { useDispatch, useSelector } from "react-redux";
 import { API_URL } from "../../../config";
 import func from "../../../util/helpers/func";

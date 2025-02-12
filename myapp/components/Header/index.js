@@ -16,11 +16,6 @@ const Default = () => {
   const { settings } = useSelector(({ settings }) => settings);
   const [visible, setVisible] = useState(false);
   const router = useRouter();
-  const [isOpen, toggle] = useState(false);
-
-  const handleModalOpen = () => {
-    toggle(prev => !prev);
-  }
 
   const showDrawer = () => {
     setVisible(!visible);

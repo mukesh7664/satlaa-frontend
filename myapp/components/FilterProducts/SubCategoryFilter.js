@@ -1,122 +1,126 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Dropdown, Button, Checkbox } from "@mui/material";
+import {
+  Button,
+  Menu,
+  MenuItem,
+  Checkbox,
+  FormControlLabel,
+  ListItemText,
+} from "@mui/material";
+import { BiChevronDown } from "react-icons/bi";
 import filterRouteLinkGenerate from "./filterRouterLink";
 import { filterProducts as filterProducts_r } from "../../../redux/reducers/FilterProducts";
 import { productsApi } from "../../../redux/api/productsApi";
-import { BiChevronDown } from "react-icons/bi";
+import { useMediaQuery } from "react-responsive";
 
-
-const Page = ({ isMobile }) => {
+const Page = () => {
   const { subcategory } = useSelector(({ subcategory }) => subcategory);
-  const { filterProducts } = useSelector(
-    ({ filterProducts }) => filterProducts
-  );
-  const [state, seTstate] = useState({
-    subcategory: [],
-    allData: [],
-    selectedSubcategory: filterProducts.subcategory,
-  });
+  const { filterProducts } = useSelector(({ filterProducts }) => filterProducts);
   const dispatch = useDispatch();
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
 
-  const getSubcategory = () => {
-    const dataManipulate = [];
-    for (const i in subcategory) {
-      dataManipulate.push({
-        label: subcategory[i].title,
-        value: subcategory[i].seo,
-      });
-    }
-    seTstate({
-      ...state,
-      subcategory: dataManipulate,
-      allData: dataManipulate,
-    });
-  };
+  const [state, setState] = useState({
+    subcategory: [],
+    selectedSubcategory: filterProducts.subcategory || [],
+  });
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
 
   useEffect(() => {
-    getSubcategory();
-    seTstate((prevState) => ({
-      ...prevState,
-      selectedSubcategory: filterProducts.subcategory,
-    }));
-  }, [filterProducts.subcategory]);
-
-  const handleMenuClick = (e) => {
-    e.preventDefault();
-
-    let selectedSubcategory = [...state.selectedSubcategory];
-
-    if (selectedSubcategory.includes(e.target.value)) {
-      selectedSubcategory = selectedSubcategory.filter(
-        (tag) => tag !== e.target.value
-      );
-    } else {
-      selectedSubcategory.push(e.target.value);
+    if (subcategory.length > 0) {
+      const formattedSubcategories = subcategory.map((subcat) => ({
+        label: subcat.title,
+        value: subcat.seo,
+      }));
+      setState((prev) => ({
+        ...prev,
+        subcategory: formattedSubcategories,
+        selectedSubcategory: filterProducts.subcategory || [],
+      }));
     }
+  }, [subcategory, filterProducts.subcategory]);
 
-    seTstate({ ...state, selectedSubcategory });
-    dispatch(productsApi.util.resetApiState());
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
 
-    dispatch(
-      filterProducts_r({
-        ...filterProducts,
-        subcategory: selectedSubcategory,
-        page: 1,
-      })
-    );
-    filterRouteLinkGenerate({
-      ...filterProducts,
-      subcategory: selectedSubcategory,
-      page: 1,
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleSelection = (value) => {
+    setState((prev) => {
+      const updatedSubcategory = prev.selectedSubcategory.includes(value)
+        ? prev.selectedSubcategory.filter((tag) => tag !== value)
+        : [...prev.selectedSubcategory, value];
+
+      dispatch(productsApi.util.resetApiState());
+      dispatch(filterProducts_r({ ...filterProducts, subcategory: updatedSubcategory, page: 1 }));
+      filterRouteLinkGenerate({ ...filterProducts, subcategory: updatedSubcategory, page: 1 });
+
+      return { ...prev, selectedSubcategory: updatedSubcategory };
     });
   };
-  const menuProps = {
-    items: state.subcategory.map((tag) => ({
-      label: (
-        <Checkbox
-          checked={state.selectedSubcategory.includes(tag.value)}
-          onChange={handleMenuClick}
-          value={tag.value}
-        >
-          {tag.label}
-        </Checkbox>
-      ),
-      key: tag.value,
-    })),
-  };
-  return (
-    <>
-      {isMobile && state.subcategory ? (
-        // Mobile layout
 
-        <div className="text-base flex flex-col">
+  return (
+    <div>
+      {isMobile ? (
+        <div className="flex flex-col">
           {state.subcategory.map((subcat) => (
-            <div key={subcat.value}>
-              <Checkbox
-                checked={state.selectedSubcategory.includes(subcat.value)}
-                onChange={handleMenuClick}
-                value={subcat.value}
-                style={{ borderRadius: "0px", fontSize: "15px" }}
-              >
-                {subcat.label}
-              </Checkbox>
-            </div>
+            <FormControlLabel
+              key={subcat.value}
+              control={
+                <Checkbox
+                  checked={state.selectedSubcategory.includes(subcat.value)}
+                  onChange={() => handleSelection(subcat.value)}
+                />
+              }
+              label={subcat.label}
+            />
           ))}
         </div>
       ) : (
-        // Desktop layout
-        <Dropdown menu={menuProps} trigger={["click","hover"]}>
+        <>
           <Button
-            className="flex items-center justify-between px-3 py-2 border border-gray-300 bg-white shadow-sm"
-            onClick={(e) => e.preventDefault()}
+            onClick={handleClick}
+            variant="contained"
+            endIcon={<BiChevronDown />}
+            className="w-full bg-white text-black px-2 text-[12px]"
+            sx={{border: "1px solid black", boxShadow: "none", ":hover" : {borderColor: "#4690ff", color: '#4690ff', boxShadow: "none"}}}
           >
-            <span>Sub Category</span>
-            <BiChevronDown className="ml-1 text-lg"/>
+            Sub Category
           </Button>
-        </Dropdown>
+
+          <Menu
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+            keepMounted
+          >
+            {state.subcategory.map((tag) => (
+              <MenuItem key={tag.value} onClick={(e) => e.stopPropagation()} sx={{ padding: "1px 29px" }}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={state.selectedSubcategory.includes(tag.value)}
+                      onChange={() => handleSelection(tag.value)}
+                      sx={{
+                        transform: "scale(1)", // Reduce checkbox size
+                        "& .MuiSvgIcon-root": { fontSize: 16 }, // Smaller checkbox icon
+                      }}
+                    />
+                  }
+                  label={<ListItemText primary={tag.label} sx={{ fontSize: "10px" }} />}
+                />
+              </MenuItem>
+            ))}
+          </Menu>
+        </>
       )}
-    </>
+    </div>
   );
 };
 

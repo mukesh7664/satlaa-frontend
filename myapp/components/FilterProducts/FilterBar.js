@@ -20,7 +20,7 @@ const FilterBar = () => {
       <div className="flex-grow" />
 
       <div className="w-32 self-end hidden md:block">
-        <SortProducts />
+        {/* <SortProducts /> */}
       </div>
     </div>
   );

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import router from "next/router";
 import { Button, Divider, message } from "@mui/material";
 import Price from "../Price";
-import { LockOutlined } from "@ant-design/icons";
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useDispatch, useSelector } from "react-redux";
 import { API_URL } from "../../../config";
 import func from "../../../util/helpers/func";
@@ -231,7 +231,7 @@ const Default = () => {
           onClick={onSubmit}
         >
           Checkout Securely
-          <LockOutlined className="float-right text-3xl" />
+          <LockOutlinedIcon className="float-right text-3xl" />
         </button>
       </div>
     </div>

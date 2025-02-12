@@ -1,12 +1,19 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Image from "next/image";
-import axiosInstance from "@/util/axios";
-const axios = axiosInstance();
+import axios from "@/util/axios";
 
-import { Input, Modal, message, Badge, Layout, Button, TextField } from "@mui/material";
-import { setLogin, setIsAuthenticated, setLogout } from "../../../redux/reducers/Login";
-import router, { useRouter } from "next/router";
+import {
+  Input,
+  Modal,
+  Badge,
+  Button,
+  TextField,
+  Box,
+  Typography,
+} from "@mui/material";
+import { setLogin, setIsAuthenticated } from "../../../redux/reducers/Login";
+import { useRouter } from "next/router";
 import Link from "next/link";
 import LoginForm from "./LoginForm";
 import AuthService from "../../../util/services/authservice";
@@ -20,28 +27,19 @@ const RightMenu = ({ mode }) => {
   const cart = useSelector((state) => state.cart);
   const isAuthenticated = useSelector((state) => state.login.isAuthenticated);
 
-  const [openModalLogin, seTopenModalLogin] = useState(false);
-  const [openModalSearch, seTopenModalSearch] = useState(false);
-  const [confirmLoadingLogin, seTconfirmLoadingLogin] = useState(false);
+  const [openModalLogin, setOpenModalLogin] = useState(false);
+  const [openModalSearch, setOpenModalSearch] = useState(false);
 
   const dispatch = useDispatch();
-
-  const [step, setStep] = useState(0);
-  const [phoneNumber, setPhoneNumber] = useState(null);
+  const router = useRouter(); // ✅ Define router
 
   const handleSuccessfulLogin = async (user, userCart) => {
     axios
       .post(`${API_URL}/cart/${userCart._id}`, cart)
       .then(() => {
         getCart(user.id);
-        message.success({ content: "User Logged In", duration: 3 });
       })
-      .catch((err) => {
-        message.error({
-          content: "Some Error, Please Try Again",
-          duration: 3,
-        });
-      });
+      .catch(() => {});
   };
 
   return (
@@ -49,8 +47,8 @@ const RightMenu = ({ mode }) => {
       <div className="text-base text-right px-0 flex flex-row w-full">
         <div className="flex flex-row w-full justify-evenly items-center border-b-0 md:gap-x-4 md:mr-4">
           <button
-            onClick={() => seTopenModalSearch(true)}
-            className="py-2 w-auto h-auto inline-flex items-center text-xl "
+            onClick={() => setOpenModalSearch(true)}
+            className="py-2 w-auto h-auto inline-flex items-center text-xl"
             aria-label="Search"
           >
             <FiSearch className="text-2xl" />
@@ -59,7 +57,7 @@ const RightMenu = ({ mode }) => {
             <FiShoppingBag className="text-2xl" />
             {cart && cart.products && cart.products.length > 0 && (
               <div className="absolute top-0 right-0 -mr-2 bg-secondary text-white rounded-full w-4 h-4 flex items-center justify-center">
-                <span className="text-xs text-">{cart.products.length}</span>
+                <span className="text-xs">{cart.products.length}</span>
               </div>
             )}
           </Link>
@@ -70,7 +68,7 @@ const RightMenu = ({ mode }) => {
           ) : (
             <span
               className="cursor-pointer hover:text-primary text-xl"
-              onClick={() => seTopenModalLogin(true)}
+              onClick={() => setOpenModalLogin(true)}
             >
               <AiOutlineUser className="text-2xl" />
               <span className="hidden">Login</span>
@@ -79,27 +77,30 @@ const RightMenu = ({ mode }) => {
         </div>
       </div>
 
-      <Modal
-        title={
-          <Image
-            src="/images/logo.png"
-            alt="loader"
-            height={70}
-            width={140}
-            className="mx-auto"
-          />
-        }
-        open={openModalLogin}
-        onOk={() => seTconfirmLoadingLogin(true)}
-        confirmLoading={confirmLoadingLogin}
-        onCancel={() => seTopenModalLogin(false)}
-        footer={null}
-        onClick={() => seTopenModalLogin(false)}
-      >
-        <LoginForm handleCancelLogin={() => seTopenModalLogin(false)} onSuccessfulLogin={handleSuccessfulLogin} />
+      {/* Fixed Modal for Login */}
+      <Modal open={openModalLogin} onClose={() => setOpenModalLogin(false)}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "white",
+            boxShadow: 24,
+            p: 4,
+            borderRadius: 2,
+          }}
+        >
+          <Box sx={{ textAlign: "center", mb: 2 }}>
+            <Image src="/images/logo.png" alt="loader" height={70} width={140} />
+          </Box>
+          <LoginForm handleCancelLogin={() => setOpenModalLogin(false)} onSuccessfulLogin={handleSuccessfulLogin} />
+        </Box>
       </Modal>
 
-      <CustomModal isOpen={openModalSearch} onClose={() => seTopenModalSearch(false)} router={router} />
+      {/*  Fixed Search Modal */}
+      <CustomModal isOpen={openModalSearch} onClose={() => setOpenModalSearch(false)} router={router} />
     </div>
   );
 };
@@ -132,10 +133,10 @@ const CustomModal = ({ isOpen, onClose, router }) => {
       <div className="flex items-center justify-center min-h-screen">
         <div className="bg-white p-6 rounded shadow-lg w-full max-w-md m-4">
           <div className="flex justify-between items-center">
-            <h4 className="text-lg">Search Your Favorite Jewellery</h4>
-            <button onClick={onClose} className="text-black">
+            <Typography variant="h6">Search Your Favorite Jewellery</Typography>
+            <Button onClick={onClose}>
               <AiOutlineClose className="text-2xl" />
-            </button>
+            </Button>
           </div>
           <div className="flex mt-4">
             <TextField
@@ -153,7 +154,7 @@ const CustomModal = ({ isOpen, onClose, router }) => {
               variant="contained"
               color="primary"
               onClick={handleSearch}
-              style={{ marginLeft: "8px" }}
+              sx={{ ml: 1 }}
             >
               <FiSearch className="text-2xl" />
             </Button>
@@ -163,3 +164,5 @@ const CustomModal = ({ isOpen, onClose, router }) => {
     </div>
   );
 };
+
+export { CustomModal };

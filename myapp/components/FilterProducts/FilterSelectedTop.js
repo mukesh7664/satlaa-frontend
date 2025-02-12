@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from "react-redux";
-import { Tag } from "@mui/material";
+import { Tag } from "@mui/icons-material";
 import { filterProducts as filterProducts_r } from "../../../redux/reducers/FilterProducts";
 
 import filterRouteLinkGenerate from "./filterRouterLink";

@@ -6,7 +6,7 @@ import Price from "../Price";
 import { useDispatch, useSelector } from "react-redux";
 import { API_URL } from "../../../config";
 import func from "../../../util/helpers/func";
-import { TagsOutlined } from "@ant-design/icons";
+import StyleOutlinedIcon from '@mui/icons-material/StyleOutlined';
 import { cartFetch } from "../../../redux/reducers/Cart";
 const Coupon = ({ total_price }) => {
   const cart= useSelector((state) => state.cart);
@@ -82,7 +82,7 @@ const Coupon = ({ total_price }) => {
             {/* <div className="text-lg mb-4">Your discount: {discountRate}%</div> */}
             <div className=" bg-gray-300 px-4 py-2  rounded inline-block">
               <div className="flex gap-x-2">
-                <TagsOutlined />
+                <StyleOutlinedIcon />
 
                 <p className="uppercase">{coupon}</p>
                 <button className="text-red-600" onClick={removeCoupon}>
