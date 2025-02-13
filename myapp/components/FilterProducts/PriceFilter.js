@@ -127,7 +127,7 @@ const Page = ({ isMobile }) => {
                     value={state.maxPrice}
                     onChange={handleChange}
                   />
-                  <Button type="submit" variant="contained" startIcon={<FiSearch />}>
+                  <Button type="submit" variant="contained" startIcon={<FiSearch />} sx={{backgroundColor: "#e76e81"}}>
                     Apply
                   </Button>
                 </Stack>
