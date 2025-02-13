@@ -83,9 +83,9 @@ const Page = ({ isMobile }) => {
         // Desktop layout with MUI Menu dropdown
         <>
           <Button
-            className="flex items-center justify-between px-3 py-2 border text-black shadow-sm"
+            className="flex items-center justify-between px-3 py-1 border text-black shadow-sm text-[12px]"
             onClick={handleMenuOpen}
-            sx={{border: "1px solid black"}}
+            sx={{border: "1px solid black", boxShadow: "none"}}
           >
             <span>Categories</span>
             <BiChevronDown className="ml-1 text-lg" />
