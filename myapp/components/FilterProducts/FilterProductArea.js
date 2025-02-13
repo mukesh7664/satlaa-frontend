@@ -7,6 +7,7 @@ const axios = axiosInstance();
 import SkeletonProductCard from "../ProductCard/skeleton";
 import { API_URL, IMG_URL } from "../../../config";
 import Image from "next/image";
+
 const FilterProductArea = ({ initialData, category, categoryData }) => {
   const { filterProducts } = useSelector(({ filterProducts }) => filterProducts);
   const [productData, setProductData] = useState({

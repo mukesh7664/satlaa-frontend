@@ -140,6 +140,7 @@ const CustomModal = ({ isOpen, onClose, router }) => {
           </div>
           <div className="flex mt-4">
             <TextField
+              className="pr-2"
               inputRef={searchInputRef}
               fullWidth
               variant="outlined"
@@ -154,7 +155,7 @@ const CustomModal = ({ isOpen, onClose, router }) => {
               variant="contained"
               color="primary"
               onClick={handleSearch}
-              sx={{ ml: 1 }}
+              sx={{ backgroundColor: "#e76e81", color: "white" }}
             >
               <FiSearch className="text-2xl" />
             </Button>

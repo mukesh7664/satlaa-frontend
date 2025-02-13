@@ -1,49 +1,56 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { Card, Row, Col } from "@mui/material";
-import router from "next/router";
+import { Card, CardContent, CardActionArea, Grid, Typography } from "@mui/material";
+import { useRouter } from "next/router";
 import { IMG_URL } from "../../../config";
 import Image from "next/image";
 
 const Default = () => {
-  const { categories } = useSelector(({ categories }) => categories);
-  const [categoriesData, seTcategoriesData] = useState([]);
+  const { categories } = useSelector((state) => state.categories) || {};
+  const [categoriesData, setCategoriesData] = useState([]);
+  const router = useRouter();
 
   useEffect(() => {
-    if (categories) seTcategoriesData(categories);
+    if (categories && Array.isArray(categories)) {
+      setCategoriesData(categories);
+    }
   }, [categories]);
 
-  const onClickCard = (data) => {
-    router.push("/" + data);
+  const onClickCard = (seo) => {
+    if (seo) router.push(`/${seo}`);
   };
 
   return (
-    <>
-      <Row gutter={16}>
-        {categoriesData?.length > 0
-          ? categoriesData.map((val) => (
-              <Col xs={12} sm={12} md={8} lg={6} key={val.seo}>
-                <Card
-                  hoverable
-                  className="uppercase m-4 shadow-lg"
-                  cover={
-                    <Image
-                    alt={val.title ? val.title : "Default Title"}
-                    width="150"
-                    height="150"
-                    src={val.image ? `${IMG_URL + val.image}` : "/images/default.jpg"} // Replace '/images/default.jpg' with your default image path
-                  />
-                  
-                  }
-                  onClick={() => onClickCard(val.seo)}
-                >
-                  <Card.Meta title={val.title} />
-                </Card>
-              </Col>
-            ))
-          : ""}
-      </Row>
-    </>
+    <Grid container spacing={3}>
+      {categoriesData.length > 0 ? (
+        categoriesData.map((val) => (
+          <Grid item xs={12} sm={6} md={4} lg={3} key={val.seo}>
+            <Card className="m-4 shadow-lg" onClick={() => onClickCard(val.seo)}>
+              <CardActionArea>
+                <Image
+                  alt={val.title || "Default Title"}
+                  width={300}
+                  height={200}
+                  src={val.image ? `${IMG_URL}${val.image}` : "/images/default.jpg"}
+                  priority
+                />
+                <CardContent>
+                  <Typography variant="h6" className="uppercase">
+                    {val.title || "Unnamed Category"}
+                  </Typography>
+                </CardContent>
+              </CardActionArea>
+            </Card>
+          </Grid>
+        ))
+      ) : (
+        <Grid item xs={12}>
+          <Typography variant="h6" align="center" className="text-center">
+            No categories available
+          </Typography>
+        </Grid>
+      )}
+    </Grid>
   );
 };
 
