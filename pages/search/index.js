@@ -24,26 +24,8 @@ import { fetchData } from "../../util/fetchData";
 import { API_URL } from "../../config";
 
 const Search = ({ productData }) => {
-  // const { filterProducts } = useSelector(
-  //   ({ filterProducts }) => filterProducts
-  // );
-  // const dispatch = useDispatch();
   const [visible, setVisible] = useState(false);
 
-  // const callUrltoRedux = async () => {
-  //   const urlToRedux = {};
-  //   for await (const [key, value] of Object.entries(router.query)) {
-  //     const arr = '["' + value.replaceAll(",", '","') + '"]';
-  //     urlToRedux[key] = JSON.parse(arr);
-  //   }
-  //   await dispatch(
-  //     filterProducts_r({ ...filterProducts, ...urlToRedux, page: 1, perPage: 12 })
-  //   );
-  // };
-
-  // useEffect(() => {
-  //   callUrltoRedux();
-  // }, [router.router?.asPath]);
   const showDrawer = () => {
     setVisible(true);
   };
@@ -51,15 +33,13 @@ const Search = ({ productData }) => {
   const onClose = () => {
     setVisible(false);
   };
+
   return (
     <div className="container-custom">
       <div className="flex flex-col h-full my-2 py-2 bg-white">
         <Head title="Search" />
 
-        <div
-          className={`w-full hidden md:flex md:flex-row p-2 gap-x-3 shadow-sm border-top md:relative md:top-auto md:right-auto md:left-auto md:bottom-auto md:visible`}
-        >
-          {/* <TextFilter /> */}
+        <div className="w-full hidden md:flex flex-row p-2 gap-x-3 shadow-sm border-top">
           <CategoriesFilter />
           <TagsFilter />
           <SubCategoryFilter />
@@ -67,80 +47,69 @@ const Search = ({ productData }) => {
           <StyleFilter />
           <PriceFilter />
           <div className="flex-grow" />
-
           <div className="w-32 self-end hidden md:block">
             <SortProducts />
           </div>
         </div>
+
         <Drawer
           title="Filter By"
           placement="left"
-          closable={true}
-          onClose={onClose}
           open={visible}
+          onClose={onClose}
           bodyStyle={{ padding: "0px" }}
-          className=""
           width="80vw"
         >
-          <Collapse
-            collapsible="header"
-            accordion="true"
-            bordered={false}
-            className="bg-white"
-            expandIconPosition="end"
-          >
-            <Panel className="text-base" header="Categories" key="1">
+          <Collapse accordion className="bg-white">
+            <Panel header="Categories" key="1">
               <CategoriesFilter isMobile={true} />
             </Panel>
-
-            <Panel className="text-base" header="Prices" key="2">
+            <Panel header="Prices" key="2">
               <PriceFilter isMobile={true} />
             </Panel>
-            <Panel className="text-base" header="Tags" key="3">
+            <Panel header="Tags" key="3">
               <TagsFilter isMobile={true} />
             </Panel>
-            <Panel className="text-base" header="Sub Categories" key="4">
+            <Panel header="Sub Categories" key="4">
               <SubCategoryFilter isMobile={true} />
             </Panel>
-            <Panel className="text-base" header="Colors" key="5">
+            <Panel header="Colors" key="5">
               <ColorFilter isMobile={true} />
             </Panel>
-            <Panel className="text-base" header="Styles" key="5">
+            <Panel header="Styles" key="6">
               <StyleFilter isMobile={true} />
             </Panel>
           </Collapse>
         </Drawer>
 
-        <div className=" md:col-span-10  col-span-12  ">
-          <div className=" fixed bottom-0 left-0 z-10 w-full flex flex-row bg-white">
-            <div className="w-full">
-              <button
-                className="flex items-center justify-between px-4 py-2 w-full z-10 bg-white border rounded-sm p-0.3 text-base  md:hidden font-bold"
-                onClick={showDrawer}
-              >
-                Filter By <BiFilterAlt className="text-lg mr-2]" />
-              </button>
-            </div>
-            <div className="w-full md:w-6/12 z-12 md:hidden">
-              <SortProducts />
-            </div>
+        <div className="fixed bottom-0 left-0 z-10 w-full flex flex-row bg-white">
+          <button
+            className="flex items-center justify-center px-4 py-2 w-full bg-white border rounded-sm text-base md:hidden font-bold"
+            onClick={showDrawer}
+          >
+            <BiFilterAlt className="text-lg mr-2" />
+            Filter By
+          </button>
+          <div className="w-full md:w-6/12 md:hidden">
+            <SortProducts />
           </div>
-          <div className="w-full float-left   pb-0">
-            <FilterSelectedTop />
-          </div>
+        </div>
 
-          <div className="w-full mt-3 float-left">
-            <FilterProductArea initialData={productData} category="search" />
-          </div>
+        <div className="w-full pb-0">
+          <FilterSelectedTop showText={true} />
+        </div>
+
+        <div className="w-full mt-3">
+          <FilterProductArea initialData={productData} category="search" />
         </div>
       </div>
     </div>
   );
 };
+
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) => async (context) => {
     const { query } = context;
-    // const { category } = query;
     await fetchData(store.dispatch);
     const axios = axiosInstance(context);
     const auth = await authservice.isAuthenticated(context);
@@ -150,13 +119,13 @@ export const getServerSideProps = wrapper.getServerSideProps(
       await store.dispatch(setLogin(auth.user));
       await store.dispatch(setIsAuthenticated(true));
     }
-    const urlToRedux = {};
 
-    for await (const [key, value] of Object.entries(query)) {
-      const arr = '["' + value.replaceAll(",", '","') + '"]';
+    const urlToRedux = {};
+    for (const [key, value] of Object.entries(query)) {
+      const arr = `["${value.replaceAll(",", '","')}"]`;
       urlToRedux[key] = JSON.parse(arr);
     }
-    // urlToRedux["categories"] = [category];
+
     const { filterProducts } = store.getState().filterProducts;
     await store.dispatch(
       filterProducts_r({
@@ -166,11 +135,12 @@ export const getServerSideProps = wrapper.getServerSideProps(
         perPage: 12,
       })
     );
+
     const productData = await axios.post(
       `${API_URL}/productspublic/search`,
       filterProducts
     );
-    
+
     return {
       props: {
         productData: productData.data ?? {},
@@ -178,4 +148,5 @@ export const getServerSideProps = wrapper.getServerSideProps(
     };
   }
 );
+
 export default Search;
