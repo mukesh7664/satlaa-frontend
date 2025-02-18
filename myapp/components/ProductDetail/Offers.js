@@ -5,7 +5,7 @@ const Offers = () => {
   const { coupons } = useSelector(({ coupons }) => coupons);
   return (
     <div>
-      <p className="w-full font-semibold text-[15px] md:text-xl text-gray-700">
+      <p className="mt-3 w-full font-semibold text-[15px] md:text-xl text-gray-700">
         SPECIAL OFFERS
       </p>
       <Swiper

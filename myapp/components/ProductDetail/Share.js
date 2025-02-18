@@ -3,7 +3,7 @@ import { FaFacebook, FaLinkedin, FaPinterest, FaTwitter, FaWhatsapp } from 'reac
 
 const Share = ({path, state}) => {
   return (
-    <div className="flex flex-wrap gap-x-1 gp-y-2">
+    <div className="flex flex-wrap gap-x-1 gp-y-2 mb-5">
     <p className="w-full text-base">
       If you loved this product than share it on-{" "}
     </p>

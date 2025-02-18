@@ -1,7 +1,7 @@
-import parse from "html-react-parser"; // Import normally since this is not the exported component
+import parse from "html-react-parser";
 
 const HtmlParser = ({ html }) => {
-  return <div>{parse(html)}</div>; // Parse HTML content and return it
+  return <>{parse(html)}</>; // Wrap the parsed content in a fragment
 };
 
 export default HtmlParser;

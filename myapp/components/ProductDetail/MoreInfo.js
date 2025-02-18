@@ -1,40 +1,68 @@
-import { Divider } from '@mui/material'
-import React from 'react'
-import { FaInstagram, FaWhatsapp } from 'react-icons/fa'
+import { Box, Button, Divider, Typography } from "@mui/material";
+import { FaInstagram, FaWhatsapp } from "react-icons/fa";
+import React from "react";
 
-const MoreInfo = ({path}) => {
+const MoreInfo = ({ path }) => {
   return (
-   <>
-     <div className="flex mt-2 flex-col gap-y-2">
-        <a
+    <>
+      <Box display="flex" flexDirection="column" gap={2} mt={2}>
+        {/* WhatsApp Chat Button */}
+        <Button
+          component="a"
+          href={`https://api.whatsapp.com/send?phone=919257120925&text=I%20want%20to%20know%20about%20https://satlaa.com${path}`}
           target="_blank"
           rel="noreferrer"
-          href={`https://api.whatsapp.com/send?phone=919257120925&text=I%20want%20to%20know%20about%20https://satlaa.com${path}`}
-          className="flex items-center justify-center border px-4 py-2 text-base rounded bg-[#25D366] text-white hover:text-[#25D366] hover:bg-white transition duration-100"
+          startIcon={<FaWhatsapp />}
+          sx={{
+            backgroundColor: "#25D366",
+            color: "white",
+            "&:hover": {
+              backgroundColor: "white",
+              color: "#25D366",
+              border: "1px solid #25D366",
+            },
+            px: 3,
+            py: 1.5,
+            fontSize: "1rem",
+            borderRadius: "8px",
+            textTransform: "none",
+          }}
         >
-          <FaWhatsapp className="text-lg mr-2" /> Chat for More Info
-        </a>{" "}
-        <p>
+          Chat for More Info
+        </Button>
+
+        {/* Call Info */}
+        <Typography variant="body1">
           Or call us on{" "}
-          <a className="underline text-blue-500" href={`tel:+919257120925`}>
+          <a href="tel:+919257120925" style={{ textDecoration: "underline", color: "#0073e6" }}>
             +91 925-7120-925
           </a>
-        </p>
-      </div>
-      <Divider />
+        </Typography>
+      </Box>
 
-      <div className="flex">
-        <p>Join 120K+ Insta Community </p>
-        <a
+      <Divider sx={{ my: 2 }} />
+
+      {/* Instagram Community */}
+      <Box display="flex" alignItems="center">
+        <Typography variant="body1">Join 120K+ Insta Community</Typography>
+        <Button
+          component="a"
+          href="https://instagram.com/satlaa.in"
           target="_blank"
           rel="noreferrer"
-          href={`https://instagram.com/satlaa.in`}
-          className=" text-base rounded ml-2 flex items-center justify-center text-primary underline"
+          startIcon={<FaInstagram />}
+          sx={{
+            textTransform: "none",
+            color: "#E1306C",
+            textDecoration: "underline",
+            ml: 1,
+          }}
         >
-          <FaInstagram className="text-lg mr-1 " /> SATLAA.in
-        </a>
-      </div></>
-  )
-}
+          SATLAA.in
+        </Button>
+      </Box>
+    </>
+  );
+};
 
-export default MoreInfo
+export default MoreInfo;
