@@ -85,7 +85,7 @@ const Page = ({ isMobile }) => {
           <Button
             className="flex items-center justify-between px-3 py-1 border text-black shadow-sm text-[12px]"
             onClick={handleMenuOpen}
-            sx={{border: "1px solid black", boxShadow: "none"}}
+            sx={{border: "1px solid black", boxShadow: "none", ":hover": { borderColor: "#4690ff", color: "#4690ff" , boxShadow: "none"}}}
           >
             <span>Categories</span>
             <BiChevronDown className="ml-1 text-lg" />
