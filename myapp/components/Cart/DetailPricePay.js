@@ -6,7 +6,7 @@ import Price from "../Price";
 import { useDispatch, useSelector } from "react-redux";
 import { API_URL } from "../../../config";
 import func from "../../../util/helpers/func";
-import { TagsOutlined } from "@ant-design/icons";
+
 import { cartFetch } from "../../../redux/reducers/Cart";
 import Coupon from "./Coupon";
 const Default = () => {
