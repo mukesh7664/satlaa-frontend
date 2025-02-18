@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Menu, MenuItem, Button, Checkbox, FormControlLabel , ListItemText} from "@mui/material"; // ✅ Correct MUI components
+import { Menu, MenuItem, Button, Checkbox, FormControlLabel, ListItemText } from "@mui/material";
 import filterRouteLinkGenerate from "./filterRouterLink";
 import { filterProducts as filterProducts_r } from "../../../redux/reducers/FilterProducts";
 import { productsApi } from "../../../redux/api/productsApi";
@@ -14,7 +14,7 @@ const Page = ({ isMobile }) => {
   const [state, setState] = useState({
     colors: [],
     selectedColors: filterProducts.colors || [],
-    anchorEl: null, // Menu anchor element
+    anchorEl: null,
   });
 
   useEffect(() => {
@@ -23,18 +23,12 @@ const Page = ({ isMobile }) => {
         label: color.title,
         value: color.seo,
       }));
-      setState((prevState) => ({
-        ...prevState,
-        colors: formattedColors,
-      }));
+      setState((prevState) => ({ ...prevState, colors: formattedColors }));
     }
   }, [colors]);
 
   useEffect(() => {
-    setState((prevState) => ({
-      ...prevState,
-      selectedColors: filterProducts.colors || [],
-    }));
+    setState((prevState) => ({ ...prevState, selectedColors: filterProducts.colors || [] }));
   }, [filterProducts.colors]);
 
   const handleCheckboxChange = (event) => {
@@ -52,18 +46,9 @@ const Page = ({ isMobile }) => {
     });
   };
 
-  const handleMenuOpen = (event) => {
-    setState((prevState) => ({ ...prevState, anchorEl: event.currentTarget }));
-  };
-
-  const handleMenuClose = () => {
-    setState((prevState) => ({ ...prevState, anchorEl: null }));
-  };
-
   return (
     <>
       {isMobile ? (
-        // ✅ Mobile layout
         <div className="flex flex-col">
           {state.colors.map((color) => (
             <FormControlLabel
@@ -80,18 +65,26 @@ const Page = ({ isMobile }) => {
           ))}
         </div>
       ) : (
-        // ✅ Desktop layout with MUI Menu dropdown
-        <>
+        <div
+          onMouseEnter={(e) => setState((prev) => ({ ...prev, anchorEl: e.currentTarget }))}
+          onMouseLeave={() => setState((prev) => ({ ...prev, anchorEl: null }))}
+        >
           <Button
             className="flex items-center justify-between px-2 py-1 border text-black shadow-sm text-[12px]"
-            onClick={handleMenuOpen}
-            sx={{border: "1px solid black", boxShadow: "none", ":hover" : {borderColor: "#4690ff", color: '#4690ff'}}}
+            sx={{ border: "1px solid black", boxShadow: "none", ":hover": { borderColor: "#4690ff", color: '#4690ff' } }}
           >
             <span>Colors</span>
             <BiChevronDown className="ml-1 text-lg" />
           </Button>
 
-          <Menu anchorEl={state.anchorEl} open={Boolean(state.anchorEl)} onClose={handleMenuClose}>
+          <Menu
+            anchorEl={state.anchorEl}
+            open={Boolean(state.anchorEl)}
+            onClose={() => setState((prev) => ({ ...prev, anchorEl: null }))}
+            MenuListProps={{
+              onMouseLeave: () => setState((prev) => ({ ...prev, anchorEl: null })),
+            }}
+          >
             {state.colors.map((color) => (
               <MenuItem key={color.value} onClick={(e) => e.stopPropagation()} sx={{ padding: "1px 12px" }}>
                 <FormControlLabel
@@ -101,8 +94,8 @@ const Page = ({ isMobile }) => {
                       onChange={handleCheckboxChange}
                       value={color.value}
                       sx={{
-                        transform: "scale(1)", // Reduce checkbox size
-                        "& .MuiSvgIcon-root": { fontSize: 16 }, // Smaller checkbox icon
+                        transform: "scale(1)",
+                        "& .MuiSvgIcon-root": { fontSize: 16 },
                       }}
                     />
                   }
@@ -111,7 +104,7 @@ const Page = ({ isMobile }) => {
               </MenuItem>
             ))}
           </Menu>
-        </>
+        </div>
       )}
     </>
   );

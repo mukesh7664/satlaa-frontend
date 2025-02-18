@@ -92,7 +92,7 @@ const Page = ({ isMobile }) => {
         //  Desktop Layout with Popover
         <>
           <Button
-            className="flex justify-center items-center text-black py-1 px-2 text-[12px]"
+            className="flex justify-center items-center text-black h-[31px] px-2 text-[12px]"
             sx={{border: "1px solid black", boxShadow: "none", ":hover" : {borderColor: "#4690ff", color: '#4690ff'}}}
             onClick={handleMenuOpen}
             endIcon={<BiChevronDown />}

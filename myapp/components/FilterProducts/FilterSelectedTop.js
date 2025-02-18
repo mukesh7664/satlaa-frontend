@@ -48,9 +48,9 @@ const Page = ({ category }) => {
         border: "1px solid #ccc",
         height: "25px",
         "& .MuiChip-deleteIcon": {
-          color: "rgba(0, 0, 0, 0.6)",
+          color: "rgba(1, 0, 0, 0.6)",
           "&:hover": {
-            color: "rgba(0, 0, 0, 0.9)"
+            color: "rgba(0, 0, 0, 0.9)",
           }
         }
       }}

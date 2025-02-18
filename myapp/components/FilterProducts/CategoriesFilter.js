@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Menu, MenuItem, Button, Checkbox, FormControlLabel } from "@mui/material"; // ✅ Correct MUI imports
+import { Menu, MenuItem, Button, Checkbox, FormControlLabel, ListItemText } from "@mui/material";
 import filterRouteLinkGenerate from "./filterRouterLink";
 import { filterProducts as filterProducts_r } from "../../../redux/reducers/FilterProducts";
 import { productsApi } from "../../../redux/api/productsApi";
@@ -14,7 +14,7 @@ const Page = ({ isMobile }) => {
   const [state, setState] = useState({
     categories: [],
     selectedCategories: filterProducts.categories || [],
-    anchorEl: null, // Dropdown anchor
+    anchorEl: null,
   });
 
   useEffect(() => {
@@ -23,10 +23,7 @@ const Page = ({ isMobile }) => {
         label: cat.title,
         value: cat.seo,
       }));
-      setState((prevState) => ({
-        ...prevState,
-        categories: formattedCategories,
-      }));
+      setState((prevState) => ({ ...prevState, categories: formattedCategories }));
     }
   }, [categories]);
 
@@ -63,7 +60,6 @@ const Page = ({ isMobile }) => {
   return (
     <>
       {isMobile ? (
-        // Mobile layout
         <div className="text-base flex flex-col">
           {state.categories.map((subcat) => (
             <FormControlLabel
@@ -80,34 +76,48 @@ const Page = ({ isMobile }) => {
           ))}
         </div>
       ) : (
-        // Desktop layout with MUI Menu dropdown
-        <>
+        <div onMouseLeave={handleMenuClose}>
           <Button
             className="flex items-center justify-between px-3 py-1 border text-black shadow-sm text-[12px]"
-            onClick={handleMenuOpen}
-            sx={{border: "1px solid black", boxShadow: "none", ":hover": { borderColor: "#4690ff", color: "#4690ff" , boxShadow: "none"}}}
+            onMouseEnter={handleMenuOpen}
+            sx={{ border: "1px solid black", boxShadow: "none", ":hover": { borderColor: "#4690ff", color: "#4690ff", boxShadow: "none" } }}
           >
             <span>Categories</span>
             <BiChevronDown className="ml-1 text-lg" />
           </Button>
 
-          <Menu anchorEl={state.anchorEl} open={Boolean(state.anchorEl)} onClose={handleMenuClose}>
+          <Menu
+            anchorEl={state.anchorEl}
+            open={Boolean(state.anchorEl)}
+            onClose={handleMenuClose}
+            MenuListProps={{ onMouseLeave: handleMenuClose }}
+            PaperProps={{
+              sx: {
+                maxHeight: 200, // Reduced size of the dropdown list
+                width: 180, // Adjust width to fit content neatly
+              },
+            }}
+          >
             {state.categories.map((category) => (
-              <MenuItem key={category.value} onClick={(e) => e.stopPropagation()}>
+              <MenuItem key={category.value} onClick={(e) => e.stopPropagation()} sx={{ padding: "1px 29px" }}>
                 <FormControlLabel
                   control={
                     <Checkbox
                       checked={state.selectedCategories.includes(category.value)}
                       onChange={handleCheckboxChange}
                       value={category.value}
+                      sx={{
+                        transform: "scale(1)",
+                        "& .MuiSvgIcon-root": { fontSize: 16 },
+                      }}
                     />
                   }
-                  label={category.label}
+                  label={<ListItemText primary={category.label} sx={{ fontSize: "10px" }} />}
                 />
               </MenuItem>
             ))}
           </Menu>
-        </>
+        </div>
       )}
     </>
   );

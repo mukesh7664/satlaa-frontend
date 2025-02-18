@@ -26,7 +26,6 @@ const Page = () => {
   });
 
   const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
 
   useEffect(() => {
     const formattedStyles = styles.map((style) => ({
@@ -39,14 +38,6 @@ const Page = () => {
       selectedStyles: filterProducts.styles || [],
     }));
   }, [styles, filterProducts.styles]);
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
 
   const handleSelection = (value) => {
     setState((prev) => {
@@ -80,34 +71,47 @@ const Page = () => {
           ))}
         </div>
       ) : (
-        <>
+        <div
+          onMouseEnter={(e) => setAnchorEl(e.currentTarget)}
+          onMouseLeave={() => setAnchorEl(null)}
+        >
           <Button
-            onClick={handleClick}
             variant="contained"
             endIcon={<BiChevronDown />}
-            className="w-full bg-white text-black px-2 text-[12px]"
-            sx={{border: "1px solid black", boxShadow: "none", ":hover" : {borderColor: "#4690ff", color: '#4690ff', boxShadow: "none"}}}
+            className="w-full bg-white text-black px-2 py-1 text-[12px]"
+            sx={{
+              border: "1px solid black",
+              boxShadow: "none",
+              ":hover": {
+                borderColor: "#4690ff",
+                color: "#4690ff",
+                boxShadow: "none",
+              },
+            }}
           >
             Styles
           </Button>
 
           <Menu
             anchorEl={anchorEl}
-            open={open}
-            onClose={handleClose}
+            open={Boolean(anchorEl)}
+            onClose={() => setAnchorEl(null)}
             anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
             keepMounted
+            MenuListProps={{
+              onMouseLeave: () => setAnchorEl(null),
+            }}
           >
             {state.styles.map((tag) => (
-              <MenuItem key={tag.value} onClick={(e) => e.stopPropagation()} sx={{ padding: "1px 29px" }}>
+              <MenuItem key={tag.value} sx={{ padding: "1px 29px" }}>
                 <FormControlLabel
                   control={
                     <Checkbox
                       checked={state.selectedStyles.includes(tag.value)}
                       onChange={() => handleSelection(tag.value)}
                       sx={{
-                        transform: "scale(1)", // Reduce checkbox size
-                        "& .MuiSvgIcon-root": { fontSize: 16 }, // Smaller checkbox icon
+                        transform: "scale(1)",
+                        "& .MuiSvgIcon-root": { fontSize: 16 },
                       }}
                     />
                   }
@@ -116,7 +120,7 @@ const Page = () => {
               </MenuItem>
             ))}
           </Menu>
-        </>
+        </div>
       )}
     </div>
   );
