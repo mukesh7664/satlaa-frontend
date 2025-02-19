@@ -1,6 +1,6 @@
 import React from "react";
 import { Accordion, AccordionSummary, AccordionDetails, Typography } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { MdOutlineExpandMore } from "react-icons/md";
 import dynamic from "next/dynamic";
 
 const HTMLParser = dynamic(() => import("../../components/Utils/HtmlParser"), { ssr: false });
@@ -9,7 +9,7 @@ const ProductDrawer = ({ contentDescription, state }) => {
   return (
     <div>
       <Accordion sx={{boxShadow: "none"}}>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <AccordionSummary expandIcon={<MdOutlineExpandMore />}>
           <Typography variant="h6" className="font-bold">DESCRIPTION</Typography>
         </AccordionSummary>
         <AccordionDetails>
@@ -20,7 +20,7 @@ const ProductDrawer = ({ contentDescription, state }) => {
       </Accordion>
 
       <Accordion sx={{boxShadow: "none"}}>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <AccordionSummary expandIcon={<MdOutlineExpandMore />}>
           <Typography variant="h6" className="font-bold" >DETAILS</Typography>
         </AccordionSummary>
         <AccordionDetails>
@@ -78,7 +78,7 @@ const ProductDrawer = ({ contentDescription, state }) => {
       </Accordion>
 
       <Accordion sx={{boxShadow: "none"}}>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <AccordionSummary expandIcon={<MdOutlineExpandMore />}>
           <Typography variant="h6" className="font-bold" >OTHER INFO</Typography>
         </AccordionSummary>
         <AccordionDetails>
@@ -91,7 +91,7 @@ const ProductDrawer = ({ contentDescription, state }) => {
       </Accordion>
 
       <Accordion sx={{boxShadow: "none"}}>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <AccordionSummary expandIcon={<MdOutlineExpandMore />}>
           <Typography variant="h6" className="font-bold" >Why SATLAA is So Affordable</Typography>
         </AccordionSummary>
         <AccordionDetails>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { FormControl, Button, Alert, Select, Box, Typography, TextField, Grid, InputLabel, MenuItem, Paper, IconButton, Dialog } from "@mui/material";
-import { CheckIcon } from "@mui/icons-material/Check";
-import CloseIcon from "@mui/icons-material/Close";
+import { FaCheck } from "react-icons/fa";
+import { IoCloseOutline } from "react-icons/io5";
 import { useRouter } from "next/router";
 import { useForm, Controller } from "react-hook-form";
 import { useDispatch } from "react-redux";
@@ -126,7 +126,7 @@ const Default = ({ onSuccessfulLogin, handleCancelLogin }) => {
       setStep(1);
     } catch (error) {
       setLoading(false);
-      <Alert icon={<CheckIcon fontSize="inherit" />} severity="failed">
+      <Alert icon={<FaCheck fontSize="inherit" />} severity="failed">
         Registration failed
       </Alert>
     }
@@ -148,7 +148,7 @@ const Default = ({ onSuccessfulLogin, handleCancelLogin }) => {
         onSuccessfulLogin(user, userCart);
         handleCancelLogin();
       } else {
-        <Alert icon={<CheckIcon fontSize="inherit" />} severity="failed">
+        <Alert icon={<FaCheck fontSize="inherit" />} severity="failed">
           Invalid or expired OTP
         </Alert>
       }
@@ -414,7 +414,7 @@ const Default = ({ onSuccessfulLogin, handleCancelLogin }) => {
           onClick={handleCancelLogin}
           sx={{ position: "absolute", top: 8, right: 8 }}
         >
-          <CloseIcon />
+          <IoCloseOutline />
         </IconButton>
 
         {isRegistered === false ? registerForm() : step === 0 ? numberForm() : otpForm({ phoneNumber, showResendButton, resendTimer })}

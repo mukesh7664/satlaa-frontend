@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import router from "next/router";
 import { Button, Divider, Typography, Paper, Box, Stack } from "@mui/material";
 import Price from "../Price";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import { MdLockOutline } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { API_URL } from "../../../config";
 import func from "../../../util/helpers/func";
@@ -199,7 +199,7 @@ const Default = () => {
           variant="contained"
           color="secondary"
           size="large"
-          startIcon={<LockOutlinedIcon />}
+          startIcon={<MdLockOutline />}
           disabled={!shipping_address?.address}
           sx={{ py: 1.5, px: 4 }}
           onClick={onSubmit}

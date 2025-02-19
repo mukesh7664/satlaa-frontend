@@ -8,7 +8,7 @@ import {
   Typography,
   IconButton,
 } from "@mui/material";
-import SortByAlphaOutlinedIcon from "@mui/icons-material/SortByAlphaOutlined";
+import { MdOutlineSortByAlpha } from "react-icons/md";
 import { filterProducts as filterProducts_r } from "../../../redux/reducers/FilterProducts";
 import filterRouteLinkGenerate from "./filterRouterLink";
 import { productsApi } from "../../../redux/api/productsApi";
@@ -65,7 +65,7 @@ const Page = () => {
           onClick={() => sortItem(JSON.stringify({ "variant_products.price": -1, price: -1 }))}
         >
           <ListItemIcon>
-            <SortByAlphaOutlinedIcon />
+            <MdOutlineSortByAlpha />
           </ListItemIcon>
           <Typography>Increased Price</Typography>
         </MenuItem>
@@ -74,7 +74,7 @@ const Page = () => {
           onClick={() => sortItem(JSON.stringify({ "variant_products.price": 1, price: 1 }))}
         >
           <ListItemIcon>
-            <SortByAlphaOutlinedIcon />
+            <MdOutlineSortByAlpha />
           </ListItemIcon>
           <Typography>Decreasing Price</Typography>
         </MenuItem>

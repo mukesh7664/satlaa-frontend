@@ -5,7 +5,7 @@ import { Button, TextField, Alert, Chip } from "@mui/material";
 import Price from "../Price";
 import { useDispatch, useSelector } from "react-redux";
 import { API_URL } from "../../../config";
-import StyleOutlinedIcon from "@mui/icons-material/StyleOutlined";
+import { IoPricetagsOutline } from "react-icons/io5";
 import { cartFetch } from "../../../redux/reducers/Cart";
 
 const Coupon = ({ total_price }) => {
@@ -77,7 +77,7 @@ const Coupon = ({ total_price }) => {
           </div>
         ) : (
           <Chip
-            icon={<StyleOutlinedIcon />}
+            icon={<IoPricetagsOutline />}
             label={coupon.toUpperCase()}
             onDelete={removeCoupon}
             color="primary"

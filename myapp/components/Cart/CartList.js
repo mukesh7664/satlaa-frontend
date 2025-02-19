@@ -13,7 +13,7 @@ import {
   Button,
   Paper,
 } from "@mui/material";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import { MdDeleteOutline } from "react-icons/md";
 import Price from "../Price";
 import { useDispatch, useSelector } from "react-redux";
 import { API_URL } from "../../../config";
@@ -97,7 +97,6 @@ const Default = () => {
   }, [cart]);
 
   const modifyQuantity = (dataRecord, delta) => {
-    console.log("modifyQuantity called with:", dataRecord);
   
     if (!dataRecord || !dataRecord._id) {
       console.error("modifyQuantity received invalid dataRecord:", dataRecord);
@@ -242,7 +241,7 @@ const Default = () => {
                 </TableCell>
                 <TableCell align="center">
                   <IconButton color="error" onClick={() => deleteProduct(record)}>
-                    <DeleteOutlineIcon />
+                    <MdDeleteOutline />
                   </IconButton>
                 </TableCell>
               </TableRow>

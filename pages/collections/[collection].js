@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { Drawer, Accordion, AccordionSummary, AccordionDetails, Button } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { MdExpandMore } from "react-icons/md";
 import parse from "html-react-parser";
 import ProductCard from "@/myapp/components/ProductCard";
 
@@ -143,7 +143,7 @@ const Collection = ({ collectionData = [] }) => {
             <p className="text-lg font-bold">FAQs</p>
             {collectionData.faqs.map((faq, i) => (
               <Accordion key={i}>
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <AccordionSummary expandIcon={<MdExpandMore />}>
                   {faq.question}
                 </AccordionSummary>
                 <AccordionDetails>

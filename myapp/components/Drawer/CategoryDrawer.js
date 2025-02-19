@@ -1,6 +1,6 @@
 import React from 'react';
 import { Drawer, Accordion, AccordionSummary, AccordionDetails, Typography, IconButton } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { MdOutlineExpandMore } from "react-icons/md";
 import TagsFilter from "@/myapp/components/FilterProducts/TagsFilter";
 import PriceFilter from "@/myapp/components/FilterProducts/PriceFilter";
 import SubCategoryFilter from "@/myapp/components/FilterProducts/SubCategoryFilter";
@@ -20,7 +20,7 @@ const CategoryDrawer = ({ onClose, visible }) => {
       </div>
       
       <Accordion>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <AccordionSummary expandIcon={<MdOutlineExpandMore />}>
           <Typography>Prices</Typography>
         </AccordionSummary>
         <AccordionDetails>
@@ -29,7 +29,7 @@ const CategoryDrawer = ({ onClose, visible }) => {
       </Accordion>
 
       <Accordion>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <AccordionSummary expandIcon={<MdOutlineExpandMore />}>
           <Typography>Tags</Typography>
         </AccordionSummary>
         <AccordionDetails>
@@ -38,7 +38,7 @@ const CategoryDrawer = ({ onClose, visible }) => {
       </Accordion>
 
       <Accordion>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <AccordionSummary expandIcon={<MdOutlineExpandMore />}>
           <Typography>Sub Categories</Typography>
         </AccordionSummary>
         <AccordionDetails>
@@ -47,7 +47,7 @@ const CategoryDrawer = ({ onClose, visible }) => {
       </Accordion>
 
       <Accordion>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <AccordionSummary expandIcon={<MdOutlineExpandMore />}>
           <Typography>Colors</Typography>
         </AccordionSummary>
         <AccordionDetails>
@@ -56,7 +56,7 @@ const CategoryDrawer = ({ onClose, visible }) => {
       </Accordion>
 
       <Accordion>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <AccordionSummary expandIcon={<MdOutlineExpandMore />}>
           <Typography>Styles</Typography>
         </AccordionSummary>
         <AccordionDetails>
