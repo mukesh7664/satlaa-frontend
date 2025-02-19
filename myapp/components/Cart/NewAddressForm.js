@@ -1,6 +1,6 @@
 import React from "react";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import { Row, Col } from "@mui/material";
+import { Formik, Form, Field } from "formik";
+import { TextField, MenuItem, Button, Box, Typography, Grid } from "@mui/material";
 import * as Yup from "yup";
 import axiosInstance from "@/util/axios";
 const axios = axiosInstance();
@@ -12,222 +12,146 @@ const validationSchema = Yup.object().shape({
   address: Yup.string().required("Missing Address"),
   pin_code: Yup.number().min(6).required("Missing Pincode"),
   district: Yup.string().required("Missing District"),
-  state: Yup.string().required("Please select your state!")
+  state: Yup.string().required("Please select your state!"),
 });
 
-const AddressForm = ({
-  initialValues = {},
-  onSubmitAddress,
-  states,
-  handleCancel,
-  setEditing
-}) => {
+const AddressForm = ({ initialValues = {}, onSubmitAddress, states, handleCancel }) => {
   const onPincodeChange = async (e, setFieldValue) => {
     const pincode = e.target.value.trim();
-
     if (pincode.length === 6) {
       try {
         const response = await axios.get(`${API_URL}/pincode/${pincode}`);
         const data = response.data;
-        setFieldValue("district", data.districtname); // Update district field
+        setFieldValue("district", data.districtname);
         setFieldValue("state", data.statename);
       } catch (error) {
         console.error(error);
       }
     }
   };
+
   return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-      onSubmit={onSubmitAddress}
-    >
-      {({
-        errors,
-        touched,
-        values,
-        handleChange,
-        handleBlur,
-        setFieldValue,
-      }) => (
-        <Form className="p-4 flex flex-wrap gap-y-2 ">
-          <div className="relative w-full md:w-1/2 px-1">
-            <Field
-              type="text"
-              name="name"
-              id="floating_filled_name"
-              className="form-input-new peer"
-              placeholder=" "
-              autoComplete="name"
-              value={values.name}
-              onChange={handleChange}
-            />
-            <label
-              htmlFor="floating_filled_name"
-              className="form-input-lable-new"
-            >
-              Name
-            </label>
-            {errors.name && touched.name && (
-              <div className="text-red-400">{errors.name}</div>
-            )}
-          </div>
+    <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmitAddress}>
+      {({ errors, touched, values, handleChange, handleBlur, setFieldValue }) => (
+        <Form>
+          <Box p={2}>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={6}>
+                <TextField
+                  fullWidth
+                  label="Name"
+                  name="name"
+                  value={values.name}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={touched.name && Boolean(errors.name)}
+                  helperText={touched.name && errors.name}
+                />
+              </Grid>
 
-          <div className="relative w-full md:w-1/2 px-1">
-            <Field
-              type="number"
-              name="phone"
-              id="floating_filled_phone"
-              className="form-input-new peer"
-              placeholder=" "
-              autoComplete="tel"
-              value={values.phone}
-              onChange={handleChange}
-            />
-            <label
-              htmlFor="floating_filled_phone"
-              className="form-input-lable-new"
-            >
-              Number
-            </label>
-            {errors.phone && touched.phone && (
-              <div className="text-red-400">{errors.phone}</div>
-            )}
-          </div>
+              <Grid item xs={12} md={6}>
+                <TextField
+                  fullWidth
+                  label="Phone Number"
+                  name="phone"
+                  type="number"
+                  value={values.phone}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={touched.phone && Boolean(errors.phone)}
+                  helperText={touched.phone && errors.phone}
+                />
+              </Grid>
 
-          <div className="relative w-full px-1">
-            <Field
-              as="textarea"
-              rows={2}
-              name="address"
-              id="floating_filled_address"
-              className="form-input-new peer"
-              placeholder=" "
-              autoComplete="off"
-              value={values.address}
-              onChange={handleChange}
-            />
-            <label
-              htmlFor="floating_filled_address"
-              className="form-input-lable-new"
-            >
-              Address (Area and Street)
-            </label>
-            {errors.address && touched.address && (
-              <div className="text-red-400">{errors.address}</div>
-            )}
-          </div>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Address (Area and Street)"
+                  name="address"
+                  multiline
+                  rows={2}
+                  value={values.address}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={touched.address && Boolean(errors.address)}
+                  helperText={touched.address && errors.address}
+                />
+              </Grid>
 
-          <div className="relative w-full md:w-1/2 px-1">
-            <Field
-              type="number"
-              name="pin_code"
-              id="floating_filled_pincode"
-              className="form-input-new peer"
-              placeholder=" "
-              autoComplete="postal-code"
-              value={values.pin_code}
-              onChange={(e) => {
-                handleChange(e); // This will handle Formik's handleChange
-                onPincodeChange(e, setFieldValue); // This is your custom onChange
-              }}
-            />
-            <label
-              htmlFor="floating_filled_pincode"
-              className="form-input-lable-new"
-            >
-              Pincode
-            </label>
-            {errors.pin_code && touched.pin_code && (
-              <div className="text-red-400">{errors.pin_code}</div>
-            )}
-          </div>
+              <Grid item xs={12} md={6}>
+                <TextField
+                  fullWidth
+                  label="Pincode"
+                  name="pin_code"
+                  type="number"
+                  value={values.pin_code}
+                  onChange={(e) => {
+                    handleChange(e);
+                    onPincodeChange(e, setFieldValue);
+                  }}
+                  onBlur={handleBlur}
+                  error={touched.pin_code && Boolean(errors.pin_code)}
+                  helperText={touched.pin_code && errors.pin_code}
+                />
+              </Grid>
 
-          <div className="relative w-1/2 px-1">
-            <Field
-              type="text"
-              name="district"
-              id="floating_filled_district"
-              className="form-input-new peer"
-              placeholder=" "
-              autoComplete="off"
-              value={values.district}
-              onChange={handleChange}
-            />
-            <label
-              htmlFor="floating_filled_district"
-              className="form-input-lable-new"
-            >
-              District
-            </label>
-            {errors.district && touched.district && (
-              <div className="text-red-400">{errors.district}</div>
-            )}
-          </div>
+              <Grid item xs={12} md={6}>
+                <TextField
+                  fullWidth
+                  label="District"
+                  name="district"
+                  value={values.district}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={touched.district && Boolean(errors.district)}
+                  helperText={touched.district && errors.district}
+                />
+              </Grid>
 
-          <div className="relative w-1/2 px-1">
-            <Field
-              as="select"
-              name="state"
-              id="floating_filled_state"
-              className="form-input-new peer"
-              value={values.state}
-              onChange={handleChange}
-            >
-              {states.map((state) => (
-                <option key={state.value} value={state.value}>
-                  {state.label}
-                </option>
-              ))}
-            </Field>
-            <label
-              htmlFor="floating_filled_state"
-              className="form-input-lable-new"
-            >
-              State
-            </label>
-            {errors.state && touched.state && (
-              <div className="text-red-400">{errors.state}</div>
-            )}
-          </div>
+              <Grid item xs={12} md={6}>
+                <TextField
+                  fullWidth
+                  select
+                  label="State"
+                  name="state"
+                  value={values.state}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={touched.state && Boolean(errors.state)}
+                  helperText={touched.state && errors.state}
+                >
+                  {states.map((state) => (
+                    <MenuItem key={state.value} value={state.value}>
+                      {state.label}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
 
-          <div className="relative w-full md:w-1/2 px-1">
-            <Field
-              type="number"
-              name="alternate_phone"
-              id="floating_filled_alternate"
-              className="form-input-new peer"
-              placeholder=" "
-              autoComplete="off"
-              value={values.alternate_phone}
-              onChange={handleChange}
-            />
-            <label
-              htmlFor="floating_filled_alternate"
-              className="form-input-lable-new"
-            >
-              Alternate Number(Optional)
-            </label>
-            {errors.alternate_phone && touched.alternate_phone && (
-              <div className="text-red-400">{errors.alternate_phone}</div>
-            )}
-          </div>
+              <Grid item xs={12} md={6}>
+                <TextField
+                  fullWidth
+                  label="Alternate Number (Optional)"
+                  name="alternate_phone"
+                  type="number"
+                  value={values.alternate_phone}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={touched.alternate_phone && Boolean(errors.alternate_phone)}
+                  helperText={touched.alternate_phone && errors.alternate_phone}
+                />
+              </Grid>
 
-          <div className="flex flex-wrap mt-2">
-            <button
-              type="submit"
-              className="py-3 w-7/12 px-4 md:px-6 h-auto bg-secondary text-white border text-base rounded"
-            >
-              Save Address
-            </button>
-
-            <button
-              onClick={handleCancel}
-              className="w-5/12 font-semibold md:py-3 px-6 text-base h-auto text-red-700  rounded text-left"
-            >
-              CANCEL
-            </button>
-          </div>
+              <Grid item xs={12} display="flex" justifyContent="space-between">
+                <Button type="submit" variant="contained" color="primary" sx={{ width: "70%" }}>
+                  Save Address
+                </Button>
+                <Button onClick={handleCancel} variant="text" color="error" sx={{ width: "30%" }}>
+                  Cancel
+                </Button>
+              </Grid>
+            </Grid>
+          </Box>
         </Form>
       )}
     </Formik>
