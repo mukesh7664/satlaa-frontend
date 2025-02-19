@@ -111,67 +111,69 @@ const MegaMenu = () => {
   const { subcategory } = useSelector((state) => state.subcategory);
 
   return (
-    <div className="w-full h-96 p-6 gap-x-6 hidden md:flex">
-      <div>
-        <p className="mb-4 font-bold">Category</p>
-        <div className="flex flex-col pt-4">
-          {categories?.map((category) => (
-            <Link
-              key={category.seo}
-              href={`/${category.seo}`}
-              className="md:hover:underline pb-1"
-            >
-              {category.title}
+    <div className="w-full max-w-screen-lg p-4 bg-white shadow-sm rounded-lg overflow-auto hidden md:flex flex-col">
+      <div className="grid grid-cols-4 gap-4 text-sm">
+        <div>
+          <p className="mb-2 font-semibold text-gray-700">Category</p>
+          <div className="flex flex-col space-y-1">
+            {categories?.map((category) => (
+              <Link
+                key={category.seo}
+                href={`/${category.seo}`}
+                className="hover:underline text-gray-600"
+              >
+                {category.title}
+              </Link>
+            ))}
+            <Link href="/search" className="hover:underline text-gray-600">
+              All Products
             </Link>
-          ))}
-          <Link href="/search" className="md:hover:underline pb-1">
-            All Products
-          </Link>
+          </div>
         </div>
-      </div>
 
-      <div>
-        <p className="mb-4 font-bold">Styles</p>
-        <div className="flex flex-col pt-4">
-          {styles?.map((style) => (
-            <Link
-              key={style._id}
-              href={`/search?styles=${style.seo}`}
-              className="md:hover:underline pb-1"
-            >
-              {style.title}
-            </Link>
-          ))}
+        <div>
+          <p className="mb-2 font-semibold text-gray-700">Styles</p>
+          <div className="flex flex-col space-y-1">
+            {styles?.map((style) => (
+              <Link
+                key={style._id}
+                href={`/search?styles=${style.seo}`}
+                className="hover:underline text-gray-600"
+              >
+                {style.title}
+              </Link>
+            ))}
+          </div>
         </div>
-      </div>
 
-      <div>
-        <p className="mb-4 font-bold">Sub Category</p>
-        <div className="flex flex-col pt-4">
-          {subcategory?.map((subCat) => (
-            <Link
-              key={subCat._id}
-              href={`/search?subcategory=${subCat.seo}`}
-              className="md:hover:underline pb-1"
-            >
-              {subCat.title}
-            </Link>
-          ))}
+        <div>
+          <p className="mb-2 font-semibold text-gray-700">Sub Category</p>
+          <div className="flex flex-col space-y-1">
+            {subcategory?.map((subCat) => (
+              <Link
+                key={subCat._id}
+                href={`/search?subcategory=${subCat.seo}`}
+                className="hover:underline text-gray-600"
+              >
+                {subCat.title}
+              </Link>
+            ))}
+          </div>
         </div>
-      </div>
 
-      <div>
-        <p className="mb-4 font-bold">Colors</p>
-        <div className="flex flex-col pt-4">
-          {colors?.map((color) => (
-            <Link
-              key={color._id}
-              href={`/search?colors=${color.seo}`}
-              className="md:hover:underline pb-1"
-            >
-              {color.title}
-            </Link>
-          ))}
+        <div>
+          <p className="mb-2 font-semibold text-gray-700">Colors</p>
+          <div className="flex flex-col space-y-1">
+            {colors?.map((color) => (
+              <Link
+                key={color._id}
+                href={`/search?colors=${color.seo}`}
+                className="hover:underline text-gray-600"
+              >
+                {color.title}
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </div>
