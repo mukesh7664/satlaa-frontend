@@ -1,18 +1,24 @@
 import axiosInstance from "@/util/axios";
 const axios = axiosInstance();
 import { useState, useEffect } from "react";
-import { Table, Popconfirm, message } from "@mui/material";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  IconButton,
+  Typography,
+  Button,
+  Paper,
+} from "@mui/material";
+import { MdDeleteOutline } from "react-icons/md";
 import Price from "../Price";
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { useDispatch, useSelector } from "react-redux";
 import { API_URL } from "../../../config";
 import func from "../../../util/helpers/func";
-
-import {
-  cartFetch,
-  getCart as getCart_r,
-  updateProduct,
-} from "../../../redux/reducers/Cart";
+import { getCart as getCart_r, updateProduct } from "../../../redux/reducers/Cart";
 import Link from "next/link";
 
 const Default = () => {
@@ -24,180 +30,62 @@ const Default = () => {
 
   const getCartProducts = (data = [], products = []) => {
     const CartAllProducts = [];
-    products.map((x) => {
-      const array = data.find((y) => y._id == x.product_id);
-      if (array) {
-        const resData = array;
+    products.forEach((x) => {
+      const productData = data.find((y) => y._id === x.product_id);
+      if (productData) {
         const errorArray = [];
-        if (x.selectedVariants !== undefined) {
-          const priceMath = func.filter_array_in_obj(
-            resData.variant_products,
+        let priceData = productData;
+        if (x.selectedVariants) {
+          priceData = func.filter_array_in_obj(
+            productData.variant_products,
             x.selectedVariants
-          );
-
-          if (priceMath[0].visible === false) {
-            errorArray.push("Product Not Active");
-          } else if (Number(priceMath[0].qty) < Number(x.qty)) {
-            errorArray.push("Out Of Stock");
-          } else {
-            errorArray.push(null);
-          }
-
-          CartAllProducts.push({
-            _id: resData._id,
-            title: resData.title,
-            selectedVariants: x.selectedVariants,
-            qty: x.qty,
-            price: priceMath[0].price,
-            before_price: priceMath[0].before_price,
-            total_price: x.qty * priceMath[0].price,
-            total_discount: x.qty * priceMath[0].before_price,
-            error: errorArray,
-            seo: resData.seo,
-          });
+          )[0];
+          if (!priceData.visible) errorArray.push("Product Not Active");
+          else if (priceData.qty < x.qty) errorArray.push("Out Of Stock");
         } else {
-          if (resData.isActive === false) {
-            errorArray.push("Product Not Active");
-          } else if (Number(resData.qty) < Number(x.qty)) {
-            errorArray.push("Out Of Stock");
-          } else {
-            errorArray.push(null);
-          }
-
-          CartAllProducts.push({
-            _id: resData._id,
-            title: resData.title,
-            selectedVariants: x.selectedVariants,
-            qty: x.qty,
-            price: resData.price,
-            before_price: resData.before_price,
-            total_price: x.qty * resData.price,
-            total_discount: x.qty * resData.before_price,
-            error: errorArray,
-            seo: resData.seo,
-          });
+          if (!productData.isActive) errorArray.push("Product Not Active");
+          else if (productData.qty < x.qty) errorArray.push("Out Of Stock");
         }
+
+        CartAllProducts.push({
+          _id: productData._id,
+          title: productData.title,
+          selectedVariants: x.selectedVariants || [],
+          qty: x.qty,
+          price: priceData.price,
+          before_price: priceData.before_price || 0,
+          total_price: x.qty * priceData.price,
+          total_discount: x.qty * priceData.before_price,
+          error: errorArray,
+          seo: productData.seo || "", // Ensure seo is always defined
+        });
       }
     });
-
-    setState(
-      CartAllProducts.sort(
-        (a, b) =>
-          (a.price + a.seo + JSON.stringify(a.selectedVariants)).length -
-          (b.price + b.seo + JSON.stringify(b.selectedVariants)).length
-      )
-    );
+    setState(CartAllProducts);
   };
 
-  const cartProductUpdate = (data, post, messageStr = "Product Update!") => {
+  const cartProductUpdate = (data, post, messageStr = "Product Updated!") => {
     if (isAuthenticated) {
-      post.created_user = {
-        name: user.name,
-        id: user.id,
-      };
+      post.created_user = { name: user.name, id: user.id };
       post.customer_id = user.id;
-      axios
-        .post(`${API_URL}/cart/${cart._id}`, post)
+      axios.post(`${API_URL}/cart/${cart._id}`, post)
         .then(async () => {
-          message.success({ content: messageStr, duration: 3 });
           await dispatch(getCart_r(user.id));
           setIsLoaded(false);
         })
-        .catch((err) => {
-          message.error({
-            content: "Some Error, Please Try Again",
-            duration: 3,
-          });
-          console.log(err);
+        .catch(() => {
+          console.error("Error updating cart");
         });
     } else {
-      message.success({ content: messageStr, duration: 3 });
       dispatch(updateProduct(data));
-      // getProducts();
       setIsLoaded(false);
     }
   };
 
-  /*const plusProduct = (dataRecord) => {
-    seTisLoaded(true);
-
-    const productsDataArray = cart.products;
-    const productsData = [];
-    const variantControl = productsDataArray.find(
-       (x) =>
-          x.product_id == dataRecord._id &&
-      JSON.stringify(x.selectedVariants) ==
-      JSON.stringify(dataRecord.selectedVariants)
-    );
-    const variantControlNot = productsDataArray.filter(
-       (x) =>
-          x.product_id != dataRecord._id ||
-      JSON.stringify(x.selectedVariants) !=
-      JSON.stringify(dataRecord.selectedVariants)
-    );
-    productsData.push(...variantControlNot, {
-       product_id: dataRecord._id,
-       selectedVariants: dataRecord.selectedVariants,
-       qty: variantControl.qty + 1,
-       seo: dataRecord.seo,
-    });
-    const post = {
-       created_user: {
-          name: user.name,
-          id: user.id,
-       },
-       customer_id: user.id,
-       products: productsData,
-    };
-
-    cartProductUpdate(post);
- };
- 
-  const notPlusProduct = (dataRecord) => {
-    seTisLoaded(true);
-    const productsDataArray = cart.products;
-    const productsData = [];
-    const variantControl = productsDataArray.find(
-      (x) =>
-        x.product_id == dataRecord._id &&
-        JSON.stringify(x.selectedVariants) ==
-          JSON.stringify(dataRecord.selectedVariants)
-    );
-    const variantControlNot = productsDataArray.filter(
-      (x) =>
-        x.product_id != dataRecord._id ||
-        JSON.stringify(x.selectedVariants) !=
-          JSON.stringify(dataRecord.selectedVariants)
-    );
-
-    productsData.push(...variantControlNot, {
-      product_id: dataRecord._id,
-      selectedVariants: dataRecord.selectedVariants,
-      qty: variantControl.qty > 1 ? variantControl.qty - 1 : variantControl.qty,
-      seo: dataRecord.seo,
-    });
-
-    const post = {
-      created_user: {
-        name: user.name,
-        id: user.id,
-      },
-      customer_id: user.id,
-      products: productsData,
-    };
-
-    cartProductUpdate(post);
-  };
- */
-
   const getProducts = async () => {
     if (cart.products?.length > 0) {
-      const arrayId = [];
-      cart.products?.map((x) => {
-        arrayId.push(x.product_id);
-      });
-      await axios
-        .post(`${API_URL}/cart/allproducts`, { _id: arrayId })
+      const productIds = cart.products.map((x) => x.product_id);
+      axios.post(`${API_URL}/cart/allproducts`, { _id: productIds })
         .then((res) => {
           getCartProducts(res.data, cart.products);
         });
@@ -208,7 +96,62 @@ const Default = () => {
     getProducts();
   }, [cart]);
 
+  const modifyQuantity = (dataRecord, delta) => {
   
+    if (!dataRecord || !dataRecord._id) {
+      console.error("modifyQuantity received invalid dataRecord:", dataRecord);
+      return;
+    }
+  
+    setIsLoaded(true);
+  
+    // Ensure cart.products exists
+    if (!cart.products || cart.products.length === 0) {
+      console.error("Cart products not found.");
+      setIsLoaded(false);
+      return;
+    }
+  
+    // Update the quantity while ensuring it does not go below 1
+    const updatedProducts = cart.products.map((item) => {
+      if (
+        item.product_id === dataRecord._id &&
+        JSON.stringify(item.selectedVariants) === JSON.stringify(dataRecord.selectedVariants)
+      ) {
+        const newQty = Math.max(1, item.qty + delta);
+        return { ...item, qty: newQty };
+      }
+      return item;
+    });
+  
+    // Calculate updated total price
+    const updatedTotalPrice = dataRecord.price * Math.max(1, dataRecord.qty + delta);
+    const updatedTotalDiscount = dataRecord.before_price * Math.max(1, dataRecord.qty + delta);
+  
+    const updatedCart = {
+      created_user: { name: user.name, id: user.id },
+      customer_id: user.id,
+      products: updatedProducts,
+    };
+  
+    const updatedProductData = {
+      product: {
+        product_id: dataRecord._id,
+        title: dataRecord.title,
+        selectedVariants: dataRecord.selectedVariants || [],
+        price: dataRecord.price,
+        before_price: dataRecord.before_price,
+        total_price: updatedTotalPrice,
+        total_discount: updatedTotalDiscount,
+        seo: dataRecord.seo,
+        error: dataRecord.error,
+      },
+      qty: Math.max(1, dataRecord.qty + delta),
+    };
+  
+    cartProductUpdate(updatedProductData, updatedCart);
+  };  
+
   const deleteProduct = (dataRecord) => {
     setIsLoaded(true);
 
@@ -217,11 +160,12 @@ const Default = () => {
    
     const variantControlNot = productsDataArray.filter(
       (x) =>
-        x.product_id != dataRecord._id ||
-        JSON.stringify(x.selectedVariants) !=
+        x.product_id !== dataRecord._id ||
+        JSON.stringify(x.selectedVariants) !==
           JSON.stringify(dataRecord.selectedVariants)
     );
     productsData.push(...variantControlNot);
+
     const post = {
       created_user: {
         name: user.name,
@@ -230,291 +174,88 @@ const Default = () => {
       customer_id: user.id,
       products: productsData,
     };
+
     let data = { product: dataRecord, qty: 0 };
     cartProductUpdate(data, post);
   };
 
-  const incrementQuantity = (dataRecord) => {
-    setIsLoaded(true);
-    const productsDataArray = cart.products;
-    const productsData = [];
-    const variantControl = productsDataArray.find(
-      (x) =>
-        x.product_id == dataRecord._id &&
-        JSON.stringify(x.selectedVariants) ==
-          JSON.stringify(dataRecord.selectedVariants)
-    );
-    const variantControlNot = productsDataArray.filter(
-      (x) =>
-        x.product_id != dataRecord._id ||
-        JSON.stringify(x.selectedVariants) !=
-          JSON.stringify(dataRecord.selectedVariants)
-    );
-    productsData.push(...variantControlNot, {
-      product_id: dataRecord._id,
-      selectedVariants: dataRecord.selectedVariants,
-      qty: variantControl.qty + 1,
-      price: variantControl.price,
-      seo: variantControl.seo,
-      sku:variantControl.sku,
-    });
-    const post = {
-      created_user: {
-        name: user.name,
-        id: user.id,
-      },
-      customer_id: user.id,
-      products: productsData,
-    };
-    let data = { product: dataRecord, qty: variantControl.qty + 1 };
-    cartProductUpdate(data, post);
-  };
-
-  const decrementQuantity = (dataRecord) => {
-    setIsLoaded(true);
-    const productsDataArray = cart.products;
-    const productsData = [];
-    const variantControl = productsDataArray.find(
-      (x) =>
-        x.product_id == dataRecord._id &&
-        JSON.stringify(x.selectedVariants) ==
-          JSON.stringify(dataRecord.selectedVariants)
-    );
-    const variantControlNot = productsDataArray.filter(
-      (x) =>
-        x.product_id != dataRecord._id ||
-        JSON.stringify(x.selectedVariants) !=
-          JSON.stringify(dataRecord.selectedVariants)
-    );
-
-    productsData.push(...variantControlNot, {
-      product_id: dataRecord._id,
-      selectedVariants: dataRecord.selectedVariants,
-      qty: variantControl.qty > 1 ? variantControl.qty - 1 : variantControl.qty,
-      seo: dataRecord.seo,
-    });
-
-    const post = {
-      created_user: {
-        name: user.name,
-        id: user.id,
-      },
-      customer_id: user.id,
-      products: productsData,
-    };
-
-    let data = { product: dataRecord, qty: variantControl.qty - 1 };
-    cartProductUpdate(data, post);
-  };
-
   return (
-    <>
-      <Table
-        pagination={false}
-        loading={isLoaded}
-        columns={[
-          {
-            title: "Title",
-            dataIndex: "title",
-            key: "title",
-            render: (text, record) => {
-              const errorArray = [];
-              record.error.map((x) => {
-                errorArray.push(<div className="text-xs "> {x} </div>);
-              });
-
-              const variants = [];
-
-              for (const property in record.selectedVariants) {
-                variants.push(
-                  <div className="text-xs ">
-                    {" "}
-                    <span className="font-semibold"> {property}</span>:{" "}
-                    {record.selectedVariants[property]}{" "}
-                  </div>
-                );
-              }
-
-              return (
-                <span className="link">
-                  <div className="float-left mb-5 w-full">
-                    <span className="float-right text-right sm:hidden ">
-                      <Popconfirm
-                        placement="left"
-                        title="Are You Sure?"
-                        onConfirm={() => {
-                          deleteProduct(record);
-                        }}
-                      >
-                        <a>
-                          <DeleteOutlineIcon
-                            style={{ fontSize: "150%", marginLeft: "15px" }}
-                          />{" "}
-                        </a>
-                      </Popconfirm>
-                    </span>
-                    <div className="flex flex-col">
-                      <Link
-                        href={`/products/${record.seo}`}
-                        className="font-semibold"
-                      >
-                        {text}
-                      </Link>
-                      <div className="text-red-500 float-left">
-                        {errorArray}
-                      </div>
-                    </div>
-                    {variants.length > 0 ? <> {variants}</> : <> </>}
-                  </div>
-                  <div className=" float-left sm:hidden flex flex-row h-10  my-2 rounded w-24 relative bg-transparent border-gray-200 border  ">
-                    <button
-                      data-action="decrement"
-                      className=" bg-white text-gray-700 hover:text-black hover:bg-primary  h-full w-20 rounded-l cursor-pointer outline-none"
-                      onClick={() => {
-                        decrementQuantity(record);
-                      }}
-                    >
-                      <span className="m-auto text-2xl font-thin">−</span>
-                    </button>
-                    <input
-                      type="number"
-                      className="outline-none  hiddenArrowInputNumber focus:outline-none text-center w-full bg-white font-semibold text-md hover:text-black focus:text-black  md:text-basecursor-default flex items-center text-gray-700  "
-                      name="custom-input-number"
-                      value={record.qty}
-                    ></input>
-                    <button
-                      data-action="increment"
-                      className="bg-white text-gray-700 hover:text-black hover:bg-primary h-full w-20 rounded-r cursor-pointer"
-                      onClick={() => {
-                        incrementQuantity(record);
-                      }}
-                    >
-                      <span className="m-auto text-2xl font-thin">+</span>
-                    </button>
-                  </div>
-
-                  <div className="text-center float-right sm:hidden  ">
-                    <span className=" text-md line-through">
-                      {" "}
-                      {record.total_discount != 0 ? (
-                        <Price data={record.total_discount} />
-                      ) : (
-                        ""
-                      )}
-                    </span>
-                    <div className=" text-lg text-primary">
-                      <Price data={record.total_price} />
-                    </div>
-                  </div>
-                </span>
-              );
-            },
-          },
-
-          {
-            title: "Price",
-            dataIndex: "price",
-            key: "price",
-            className: "hidden sm:table-cell ",
-            render: (text, record) => (
-              <div className="text-center  ">
-                <span className=" text-md line-through">
-                  {record.before_price != 0 ? (
-                    <Price data={record.before_price} />
-                  ) : (
-                    ""
+    <TableContainer component={Paper} className="w-100">
+      <Table>
+        <TableHead>
+          <TableRow sx={{ background: "#f5f5f5" }}>
+            <TableCell>
+              <Typography variant="body2" fontWeight="bold">Title</Typography>
+            </TableCell>
+            <TableCell align="center">
+              <Typography variant="body2" fontWeight="bold">Price</Typography>
+            </TableCell>
+            <TableCell align="center">
+              <Typography variant="body2" fontWeight="bold">Qty</Typography>
+            </TableCell>
+            <TableCell align="center">
+              <Typography variant="body2" fontWeight="bold">Total Price</Typography>
+            </TableCell>
+            <TableCell align="center">
+              <Typography variant="body2" fontWeight="bold">Delete</Typography>
+            </TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {state.length > 0 ? (
+            state.map((record) => (
+              <TableRow key={record._id}>
+                <TableCell>
+                  <Link href={`/products/${record.seo}`} passHref>
+                    <Typography variant="body1" fontWeight="bold">{record.title}</Typography>
+                  </Link>
+                  {record.error.length > 0 && (
+                    <Typography variant="caption" color="error">
+                      {record.error.join(", ")}
+                    </Typography>
                   )}
-                </span>
-                <div className=" text-sm ">
-                  <Price data={record.price} />
-                </div>
-              </div>
-            ),
-          },
-
-          {
-            title: "Qty",
-            dataIndex: "action",
-            key: "action",
-            className: "hidden sm:table-cell ",
-            render: (text, record) => (
-              <>
-                <div className="flex flex-row h-10  rounded w-24 relative bg-transparent border-gray-200 border mt-1">
-                  <button
-                    data-action="decrement"
-                    className=" bg-white text-gray-700 hover:text-black hover:bg-primary  h-full w-20 rounded-l cursor-pointer outline-none"
-                    onClick={() => {
-                      decrementQuantity(record);
-                    }}
-                  >
-                    <span className="m-auto text-2xl font-thin">−</span>
-                  </button>
-                  <input
-                    type="number"
-                    className="outline-none  hiddenArrowInputNumber focus:outline-none text-center w-full bg-white font-semibold text-md hover:text-black focus:text-black  md:text-basecursor-default flex items-center text-gray-700  "
-                    name="custom-input-number"
-                    value={record.qty}
-                  ></input>
-                  <button
-                    data-action="increment"
-                    className="bg-white text-gray-700 hover:text-black hover:bg-primary h-full w-20 rounded-r cursor-pointer"
-                    onClick={() => {
-                      incrementQuantity(record);
-                    }}
-                  >
-                    <span className="m-auto text-2xl font-thin">+</span>
-                  </button>
-                </div>
-              </>
-            ),
-          },
-          {
-            title: "Total Price",
-            dataIndex: "total_price",
-            key: "total_price",
-            className: "hidden sm:table-cell ",
-            render: (text, record) => (
-              <div className="text-center">
-                <span className=" text-md line-through">
-                  {" "}
-                  {record.total_discount != 0 ? (
-                    <Price data={record.total_discount} />
-                  ) : (
-                    ""
+                </TableCell>
+                <TableCell align="center">
+                  {record.before_price !== 0 && (
+                    <Typography variant="body2" color="textSecondary" sx={{ textDecoration: "line-through" }}>
+                      <Price data={record.before_price} />
+                    </Typography>
                   )}
-                </span>
-                <div className=" text-lg text-primary">
-                  <Price data={record.total_price} />
-                </div>
-              </div>
-            ),
-          },
-
-          {
-            title: "Delete",
-            dataIndex: "action",
-            key: "action",
-            className: "hidden sm:table-cell ",
-            render: (text, record) => (
-              <Popconfirm
-                placement="left"
-                title="Are You Sure?"
-                onConfirm={() => {
-                  deleteProduct(record);
-                }}
-              >
-                <a>
-                  <DeleteOutlineIcon
-                    style={{ fontSize: "150%", marginLeft: "15px" }}
-                  />{" "}
-                </a>
-              </Popconfirm>
-            ),
-          },
-        ]}
-        dataSource={[...state]}
-      />
-    </>
+                  <Typography variant="body1" fontWeight="bold">
+                    <Price data={record.price} />
+                  </Typography>
+                </TableCell>
+                <TableCell align="center">
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <Button variant="outlined" onClick={() => modifyQuantity(record, -1)}>-</Button>
+                    <Typography variant="body1" component="span" sx={{ mx: 1 }}>
+                      {record.qty}
+                    </Typography>
+                    <Button variant="outlined" onClick={() => modifyQuantity(record, 1)}>+</Button>
+                  </div>
+                </TableCell>
+                <TableCell align="center">
+                  <Typography variant="body1" fontWeight="bold">
+                    <Price data={record.total_price} />
+                  </Typography>
+                </TableCell>
+                <TableCell align="center">
+                  <IconButton color="error" onClick={() => deleteProduct(record)}>
+                    <MdDeleteOutline />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={5} align="center">
+                <Typography variant="body1">No products in cart.</Typography>
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 };
 

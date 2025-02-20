@@ -1,43 +1,40 @@
 import axiosInstance from "@/util/axios";
-const axios = axiosInstance();
 import { useState, useEffect } from "react";
-import router from "next/router";
-import { Modal, Divider, message, Button } from "@mui/material";
-import Price from "../Price";
-import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlined';
+import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import { API_URL } from "../../../config";
 import func from "../../../util/helpers/func";
 import { cartFetch, getCart as getCart_r } from "../../../redux/reducers/Cart";
-import Coupon from "./Coupon";
 import TagManager from "react-gtm-module";
+import { Box, Typography, Divider, Button } from "@mui/material";
+import Price from "../Price";
 
 const Default = () => {
+  const axios = axiosInstance();
   const cart = useSelector((state) => state.cart);
-
   const { isAuthenticated, user } = useSelector(({ login }) => login);
-  const { productShippingPrice, setProductShippingPrice } = useState(null);
+  const dispatch = useDispatch();
+  const router = useRouter();
+
   const [allPrice, setAllPrice] = useState({
     total: 0,
     discount: 0,
     cargo_price: 0,
     cargo_price_discount: 0,
   });
-  const dispatch = useDispatch();
-  const shipping_price = () => {
-    if (productShippingPrice) {
-      return productShippingPrice + 30;
-    } else {
-      return cart.shipping_charges;
-    }
-  };
+
+  const [productShippingPrice, setProductShippingPrice] = useState(null);
+
+  const shipping_price = () =>
+    productShippingPrice ? productShippingPrice + 30 : cart.shipping_charges;
+
   const getCartProducts = (data = [], products = []) => {
     let cartTotalPrice = 0;
     let cartTotalDiscountPrice = 0;
     const errorArray = [];
 
-    products.map((x) => {
-      const array = data.find((y) => y._id == x.product_id);
+    products.forEach((x) => {
+      const array = data.find((y) => y._id === x.product_id);
 
       if (array) {
         const resData = array;
@@ -47,32 +44,27 @@ const Default = () => {
             x.selectedVariants
           );
 
-          if (priceMath[0].visible === false) {
-            errorArray.push(true);
-          } else if (Number(priceMath[0].qty) < Number(x.qty)) {
+          if (!priceMath[0].visible || Number(priceMath[0].qty) < Number(x.qty)) {
             errorArray.push(true);
           } else {
             errorArray.push(false);
           }
 
-          cartTotalPrice = cartTotalPrice + x.qty * priceMath[0].price;
-          cartTotalDiscountPrice =
-            cartTotalDiscountPrice + x.qty * priceMath[0].before_price;
+          cartTotalPrice += x.qty * priceMath[0].price;
+          cartTotalDiscountPrice += x.qty * priceMath[0].before_price;
         } else {
-          if (resData.isActive === false) {
-            errorArray.push(true);
-          } else if (Number(resData.qty) < Number(x.qty)) {
+          if (!resData.isActive || Number(resData.qty) < Number(x.qty)) {
             errorArray.push(true);
           } else {
             errorArray.push(false);
           }
 
-          cartTotalPrice = cartTotalPrice + x.qty * resData.price;
-          cartTotalDiscountPrice =
-            cartTotalDiscountPrice + x.qty * resData.before_price;
+          cartTotalPrice += x.qty * resData.price;
+          cartTotalDiscountPrice += x.qty * resData.before_price;
         }
       }
     });
+
     setAllPrice({
       total: cartTotalPrice,
       discount: cartTotalDiscountPrice,
@@ -82,38 +74,29 @@ const Default = () => {
 
   const getProducts = async () => {
     if (cart.products?.length > 0) {
-      const arrayId = [];
-      cart.products?.map((x) => {
-        arrayId.push(x.product_id);
-      });
+      const arrayId = cart.products.map((x) => x.product_id);
       await axios
         .post(`${API_URL}/cart/allproducts`, { _id: arrayId })
-        .then((res) => {
-          getCartProducts(res.data, cart.products);
-        });
+        .then((res) => getCartProducts(res.data, cart.products));
     }
   };
 
   const onSubmit = async () => {
     TagManager.dataLayer({ dataLayer: null });
     TagManager.dataLayer({ dataLayer: dataLayerContent });
-    const errorArray = [];
-    const arrayId = [];
 
-    cart.products?.map((x) => {
-      arrayId.push(x.product_id);
-    });
+    const errorArray = [];
+    const arrayId = cart.products?.map((x) => x.product_id);
 
     await axios
       .post(`${API_URL}/cart/allproducts`, { _id: arrayId })
       .then((res) => {
         const data = res.data;
-        const products = cart.products;
         let cartTotalPrice = 0;
         let cartTotalDiscountPrice = 0;
 
-        products.map((x) => {
-          const array = data.find((y) => y._id == x.product_id);
+        cart.products.forEach((x) => {
+          const array = data.find((y) => y._id === x.product_id);
 
           if (array) {
             const resData = array;
@@ -123,46 +106,37 @@ const Default = () => {
                 x.selectedVariants
               );
 
-              if (priceMath[0].visible === false) {
-                errorArray.push(true);
-              } else if (Number(priceMath[0].qty) < Number(x.qty)) {
+              if (!priceMath[0].visible || Number(priceMath[0].qty) < Number(x.qty)) {
                 errorArray.push(true);
               } else {
                 errorArray.push(false);
               }
 
-              cartTotalPrice = cartTotalPrice + x.qty * priceMath[0].price;
-              cartTotalDiscountPrice =
-                cartTotalDiscountPrice + x.qty * priceMath[0].before_price;
+              cartTotalPrice += x.qty * priceMath[0].price;
+              cartTotalDiscountPrice += x.qty * priceMath[0].before_price;
             } else {
-              if (resData.isActive === false) {
-                errorArray.push(true);
-              } else if (Number(resData.qty) < Number(x.qty)) {
+              if (!resData.isActive || Number(resData.qty) < Number(x.qty)) {
                 errorArray.push(true);
               } else {
                 errorArray.push(false);
               }
 
-              cartTotalPrice = cartTotalPrice + x.qty * resData.price;
-              cartTotalDiscountPrice =
-                cartTotalDiscountPrice + x.qty * resData.before_price;
+              cartTotalPrice += x.qty * resData.price;
+              cartTotalDiscountPrice += x.qty * resData.before_price;
             }
           }
         });
       });
 
-    let control = false;
-    control = errorArray.find((x) => x == true);
-    if (control === undefined) {
+    const hasError = errorArray.some((x) => x === true);
+    if (!hasError) {
       const post = {
         created_user: {
           name: user.name,
           id: user.id,
         },
         customer_id: user.id,
-
         products: cart.products,
-
         total_price: allPrice.total,
         total_discount: allPrice.discount,
         cargo_price: cart.shipping_charges,
@@ -173,18 +147,15 @@ const Default = () => {
         axios
           .post(`${API_URL}/cart/${cart._id}`, post)
           .then(async () => {
-            // message.success({ content: "Next Stage :)", duration: 3 });
             await dispatch(getCart_r(user.id));
           })
-          .catch((err) => {
+          .catch(() => {
             message.error({
               content: "Some Error, Please Try Again",
               duration: 3,
             });
-            console.log(err);
           });
       } else {
-        // message.success({ content: "Next Stage :)", duration: 3 });
         dispatch(cartFetch(post));
         getProducts();
       }
@@ -200,24 +171,21 @@ const Default = () => {
   useEffect(() => {
     getProducts();
   }, [cart]);
+
   let userInfo = {
-    user_name: user.name, // Assume user.name is always available
-    user_phone: user.prefix + user.phone, // Assume user.phone is always available
+    user_name: user.name,
+    user_phone: user.prefix + user.phone,
   };
-  if (user.last_name) {
-    userInfo.user_last_name = user.last_name;
-  }
-  if (user.email) {
-    userInfo.user_email = user.email;
-  }
+  if (user.last_name) userInfo.user_last_name = user.last_name;
+  if (user.email) userInfo.user_email = user.email;
+
   const dataLayerContent = {
     event: "begin_checkout",
     user_info: userInfo,
     ecommerce: {
       currency: "INR",
-      value: allPrice.total, // Calculate and add the total value
+      value: allPrice.total,
       items: cart.products?.map((product) => ({
-        // Simplified array mapping
         item_name: product.title,
         item_id: product.sku,
         price: product.price,
@@ -226,57 +194,46 @@ const Default = () => {
       })),
     },
   };
-  return (
-    <div className="h-full relative">
-      <div className="text-lg p-3 my-5 bg-gray-50 font-semibold">
-        Cart Summary
-      </div>
-      <div className="w-full px-4 mt-1">
-        <span>Items Price</span>
-        <span className="float-right font-semibold">
-          <Price data={allPrice.total} />
-        </span>
-      </div>
-      <div className="w-full px-4 mt-1">
-        <span>Shipping</span>
-        <span className="float-right font-semibold">
-          <Price data={shipping_price()} />
-        </span>
-      </div>
-      {/* {allPrice.discount + 0 > 0 ? (
-        <>
-          <div className="w-full px-4 mt-1">
-            <span>Total Discount:</span>
-            <span className="float-right  line-through font-semibold">
-              <Price data={allPrice.discount + 0} />
-            </span>
-          </div>
-          <Divider />
-        </>
-      ) : (
-        ""
-      )} */}
-      {/* <Coupon total_price={allPrice.total}/> */}
-      <div className="w-full px-4 text-lg mb-6">
-        <span>Total Price:</span>
-        <span className="float-right font-semibold text-primary">
-          <Price data={allPrice.total + Math.floor(shipping_price() || 0)} />
-        </span>
-        <p className="text-base text-gray-600 mt-2">
-          Apply Discount at Checkout
-        </p>
-      </div>
 
-      <div className="h-24">
-        <button
-          disabled={cart?.products.length > 0 ? false : true}
-          className="bg-secondary rounded w-full h-auto absolute bottom-0 cursor-pointer hover:text-white  transition-all text-lg text-white p-4"
-          onClick={onSubmit}
-        >
-          Procced to Checkout
-        </button>
-      </div>
-    </div>
+  return (
+    <Box sx={{ p: 2, backgroundColor: "background.paper", borderRadius: 2 }}>
+      <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold", width: "100%"}}>
+        Cart Summary
+      </Typography>
+      
+      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
+        <Typography>Items Price</Typography>
+        <Typography fontWeight="bold">
+          <Price data={allPrice.total} />
+        </Typography>
+      </Box>
+
+      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
+        <Typography>Shipping</Typography>
+        <Typography fontWeight="bold">
+          <Price data={shipping_price()} />
+        </Typography>
+      </Box>
+
+      <Divider sx={{ my: 2 }} />
+
+      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
+        <Typography>Total Price:</Typography>
+        <Typography fontWeight="bold" color="primary">
+          <Price data={allPrice.total + Math.floor(shipping_price() || 0)} />
+        </Typography>
+      </Box>
+
+      <Button
+        variant="contained"
+        className="bg-secondary"
+        fullWidth
+        disabled={cart?.products.length === 0}
+        onClick={onSubmit}
+      >
+        Proceed to Checkout
+      </Button>
+    </Box>
   );
 };
 

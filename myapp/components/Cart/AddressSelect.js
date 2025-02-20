@@ -1,8 +1,7 @@
-import { Modal } from "@mui/material";
 import { useState } from "react";
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@mui/material";
 import NewAddressForm from "./NewAddressForm";
 
-// Update your AddressSelect component
 const AddressSelect = ({
   Data,
   setNewAddress,
@@ -18,11 +17,13 @@ const AddressSelect = ({
   fields,
   setFields,
 }) => {
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const handleCancel = () => {
-    setIsModalVisible(false);
-  };
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editing, setEditing] = useState(false);
+
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
+  };
+
   const EditCurrentAddress = (e) => {
     setEditing(false);
     onSubmitAddress(e);
@@ -31,9 +32,9 @@ const AddressSelect = ({
   return (
     <>
       {!editing ? (
-        <div className="w-full ">
+        <div className="w-full">
           {activeRadioValue === radioValue && (
-            <div className="float-right font-xs p-2 cursor-pointer -mb-10 z-10 relative flex  flex-row gap-x-3">
+            <div className="float-right font-xs p-2 cursor-pointer -mb-10 z-10 relative flex flex-row gap-x-3">
               <span
                 className=""
                 onClick={() => {
@@ -47,17 +48,13 @@ const AddressSelect = ({
                       name,
                       value,
                     }))
-                    //  seTnewAddress({
-                    //                 id: JSON.stringify(Data),
-                    //                 open: !newAddress.open,
-                    //               });
                   );
                 }}
               >
                 Edit
               </span>
               <button
-                onClick={() => setIsModalVisible(true)} // Replace Data.id with the actual id property of your address
+                onClick={() => setIsDialogOpen(true)}
                 className="text-red-700"
               >
                 Delete
@@ -69,12 +66,9 @@ const AddressSelect = ({
             <span className="font-semibold w-full p-1">{Data.phone}</span>
           </div>
           <div className="w-full">
-            <div className=" w-full float-left px-2 md:px-3 pb-0  ">
-              {" "}
-              {Data.address},
-            </div>
-            <div className=" w-full p-2 md:p-3 pt-1 ">
-              {Data.district},{Data.state}&nbsp;
+            <div className="w-full float-left px-2 md:px-3 pb-0">{Data.address},</div>
+            <div className="w-full p-2 md:p-3 pt-1">
+              {Data.district}, {Data.state}&nbsp;
               <span className="font-semibold">{Data.pin_code}</span>
             </div>
           </div>
@@ -102,17 +96,28 @@ const AddressSelect = ({
           />
         </>
       )}
-      <Modal
-        title="Confirm Deletion"
-        open={isModalVisible}
-        onOk={() => {
-          setIsModalVisible(false);
-          onDeleteAddress(Data._id);
-        }} // Replace addressId with the actual ID of the address
-        onCancel={handleCancel}
-      >
-        <p>Are you sure you want to delete this address?</p>
-      </Modal>
+
+      {/* MUI Dialog for deletion confirmation */}
+      <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
+        <DialogTitle>Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <p>Are you sure you want to delete this address?</p>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">
+            Cancel
+          </Button>
+          <Button
+            onClick={() => {
+              setIsDialogOpen(false);
+              onDeleteAddress(Data._id);
+            }}
+            color="error"
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

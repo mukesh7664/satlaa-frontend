@@ -2,35 +2,34 @@ import axiosInstance from "@/util/axios";
 const axios = axiosInstance();
 import { useState, useEffect } from "react";
 import router from "next/router";
-import { Button, Divider, message } from "@mui/material";
+import { Button, Divider, Typography, Paper, Box, Stack } from "@mui/material";
 import Price from "../Price";
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import { MdLockOutline } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { API_URL } from "../../../config";
 import func from "../../../util/helpers/func";
-
 import { cartFetch, getCart as getCart_r } from "../../../redux/reducers/Cart";
-import Coupon from "./Coupon";
+
 const Default = () => {
-  const cart= useSelector((state) => state.cart);
+  const cart = useSelector((state) => state.cart);
   const { user } = useSelector(({ login }) => login);
   const { shipping_address } = useSelector((state) => state.cart);
-  const [allPrice, seTallPrice] = useState({
+  const [allPrice, setAllPrice] = useState({
     total: 0,
     discount: 0,
     cargo_price: 0,
     cargo_price_discount: 0,
   });
+
   const dispatch = useDispatch();
- 
+
   const getCartProducts = (data = [], products = []) => {
     let cartTotalPrice = 0;
     let cartTotalDiscountPrice = 0;
     const errorArray = [];
 
-    products.map((x) => {
-      const array = data.find((y) => y._id == x.product_id);
-
+    products.forEach((x) => {
+      const array = data.find((y) => y._id === x.product_id);
       if (array) {
         const resData = array;
         if (x.selectedVariants !== undefined) {
@@ -39,33 +38,26 @@ const Default = () => {
             x.selectedVariants
           );
 
-          if (priceMath[0].visible === false) {
-            errorArray.push("Product Not Active");
-          } else if (Number(priceMath[0].qty) < Number(x.qty)) {
+          if (!priceMath[0].visible) errorArray.push("Product Not Active");
+          else if (Number(priceMath[0].qty) < Number(x.qty))
             errorArray.push("Out Of Stock");
-          } else {
-            errorArray.push(null);
-          }
+          else errorArray.push(null);
 
-          cartTotalPrice = cartTotalPrice + x.qty * priceMath[0].price;
-          cartTotalDiscountPrice =
-            cartTotalDiscountPrice + x.qty * priceMath[0].before_price;
+          cartTotalPrice += x.qty * priceMath[0].price;
+          cartTotalDiscountPrice += x.qty * priceMath[0].before_price;
         } else {
-          if (resData.isActive === false) {
-            errorArray.push("Product Not Active");
-          } else if (Number(resData.qty) < Number(x.qty)) {
+          if (!resData.isActive) errorArray.push("Product Not Active");
+          else if (Number(resData.qty) < Number(x.qty))
             errorArray.push("Out Of Stock");
-          } else {
-            errorArray.push(null);
-          }
+          else errorArray.push(null);
 
-          cartTotalPrice = cartTotalPrice + x.qty * resData.price;
-          cartTotalDiscountPrice =
-            cartTotalDiscountPrice + x.qty * resData.before_price;
+          cartTotalPrice += x.qty * resData.price;
+          cartTotalDiscountPrice += x.qty * resData.before_price;
         }
       }
     });
-    seTallPrice({
+
+    setAllPrice({
       total: cartTotalPrice,
       discount: cartTotalDiscountPrice,
       error: errorArray,
@@ -74,167 +66,148 @@ const Default = () => {
 
   const getProducts = async () => {
     if (cart.products?.length > 0) {
-      const arrayId = [];
-      cart.products?.map((x) => {
-        arrayId.push(x.product_id);
-      });
-      await axios
-        .post(`${API_URL}/cart/allproducts`, { _id: arrayId })
-        .then((res) => {
-          getCartProducts(res.data, cart.products);
+      const arrayId = cart.products.map((x) => x.product_id);
+      try {
+        const res = await axios.post(`${API_URL}/cart/allproducts`, {
+          _id: arrayId,
         });
+        getCartProducts(res.data, cart.products);
+      } catch (error) {
+        console.error("Error fetching cart products", error);
+      }
     }
   };
 
   const onSubmit = async () => {
     const errorArray = [];
-    const arrayId = [];
+    const arrayId = cart.products?.map((x) => x.product_id);
 
-    cart.products?.map((x) => {
-      arrayId.push(x.product_id);
-    });
-
-    await axios
-      .post(`${API_URL}/cart/allproducts`, { _id: arrayId })
-      .then((res) => {
-        const data = res.data;
-        const products = cart.products;
-        let cartTotalPrice = 0;
-        let cartTotalDiscountPrice = 0;
-
-        products.map((x) => {
-          const array = data.find((y) => y._id == x.product_id);
-
-          if (array) {
-            const resData = array;
-            if (x.selectedVariants !== undefined) {
-              const priceMath = func.filter_array_in_obj(
-                resData.variant_products,
-                x.selectedVariants
-              );
-
-              if (priceMath[0].visible === false) {
-                errorArray.push(true);
-              } else if (Number(priceMath[0].qty) < Number(x.qty)) {
-                errorArray.push(true);
-              } else {
-                errorArray.push(false);
-              }
-
-              cartTotalPrice = cartTotalPrice + x.qty * priceMath[0].price;
-              cartTotalDiscountPrice =
-                cartTotalDiscountPrice + x.qty * priceMath[0].before_price;
-            } else {
-              if (resData.isActive === false) {
-                errorArray.push(true);
-              } else if (Number(resData.qty) < Number(x.qty)) {
-                errorArray.push(true);
-              } else {
-                errorArray.push(false);
-              }
-
-              cartTotalPrice = cartTotalPrice + x.qty * resData.price;
-              cartTotalDiscountPrice =
-                cartTotalDiscountPrice + x.qty * resData.before_price;
-            }
-          }
-        });
+    try {
+      const res = await axios.post(`${API_URL}/cart/allproducts`, {
+        _id: arrayId,
       });
 
-    let control = false;
-    control = errorArray.find((x) => x == true);
-    if (control === undefined) {
-      router.push("/cart/payment");
-    } else {
-      dispatch(getCart_r(user.id));
-      message
-        .loading("Action in progress..", 0.5)
-        .then(() => message.error(" Your Cart", 2.5));
-      router.push("/cart");
+      const data = res.data;
+      const products = cart.products;
+      let cartTotalPrice = 0;
+      let cartTotalDiscountPrice = 0;
+
+      products.forEach((x) => {
+        const array = data.find((y) => y._id === x.product_id);
+        if (array) {
+          const resData = array;
+          if (x.selectedVariants !== undefined) {
+            const priceMath = func.filter_array_in_obj(
+              resData.variant_products,
+              x.selectedVariants
+            );
+
+            if (!priceMath[0].visible || Number(priceMath[0].qty) < Number(x.qty)) {
+              errorArray.push(true);
+            } else {
+              errorArray.push(false);
+            }
+
+            cartTotalPrice += x.qty * priceMath[0].price;
+            cartTotalDiscountPrice += x.qty * priceMath[0].before_price;
+          } else {
+            if (!resData.isActive || Number(resData.qty) < Number(x.qty)) {
+              errorArray.push(true);
+            } else {
+              errorArray.push(false);
+            }
+
+            cartTotalPrice += x.qty * resData.price;
+            cartTotalDiscountPrice += x.qty * resData.before_price;
+          }
+        }
+      });
+
+      if (!errorArray.includes(true)) {
+        router.push("/cart/payment");
+      } else {
+        dispatch(getCart_r(user.id));
+        router.push("/cart");
+      }
+    } catch (error) {
+      console.error("Error processing checkout", error);
     }
   };
+
   useEffect(() => {
     getProducts();
   }, [cart]);
 
   return (
-    <div className="h-full relative">
-      <div className="text-lg p-3 -mt-2 bg-gray-50 font-semibold">
+    <Paper elevation={3} sx={{ p: 3 }}>
+      <Typography variant="h6" gutterBottom sx={{ bgcolor: "grey.100", p: 2 }}>
         Shipping Address Summary
-      </div>
+      </Typography>
 
-      <div className="w-full p-4">
+      <Box sx={{ p: 2 }}>
         {shipping_address && shipping_address.address ? (
           <>
-            <b>{shipping_address.name} </b>
-            <br />
-            <div className="flex w-full justify-between pt-1 ">
-              {shipping_address.address}
-              <br />
-              {shipping_address.district},{shipping_address.state},
-              {shipping_address.pin_code}
-            </div>
+            <Typography variant="body1" fontWeight="bold">
+              {shipping_address.name}
+            </Typography>
+            <Typography variant="body2">
+              {shipping_address.address}, {shipping_address.district},{" "}
+              {shipping_address.state}, {shipping_address.pin_code}
+            </Typography>
           </>
         ) : (
-          <div className="text-red-500 text-xl text-center font-semibold p-4">
+          <Typography variant="h6" color="error" textAlign="center">
             Please Select Address
-          </div>
+          </Typography>
         )}
-      </div>
+      </Box>
 
-      <div className="text-lg p-3 my-5 bg-gray-50 font-semibold">
+      <Typography variant="h6" gutterBottom sx={{ bgcolor: "grey.100", p: 2, mt: 3 }}>
         Cart Summary
-      </div>
-      <div className="w-full px-4 mt-1">
-        <span>Items Price</span>
-        <span className="float-right font-semibold">
-          <Price data={allPrice.total} />
-        </span>
-      </div>
-      <div className="w-full px-4 mt-1">
-        <span>Shipping</span>
-        <span className="float-right font-semibold">
-          <Price data={cart.cargo_price} />
-        </span>
-      </div>
-      {/* {allPrice.discount ? (
-        <>
-          <div className="w-full px-4 mt-1">
-            <span>Total Discount:</span>
-            <span className="float-right  line-through font-semibold">
-              <Price data={allPrice.discount} />
-            </span>
-          </div>
-          <Divider />
-        </>
-      ) : (
-        ""
-      )} */}
-      {/* <Coupon total_price={allPrice.total}/> */}
-      <div className="w-full px-4 text-lg mb-6">
-        <span>Total Price:</span>
-        <span className="float-right font-semibold text-primary">
-          <Price data={allPrice.total + (cart.cargo_price || 0)} />
-        </span>{" "}
-        <p className="text-base text-gray-600 mt-2">
+      </Typography>
+
+      <Stack spacing={1} sx={{ p: 2 }}>
+        <Box display="flex" justifyContent="space-between">
+          <Typography>Items Price</Typography>
+          <Typography fontWeight="bold">
+            <Price data={allPrice.total} />
+          </Typography>
+        </Box>
+
+        <Box display="flex" justifyContent="space-between">
+          <Typography>Shipping</Typography>
+          <Typography fontWeight="bold">
+            <Price data={cart.cargo_price} />
+          </Typography>
+        </Box>
+
+        <Divider />
+
+        <Box display="flex" justifyContent="space-between">
+          <Typography variant="h6">Total Price:</Typography>
+          <Typography fontWeight="bold" color="primary">
+            <Price data={allPrice.total + (cart.cargo_price || 0)} />
+          </Typography>
+        </Box>
+        <Typography variant="body2" color="textSecondary">
           Apply Discount at Checkout
-        </p>
-      </div>
-      <div className="text-center flex justify-center h-20">
-        <button
-          disabled={shipping_address && shipping_address.address ? false : true}
-          className={`${
-            shipping_address && shipping_address.address
-              ? "bg-secondary"
-              : "bg-gray-500"
-          } bg-secondary self-center rounded mx-auto flex gap-x-3 h-auto absolute bottom-0 cursor-pointer hover:text-white  transition-all text-xl text-white p-4`}
+        </Typography>
+      </Stack>
+
+      <Box textAlign="center" mt={3}>
+        <Button
+          variant="contained"
+          color="secondary"
+          size="large"
+          startIcon={<MdLockOutline />}
+          disabled={!shipping_address?.address}
+          sx={{ py: 1.5, px: 4 }}
           onClick={onSubmit}
         >
           Checkout Securely
-          <LockOutlinedIcon className="float-right text-3xl" />
-        </button>
-      </div>
-    </div>
+        </Button>
+      </Box>
+    </Paper>
   );
 };
 

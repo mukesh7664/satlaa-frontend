@@ -1,29 +1,30 @@
 import axiosInstance from "@/util/axios";
-const axios = axiosInstance();
 import { useState, useEffect } from "react";
-import { Button, Divider, Input, Alert } from "@mui/material";
+import { Button, Divider, Typography, Box } from "@mui/material";
 import Price from "../Price";
 import { useDispatch, useSelector } from "react-redux";
 import { API_URL } from "../../../config";
 import func from "../../../util/helpers/func";
-
 import { cartFetch } from "../../../redux/reducers/Cart";
 import Coupon from "./Coupon";
-const Default = () => {
-  const cart= useSelector((state) => state.cart);
 
-  const [allPrice, seTallPrice] = useState({
+const Default = () => {
+  const axios = axiosInstance();
+  const cart = useSelector((state) => state.cart);
+
+  const [allPrice, setAllPrice] = useState({
     total: 0,
     discount: 0,
     appliedDiscount: 0,
   });
+
   const getCartProducts = (data = [], products = []) => {
     let cartTotalPrice = 0;
     let cartTotalDiscountPrice = 0;
     const errorArray = [];
 
-    products.map((x) => {
-      const array = data.find((y) => y._id == x.product_id);
+    products.forEach((x) => {
+      const array = data.find((y) => y._id === x.product_id);
 
       if (array) {
         const resData = array;
@@ -33,7 +34,7 @@ const Default = () => {
             x.selectedVariants
           );
 
-          if (priceMath[0].visible === false) {
+          if (!priceMath[0].visible) {
             errorArray.push("Product Not Active");
           } else if (Number(priceMath[0].qty) < Number(x.qty)) {
             errorArray.push("Out Of Stock");
@@ -41,11 +42,10 @@ const Default = () => {
             errorArray.push(null);
           }
 
-          cartTotalPrice = cartTotalPrice + x.qty * priceMath[0].price;
-          cartTotalDiscountPrice =
-            cartTotalDiscountPrice + x.qty * priceMath[0].before_price;
+          cartTotalPrice += x.qty * priceMath[0].price;
+          cartTotalDiscountPrice += x.qty * priceMath[0].before_price;
         } else {
-          if (resData.isActive === false) {
+          if (!resData.isActive) {
             errorArray.push("Product Not Active");
           } else if (Number(resData.qty) < Number(x.qty)) {
             errorArray.push("Out Of Stock");
@@ -53,13 +53,13 @@ const Default = () => {
             errorArray.push(null);
           }
 
-          cartTotalPrice = cartTotalPrice + x.qty * resData.price;
-          cartTotalDiscountPrice =
-            cartTotalDiscountPrice + x.qty * resData.before_price;
+          cartTotalPrice += x.qty * resData.price;
+          cartTotalDiscountPrice += x.qty * resData.before_price;
         }
       }
     });
-    seTallPrice({
+
+    setAllPrice({
       total: cartTotalPrice,
       discount: cartTotalDiscountPrice,
       error: errorArray,
@@ -68,19 +68,14 @@ const Default = () => {
 
   const getProducts = async () => {
     if (cart.products?.length > 0) {
-      const arrayId = [];
+      const arrayId = cart.products.map((x) => x.product_id);
 
-      cart.products?.map((x) => {
-        arrayId.push(x.product_id);
-      });
-
-      await axios
-        .post(`${API_URL}/cart/allproducts`, { _id: arrayId })
-        .then((res) => {
-          getCartProducts(res.data, cart.products);
-        });
-
-      // seTshippingAddress(cart.shipping_address);
+      try {
+        const res = await axios.post(`${API_URL}/cart/allproducts`, { _id: arrayId });
+        getCartProducts(res.data, cart.products);
+      } catch (error) {
+        console.error("Error fetching cart products:", error);
+      }
     }
   };
 
@@ -89,36 +84,39 @@ const Default = () => {
   }, [cart]);
 
   const finalPrice = () => {
-    let discount = Math.ceil(Math.ceil(allPrice.total * cart.coupon_discount) / 100) || 0;
-    
-    return Math.floor(allPrice.total + (cart.cargo_price || 0 )- discount);
+    const discount = Math.ceil((allPrice.total * cart.coupon_discount) / 100) || 0;
+    return Math.floor(allPrice.total + (cart.cargo_price || 0) - discount);
   };
-  return (
-    <div className="h-full relative">
-      <div className="text-lg p-3 my-5 bg-gray-50 font-semibold">
-        Cart Summary
-      </div>
-      <div className="w-full px-4 mt-1">
-        <span>Items Price</span>
-        <span className="float-right font-semibold">
-          <Price data={allPrice.total} />
-        </span>
-      </div>
-      <div className="w-full px-4 mt-1">
-        <span>Shipping</span>
-        <span className="float-right font-semibold">
-          <Price data={cart.cargo_price || 0} />
-        </span>
-      </div>
 
-      <Coupon total_price={allPrice.total}/>
-      <div className="w-full px-4 text-lg mb-6 mt-4">
-        <span>Total Price:</span>
-        <span className="float-right font-semibold text-primary">
+  return (
+    <Box className="h-full relative">
+      <Typography variant="h6" className="p-3 my-5 bg-gray-50 font-semibold">
+        Cart Summary
+      </Typography>
+      <Box className="w-full px-4 mt-1">
+        <Typography display="inline">Items Price</Typography>
+        <Typography display="inline" className="float-right font-semibold">
+          <Price data={allPrice.total} />
+        </Typography>
+      </Box>
+      <Box className="w-full px-4 mt-1">
+        <Typography display="inline">Shipping</Typography>
+        <Typography display="inline" className="float-right font-semibold">
+          <Price data={cart.cargo_price || 0} />
+        </Typography>
+      </Box>
+
+      <Coupon total_price={allPrice.total} />
+
+      <Box className="w-full px-4 text-lg mb-6 mt-4">
+        <Typography variant="h6" display="inline">
+          Total Price:
+        </Typography>
+        <Typography display="inline" className="float-right font-semibold text-primary">
           <Price data={finalPrice()} />
-        </span>
-      </div>
-    </div>
+        </Typography>
+      </Box>
+    </Box>
   );
 };
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
+import { IoSearchOutline } from "react-icons/io5";
 import { TextField, Button, InputAdornment, Stack } from "@mui/material";
 import filterRouteLinkGenerate from "./filterRouterLink";
 import { filterProducts as filterProducts_r } from "../../../redux/reducers/FilterProducts";
@@ -47,7 +47,7 @@ const Page = () => {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <SearchOutlinedIcon />
+                  <IoSearchOutline />
                 </InputAdornment>
               ),
             }}
