@@ -3,8 +3,20 @@ import React, { useState, useEffect } from "react";
 import { BiSolidStar } from "react-icons/bi";
 import { API_URL } from "../../../config";
 import { GoCheckCircleFill } from "react-icons/go";
-import { IoClose } from "react-icons/io5";
-import { Modal, Box, Grid, Card, CardContent, Typography, Button } from "@mui/material";
+import { 
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Card,
+  CardMedia,
+  CardContent,
+  Grid,
+  Typography,
+  Button,
+  Container,
+  Box
+} from "@mui/material";
 
 const Reviews = ({ reviews }) => {
   const [displayedReviews, setDisplayedReviews] = useState([]);
@@ -36,34 +48,33 @@ const Reviews = ({ reviews }) => {
   };
 
   return (
-    <div className="flex flex-col mt-4">
-      <Typography variant="h4" fontWeight="bold" className="mb-4">
+    <Container sx={{ mt: 4 }}>
+      <Typography variant="h4" fontWeight="bold" gutterBottom>
         Customer Reviews
       </Typography>
 
       <Grid container spacing={2}>
         {displayedReviews.map((review, index) => (
           <Grid item xs={12} sm={6} md={4} key={index}>
-            <Card className="cursor-pointer" onClick={() => openReviewModal(review)}>
-              {review.media && review.media.length > 0 && (
-                <Image
-                  src={review.media[0].url ? `${API_URL + review.media[0].url}` : "/images/nofoto.jpg"}
-                  width={250}
-                  height={250}
-                  className="w-full object-cover"
+            <Card sx={{ cursor: "pointer" }} onClick={() => openReviewModal(review)}>
+              {review.media?.length > 0 && (
+                <CardMedia
+                  component="img"
+                  height="250"
+                  image={review.media[0].url ? `${API_URL + review.media[0].url}` : "/images/nofoto.jpg"}
                   alt="Review Image"
                 />
               )}
               <CardContent>
-                <Typography variant="h6" className="flex items-center gap-2">
+                <Typography variant="h6" display="flex" alignItems="center" gap={1}>
                   {review.name.length > 11 ? `${review.name.slice(0, 11)}...` : review.name}
                   {review.verified && <GoCheckCircleFill />}
                 </Typography>
-                <div className="flex mb-2">
+                <Box display="flex" mb={1}>
                   {[...Array(5)].map((_, i) => (
-                    <BiSolidStar key={i} className="w-5 h-5" fill={i < review.rating ? "#f59e0b" : "#d1d5db"} />
+                    <BiSolidStar key={i} style={{ width: 20, height: 20, color: i < review.rating ? "#f59e0b" : "#d1d5db" }} />
                   ))}
-                </div>
+                </Box>
                 <Typography variant="body2" color="textSecondary">
                   {review.reviewText.length > 100 ? `${review.reviewText.slice(0, 100)}...` : review.reviewText}
                 </Typography>
@@ -74,52 +85,52 @@ const Reviews = ({ reviews }) => {
       </Grid>
 
       {showMore && (
-        <Button variant="outlined" className="mt-4" onClick={loadMoreReviews}>
+        <Button variant="outlined" sx={{ mt: 3 }} onClick={loadMoreReviews}>
           Load More Reviews
         </Button>
       )}
 
       {/* Review Modal */}
-      <Modal open={isModalOpen} onClose={closeReviewModal}>
-        <Box className="p-6 bg-white rounded-lg max-w-lg mx-auto mt-20 shadow-lg">
-          {selectedReview && (
-            <>
-              <Typography variant="h6" className="flex items-center gap-2">
-                {selectedReview.name} {selectedReview.verified && <GoCheckCircleFill />}
-                {selectedReview.verified && <span className="text-sm">Verified Purchase</span>}
-              </Typography>
-              <div className="flex mb-2">
+      <Dialog open={isModalOpen} onClose={closeReviewModal} maxWidth="sm" fullWidth>
+        {selectedReview && (
+          <>
+            <DialogTitle display="flex" alignItems="center" gap={1}>
+              {selectedReview.name} {selectedReview.verified && <GoCheckCircleFill />}
+              {selectedReview.verified && <Typography variant="body2">Verified Purchase</Typography>}
+            </DialogTitle>
+            <DialogContent>
+              <Box display="flex" mb={2}>
                 {[...Array(5)].map((_, i) => (
-                  <BiSolidStar key={i} className="w-5 h-5" fill={i < selectedReview.rating ? "#f59e0b" : "#d1d5db"} />
+                  <BiSolidStar key={i} style={{ width: 20, height: 20, color: i < selectedReview.rating ? "#f59e0b" : "#d1d5db" }} />
                 ))}
-              </div>
-              {selectedReview.media && selectedReview.media.length > 0 && (
-                <div className="mb-4">
+              </Box>
+              {selectedReview.media?.length > 0 && (
+                <Box mb={2}>
                   {selectedReview.media.map((image) => (
-                    <Image
+                    <CardMedia
                       key={image.url}
-                      src={image.url ? `${API_URL + image.url}` : "/images/nofoto.jpg"}
-                      width={400}
-                      height={400}
-                      className="w-full object-cover mb-2"
+                      component="img"
+                      height="400"
+                      image={image.url ? `${API_URL + image.url}` : "/images/nofoto.jpg"}
                       alt="Review Image"
+                      sx={{ mb: 2, borderRadius: 1 }}
                     />
                   ))}
-                </div>
+                </Box>
               )}
-              <Typography variant="body1" color="textSecondary" className="mb-4">
+              <Typography variant="body1" color="textSecondary">
                 {selectedReview.reviewText}
               </Typography>
-              <div className="flex justify-end mt-4">
-                <Button variant="contained" color="primary" onClick={closeReviewModal}>
-                  Close
-                </Button>
-              </div>
-            </>
-          )}
-        </Box>
-      </Modal>
-    </div>
+            </DialogContent>
+            <DialogActions>
+              <Button variant="contained" color="primary" onClick={closeReviewModal}>
+                Close
+              </Button>
+            </DialogActions>
+          </>
+        )}
+      </Dialog>
+    </Container>
   );
 };
 
