@@ -215,7 +215,7 @@ const ProductDetail = ({ data = {}, reviews, banners }) => {
       <MoreInfo />
       <Share path={router.asPath} state={data} />
       {reviews?.length > 0 && <Reviews reviews={reviews} />}
-      <Divider />
+      <Divider /> 
     </div>
   );
 };
