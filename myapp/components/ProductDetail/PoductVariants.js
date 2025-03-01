@@ -84,16 +84,13 @@ const ProductDetail = ({ data = {}, reviews, banners }) => {
       <h2 className="font-semibold font-Roboto mt-5 md:mt-0 text-xl md:text-2xl">
         {data.brand === "satlaa" ? "925 Silver" : "Silver"} {data.title.replace(/\b(925|silver)\b\s*/gi, "")}
       </h2>
-
       <div className="flex items-center p-1">
         <StarRating className="text-lg" rating={data.reviewData.average_rating} />
         <p className="ml-1">
           {data.reviewData.average_rating} | {data.reviewData.total_rating} (Inc. Amazon/Flipkart)
         </p>
       </div>
-
       <h3 className="text-gray-500 font-bold mt-1 text-[24px] font-Samarkan md:ml-1">MADE IN PURE SILVER</h3>
-
       <div className="my-4 w-full">
         {data.type ? (
           disabledVariant ? (
@@ -123,7 +120,6 @@ const ProductDetail = ({ data = {}, reviews, banners }) => {
           </h1>
         )}
       </div>
-
       <div className=" flex-row content-around px-1 my-2 pt-2 flex ">
         {features.map((feature, i) => {
           return (
@@ -145,9 +141,7 @@ const ProductDetail = ({ data = {}, reviews, banners }) => {
           );
         })}
       </div>
-
       <Divider className="mt-4  mb-4 "/>
-
       <form>
         {data.variants?.map((variant) => (
           <FormControl key={variant.name} component="fieldset" className="mb-4">
@@ -190,7 +184,6 @@ const ProductDetail = ({ data = {}, reviews, banners }) => {
           </FormControl>
         ))}
       </form>
-
       {data.qty > 0 ? (
         <AddProductButton
           disabledVariant={disabledVariant}
@@ -205,7 +198,6 @@ const ProductDetail = ({ data = {}, reviews, banners }) => {
       ) : (
         <p className="text-red-600 text-xl font-semibold">Currently Out Of Stock</p>
       )}
-
       <DeliveryTime />
       <Divider className="mb-4 mt-4"/>
       {banners?.top && <Image src={`${IMG_URL}${banners.top.banner_mobile}`} width={1680} height={500} alt="Banner" />}

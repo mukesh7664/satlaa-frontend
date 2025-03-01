@@ -44,7 +44,6 @@ const Default = ({ onSubmitSignup }) => {
                />
             )}
          />
-
          {/* Password */}
          <Controller
             name="password"
@@ -65,7 +64,6 @@ const Default = ({ onSubmitSignup }) => {
                />
             )}
          />
-
          {/* Confirm Password */}
          <Controller
             name="confirm"
@@ -87,7 +85,6 @@ const Default = ({ onSubmitSignup }) => {
                />
             )}
          />
-
          {/* Name */}
          <Controller
             name="name"
@@ -106,7 +103,6 @@ const Default = ({ onSubmitSignup }) => {
                />
             )}
          />
-
          {/* Phone with Prefix */}
          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "1rem" }}>
             {/* Country Code Select */}
@@ -144,9 +140,7 @@ const Default = ({ onSubmitSignup }) => {
                )}
             />
          </div>
-
          <Divider sx={{ my: 2 }} />
-
          {/* Submit Button */}
          <Button type="submit" variant="contained" fullWidth>
             Save

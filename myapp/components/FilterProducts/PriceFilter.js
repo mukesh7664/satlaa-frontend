@@ -60,7 +60,7 @@ const Page = ({ isMobile }) => {
     <>
       {isMobile ? (
         // Mobile Layout
-        <Box className="p-2 bg-white border rounded-md">
+        (<Box className="p-2 bg-white border rounded-md">
           <form onSubmit={handleFilter}>
             <Stack spacing={2}>
               <TextField
@@ -87,10 +87,10 @@ const Page = ({ isMobile }) => {
             </Stack>
           </form>
           <Divider className="mt-2" />
-        </Box>
+        </Box>)
       ) : (
         //  Desktop Layout with Popover
-        <>
+        (<>
           <Button
             className="flex justify-center items-center text-black h-[31px] px-2 text-[12px]"
             sx={{border: "1px solid black", boxShadow: "none", ":hover" : {borderColor: "#4690ff", color: '#4690ff'}}}
@@ -99,7 +99,6 @@ const Page = ({ isMobile }) => {
           >
             Price Filter
           </Button>
-
           <Popover
             open={Boolean(anchorEl)}
             anchorEl={anchorEl}
@@ -134,7 +133,7 @@ const Page = ({ isMobile }) => {
               </form>
             </Box>
           </Popover>
-        </>
+        </>)
       )}
     </>
   );

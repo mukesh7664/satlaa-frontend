@@ -16,12 +16,9 @@ export const getServerSideProps = async ({ res }) => {
       "'": "&#039;",
     };
 
-    return (
-      WEBSITE_URL +
-      text.replace(/[&<>"']/g, function (m) {
-        return map[m];
-      })
-    );
+    return (WEBSITE_URL + text.replace(/[&<>"']/g, function (m) {
+      return map[m];
+    }));
   }
 
 
