@@ -1,9 +1,11 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Divider, RadioGroup, FormControl, FormLabel, FormControlLabel, Radio } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import dynamic from "next/dynamic";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -120,63 +122,44 @@ const ProductDetail = ({ data = {}, reviews, banners }) => {
           </h1>
         )}
       </div>
-      <div className=" flex-row content-around px-1 my-2 pt-2 flex ">
-        {features.map((feature, i) => {
-          return (
-            <div
-              className="flex flex-1 flex-col justify-center content-center px-2"
-              key={i}
-            >
-              <Image
-                className=""
-                src={`/images/icons/${feature.icon}.png`}
-                width="60"
-                height="60"
-                alt={feature.title}
-              />
-              <p className="mt-2 text-gray-500 font-Montserrat text-sm">
-                {feature.title}
-              </p>
-            </div>
-          );
-        })}
+      <div className="flex-row content-around px-1 my-2 pt-2 flex">
+        {features.map((feature, i) => (
+          <div className="flex flex-1 flex-col justify-center content-center px-2" key={i}>
+            <Image src={`/images/icons/${feature.icon}.png`} width="60" height="60" alt={feature.title} />
+            <p className="mt-2 text-gray-500 font-Montserrat text-sm">{feature.title}</p>
+          </div>
+        ))}
       </div>
-      <Divider className="mt-4  mb-4 "/>
+      <Divider className="mt-4 mb-4" />
       <form>
         {data.variants?.map((variant) => (
           <FormControl key={variant.name} component="fieldset" className="mb-4">
-            <FormLabel component="legend" className="font-semibold">
-              {variant.name}
-            </FormLabel>
+            <FormLabel component="legend" className="font-semibold">{variant.name}</FormLabel>
             <Controller
               name={variant.name}
               control={control}
               render={({ field }) => (
-                <RadioGroup
-                  {...field}
-                  onChange={(e) => handleVariantChange(variant.name, e.target.value)}
-                  className="pl-2 mt-2 mb-1"
-                >
+                <RadioGroup {...field} onChange={(e) => handleVariantChange(variant.name, e.target.value)} className="pl-2 mt-2 mb-1">
                   {variant.value.map((option, index) => (
                     <FormControlLabel
-                    key={index}
-                    value={option}
-                    control={<Radio />}
-                    label={
-                      <div className="flex items-center space-x-2">
-                        {variant.images?.[index] && (
-                          <Image
-                            src={`${IMG_URL}${variant.images[index]}`}
-                            alt={option}
-                            width={40}
-                            height={40}
-                            className="border rounded-md"
-                          />
-                        )}
-                        <span>{option}</span>
-                      </div>
-                    }
-                  />
+                      key={index}
+                      value={option}
+                      control={<Radio />}
+                      label={
+                        <div className="flex items-center space-x-2">
+                          {variant.images?.[index] && (
+                            <Image
+                              src={`${IMG_URL}${variant.images[index]}`}
+                              alt={option}
+                              width={40}
+                              height={40}
+                              className="border rounded-md"
+                            />
+                          )}
+                          <span>{option}</span>
+                        </div>
+                      }
+                    />
                   ))}
                 </RadioGroup>
               )}
@@ -199,8 +182,7 @@ const ProductDetail = ({ data = {}, reviews, banners }) => {
         <p className="text-red-600 text-xl font-semibold">Currently Out Of Stock</p>
       )}
       <DeliveryTime />
-      <Divider className="mb-4 mt-4"/>
-      {banners?.top && <Image src={`${IMG_URL}${banners.top.banner_mobile}`} width={1680} height={500} alt="Banner" />}
+      <Divider className="mb-4 mt-4" />
       <Offers />
       {contentPoints && <HTMLParser html={contentPoints} />}
       <ProductDrawer contentDescription={contentDescription} state={data} />

@@ -1,45 +1,44 @@
+"use client"; // Ensure this runs only on the client
+
 import { useSelector } from "react-redux";
-// import { login_r, isAuthenticated_r, logout_r } from "../../../redux/actions";
-
-import {  Drawer } from "@mui/material";
-
-import { IMG_URL } from "../../../config";
+import { Drawer } from "@mui/material";
 import Image from "next/image";
 import LeftMenu from "./LeftMenu";
 import RightMenu from "./RightMenu";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { FaBars } from "react-icons/fa";
+import { useRouter } from "next/navigation"; // ✅ Correct import for Next.js 15
 
 const Default = () => {
   const { settings } = useSelector(({ settings }) => settings);
   const [visible, setVisible] = useState(false);
-  const router = useRouter();
+  const router = useRouter(); // ✅ Use it directly
 
   const showDrawer = () => {
     setVisible(!visible);
   };
+
   useEffect(() => {
+    if (typeof window === "undefined") return; // Ensure it's running in the browser
+
     const handleRouteChange = () => {
       setVisible(false);
     };
 
-    router.events.on("routeChangeStart", handleRouteChange);
-
+    window.addEventListener("popstate", handleRouteChange);
     return () => {
-      router.events.off("routeChangeStart", handleRouteChange);
+      window.removeEventListener("popstate", handleRouteChange);
     };
   }, []);
+
   return (
     <div className="w-full flex justify-between py-2 md:py-3 z-10 sticky top-0">
       <header className="bg-white w-full flex justify-between py-1">
         <div className="w-5/12 md:w-2/12 md:mr-0 flex flex-row justify-center">
           <Link href="/" className="flex align-middle">
             <Image
-             src={
-              "https://api.satlaa.com/images/uploads/custom/logo.png"
-            }
+              src={"https://api.satlaa.com/images/uploads/custom/logo.png"}
               width="130"
               height="44"
               className="w-full sm:w-10/12 sm:mt-0 object-contain"
@@ -71,7 +70,6 @@ const Default = () => {
           width={"80vw"}
         >
           <LeftMenu mode="inline" />
-          {/* <RightMenu mode={"vertical"} /> */}
         </Drawer>
       </header>
     </div>

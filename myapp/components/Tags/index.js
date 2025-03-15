@@ -1,3 +1,5 @@
+"use client"
+
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore, { Navigation, Pagination, History } from "swiper";
 import { useSelector } from "react-redux";

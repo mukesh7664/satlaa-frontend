@@ -1,33 +1,17 @@
 import { configureStore } from "@reduxjs/toolkit";
 import rootReducer from "./reducers/index";
-import { HYDRATE, createWrapper } from "next-redux-wrapper";
-import {
-  nextReduxCookieMiddleware,
-  wrapMakeStore,
-} from "next-redux-cookie-wrapper";
-const reducer = (state, action) => {
-  if (action.type === HYDRATE) {
-    const nextState = {
-      ...state,
-      ...action.payload,
-    };
+import { nextReduxCookieMiddleware } from "next-redux-cookie-wrapper";
 
-    return nextState;
-  } else {
-    return rootReducer(state, action);
-  }
-};
-
-const initStore = wrapMakeStore(() =>
-  configureStore({
-    reducer,
+// Create Redux store function
+export function makeStore(preloadedState = {}) {
+  return configureStore({
+    reducer: rootReducer, // Use the root reducer
+    preloadedState, // Set initial state
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({ thunk: true, serializableCheck: false }).prepend(
         nextReduxCookieMiddleware({
-          subtrees: ["cart"],
+          subtrees: ["cart"], // Store only "cart" in cookies
         })
       ),
-  })
-);
-
-export const wrapper = createWrapper(initStore);
+  });
+}

@@ -1,3 +1,5 @@
+"use client"
+
 import ProductCard from "../../components/ProductCard/";
 import { Swiper, SwiperSlide } from "swiper/react";
 const Default = ({ state = [], title = { title: "", description: "" } }) => {

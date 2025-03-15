@@ -1,3 +1,5 @@
+"use client";
+
 import { useDispatch } from "react-redux";
 import { Snackbar } from "@mui/material";
 import { Modal } from "@mui/material";
@@ -8,7 +10,7 @@ import { useState } from "react";
 import { addProductToCart, cartFetch } from "../../../redux/reducers/Cart";
 import axiosInstance from "@/util/axios";
 import { API_URL } from "../../../config";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation"; // Fixed import for App Router
 import Loader from "@/components/Utils/Loader";
 import TagManager from "react-gtm-module";
 import Image from "next/image";
@@ -18,14 +20,14 @@ const axios = axiosInstance();
 
 const Page = ({
   disabledVariant = true,
-  setLoadingButton, // Fixed function name
+  setLoadingButton, 
   loadingButton,
   cart,
   state,
   getCart,
 }) => {
   const dispatch = useDispatch();
-  const router = useRouter();
+  const router = useRouter(); // Now properly used in a client component
   const [isLoading, setIsLoading] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: "", type: "success" });
 
