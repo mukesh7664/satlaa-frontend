@@ -36,12 +36,12 @@ const Page = () => {
         {cart.products && cart.products.length > 0 ? (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 w-full max-w-7xl">
             {/* Cart List */}
-            <div className="lg:col-span-8 bg-white shadow-lg rounded-lg p-4">
+            <div className="lg:col-span-5 bg-white shadow-lg rounded-lg p-4">
               <CartList />
             </div>
 
             {/* Price Details */}
-            <div className="lg:col-span-4 bg-white shadow-lg rounded-lg p-4">
+            <div className="lg:col-span-3 bg-white shadow-lg rounded-lg p-4">
               <DetailPrice />
             </div>
           </div>
