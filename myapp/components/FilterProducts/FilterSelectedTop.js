@@ -1,15 +1,13 @@
+//components/FilterProducts/FilterSelectedTop.js 
+
 import { useSelector, useDispatch } from "react-redux";
 import Chip from "@mui/material/Chip";
 import { filterProducts as filterProducts_r } from "../../../redux/reducers/FilterProducts";
-
 import filterRouteLinkGenerate from "./filterRouterLink";
 import { productsApi } from "../../../redux/api/productsApi";
-import { FiX } from "react-icons/fi";
 
 const Page = ({ category }) => {
-  const { filterProducts } = useSelector(
-    ({ filterProducts }) => filterProducts
-  );
+  const { filterProducts } = useSelector(({ filterProducts }) => filterProducts);
   const { tags } = useSelector(({ tags }) => tags);
   const { colors } = useSelector(({ colors }) => colors);
   const { styles } = useSelector(({ styles }) => styles);
@@ -36,8 +34,9 @@ const Page = ({ category }) => {
     filterRouteLinkGenerate({ ...filterProducts, text: "", page: 1 });
   };
 
-  const renderChip = (label, onDelete) => (
+  const renderChip = (key, label, onDelete) => (
     <Chip
+      key={key}
       label={label}
       onDelete={onDelete}
       color="default"
@@ -59,10 +58,11 @@ const Page = ({ category }) => {
 
   return (
     <div className="flex flex-wrap gap-2">
-      {filterProducts.text && renderChip(`Text: ${filterProducts.text}`, handleTextClose)}
+      {filterProducts.text && renderChip("text-filter", `Text: ${filterProducts.text}`, handleTextClose)}
 
       {filterProducts.tags.map((val) =>
         renderChip(
+          `tag-${val}`,
           tags.find((find) => find.seo === val)?.title,
           () => handleClose("tags", val)
         )
@@ -70,6 +70,7 @@ const Page = ({ category }) => {
 
       {filterProducts.colors.map((val) =>
         renderChip(
+          `color-${val}`,
           colors.find((find) => find.seo === val)?.title,
           () => handleClose("colors", val)
         )
@@ -77,6 +78,7 @@ const Page = ({ category }) => {
 
       {filterProducts.styles.map((val) =>
         renderChip(
+          `style-${val}`,
           styles.find((find) => find.seo === val)?.title,
           () => handleClose("styles", val)
         )
@@ -84,20 +86,22 @@ const Page = ({ category }) => {
 
       {filterProducts.subcategory.map((val) =>
         renderChip(
+          `subcategory-${val}`,
           subcategory.find((find) => find.seo === val)?.title,
           () => handleClose("subcategory", val)
         )
       )}
 
       {filterProducts.minPrice > 0 &&
-        renderChip(`Min Price: ${filterProducts.minPrice}`, () => handlePriceClose("minPrice"))}
+        renderChip(`min-price-${filterProducts.minPrice}`, `Min Price: ${filterProducts.minPrice}`, () => handlePriceClose("minPrice"))}
 
       {filterProducts.maxPrice > 0 &&
-        renderChip(`Max Price: ${filterProducts.maxPrice}`, () => handlePriceClose("maxPrice"))}
+        renderChip(`max-price-${filterProducts.maxPrice}`, `Max Price: ${filterProducts.maxPrice}`, () => handlePriceClose("maxPrice"))}
 
       {!category &&
         filterProducts.categories.map((val) =>
           renderChip(
+            `category-${val}`,
             categories.find((find) => find.seo === val)?.title,
             () => handleClose("categories", val)
           )

@@ -1,3 +1,5 @@
+"use client"
+
 import { useSelector } from "react-redux";
 import { useState, useEffect } from "react";
 import axiosInstance from "@/util/axios";

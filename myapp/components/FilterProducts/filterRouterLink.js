@@ -1,43 +1,26 @@
-import router from "next/router";
+"use client";
 
-const filterRouteLinkGenerate = (filterProducts, search) => {
-  const currentPath = router.asPath.split("?")[0];
-  const urlTags =
-    filterProducts.tags.length > 0 ? `&tags=${filterProducts.tags}` : "";
-  const urlColors =
-    filterProducts.colors.length > 0 ? `&colors=${filterProducts.colors}` : "";
-  const urlStyle =
-    filterProducts.styles.length > 0 ? `&styles=${filterProducts.styles}` : "";
-  const urlSubCategory =
-    filterProducts.subcategory.length > 0
-      ? `&subCategory=${filterProducts.subcategory}`
-      : "";
+const filterRouteLinkGenerate = (filterProducts = {}) => {
+  if (typeof window === "undefined" || !filterProducts) return; // Ensure it runs only on the client
 
-  const urlMinPrice =
-    filterProducts.minPrice > 0 ? `&minprice=${filterProducts.minPrice}` : "";
-  const urlMaxPrice =
-    filterProducts.maxPrice > 0 ? `&maxprice=${filterProducts.maxPrice}` : "";
-  const urlText =
-    filterProducts.text != "" ? `&text=${filterProducts.text}` : "";
+  const currentPath = window.location.pathname;
+  const urlParams = new URLSearchParams(window.location.search);
 
-  let totalUrl =
-    urlText +
-    urlTags +
-    urlColors +
-    urlStyle +
-    urlSubCategory +
-    urlMinPrice +
-    urlMaxPrice;
+  // Update query parameters dynamically
+  if (filterProducts.text) urlParams.set("text", filterProducts.text);
+  if (filterProducts.tags?.length > 0) urlParams.set("tags", filterProducts.tags.join(","));
+  if (filterProducts.colors?.length > 0) urlParams.set("colors", filterProducts.colors.join(","));
+  if (filterProducts.styles?.length > 0) urlParams.set("styles", filterProducts.styles.join(","));
+  if (filterProducts.subcategory?.length > 0) urlParams.set("subCategory", filterProducts.subcategory.join(","));
+  if (filterProducts.minPrice) urlParams.set("minprice", filterProducts.minPrice);
+  if (filterProducts.maxPrice) urlParams.set("maxprice", filterProducts.maxPrice);
+  if (filterProducts.categories?.length > 0) urlParams.set("categories", filterProducts.categories.join(","));
 
-  const urlCategory =
-    filterProducts.categories.length > 0
-      ? `&categories=${filterProducts.categories}`
-      : "";
-  if (urlCategory) {
-    totalUrl = urlCategory + totalUrl;
-  }
+  const queryString = urlParams.toString();
+  const newUrl = queryString ? `${currentPath}?${queryString}` : currentPath;
 
-  router.push({}, `${currentPath}?${totalUrl}`, { shallow: true });
+  // Update URL without reloading the page
+  window.history.pushState(null, "", newUrl);
 };
 
 export default filterRouteLinkGenerate;

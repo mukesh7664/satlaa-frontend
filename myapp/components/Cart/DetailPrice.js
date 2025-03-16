@@ -1,6 +1,8 @@
+"use client";
+
 import axiosInstance from "@/util/axios";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { API_URL } from "../../../config";
 import func from "../../../util/helpers/func";
@@ -197,10 +199,10 @@ const Default = () => {
 
   return (
     <Box sx={{ p: 2, backgroundColor: "background.paper", borderRadius: 2 }}>
-      <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold", width: "100%"}}>
+      <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold", width: "100%" }}>
         Cart Summary
       </Typography>
-      
+
       <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
         <Typography>Items Price</Typography>
         <Typography fontWeight="bold">

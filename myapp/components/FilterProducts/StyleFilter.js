@@ -1,3 +1,5 @@
+// components/FilterProducts/StyleFilter.js 
+
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -40,17 +42,17 @@ const Page = () => {
   }, [styles, filterProducts.styles]);
 
   const handleSelection = (value) => {
-    setState((prev) => {
-      const updatedStyles = prev.selectedStyles.includes(value)
-        ? prev.selectedStyles.filter((tag) => tag !== value)
-        : [...prev.selectedStyles, value];
+    const updatedStyles = state.selectedStyles.includes(value)
+      ? state.selectedStyles.filter((tag) => tag !== value)
+      : [...state.selectedStyles, value];
 
-      dispatch(productsApi.util.resetApiState());
-      dispatch(filterProducts_r({ ...filterProducts, styles: updatedStyles, page: 1 }));
-      filterRouteLinkGenerate({ ...filterProducts, styles: updatedStyles, page: 1 });
+    // Update local state first
+    setState((prev) => ({ ...prev, selectedStyles: updatedStyles }));
 
-      return { ...prev, selectedStyles: updatedStyles };
-    });
+    // Dispatch Redux actions separately
+    dispatch(productsApi.util.resetApiState());
+    dispatch(filterProducts_r({ ...filterProducts, styles: updatedStyles, page: 1 }));
+    filterRouteLinkGenerate({ ...filterProducts, styles: updatedStyles, page: 1 });
   };
 
   return (

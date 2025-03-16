@@ -14,15 +14,15 @@ import { filterProducts as filterProducts_r } from "../../../redux/reducers/Filt
 import { productsApi } from "../../../redux/api/productsApi";
 import { useMediaQuery } from "react-responsive";
 
-const Page = () => {
-  const { tags } = useSelector(({ tags }) => tags);
-  const { filterProducts } = useSelector(({ filterProducts }) => filterProducts);
+const TagsFilter = () => {
+  const { tags } = useSelector((state) => state.tags);
+  const { filterProducts } = useSelector((state) => state.filterProducts);
   const dispatch = useDispatch();
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
 
   const [state, setState] = useState({
     tags: [],
-    selectedTags: [],
+    selectedTags: filterProducts.tags || [],
   });
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -37,10 +37,9 @@ const Page = () => {
       setState((prev) => ({
         ...prev,
         tags: formattedTags,
-        selectedTags: filterProducts.tags || [],
       }));
     }
-  }, [tags, filterProducts.tags]);
+  }, [tags]);
 
   const handleSelection = (value) => {
     setState((prev) => {
@@ -48,12 +47,19 @@ const Page = () => {
         ? prev.selectedTags.filter((tag) => tag !== value)
         : [...prev.selectedTags, value];
 
+      return { ...prev, selectedTags: updatedTags };
+    });
+
+    // Dispatch actions asynchronously
+    setTimeout(() => {
+      const updatedTags = state.selectedTags.includes(value)
+        ? state.selectedTags.filter((tag) => tag !== value)
+        : [...state.selectedTags, value];
+
       dispatch(productsApi.util.resetApiState());
       dispatch(filterProducts_r({ ...filterProducts, tags: updatedTags, page: 1 }));
       filterRouteLinkGenerate({ ...filterProducts, tags: updatedTags, page: 1 });
-
-      return { ...prev, selectedTags: updatedTags };
-    });
+    }, 0);
   };
 
   return (
@@ -146,4 +152,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default TagsFilter;

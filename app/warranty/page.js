@@ -1,12 +1,11 @@
-// WarrantyRegistrationForm.js
+"use client";
 
 import { useState } from "react";
 import axios from "axios";
-import { wrapper } from "@/redux/store";
-import { fetchData } from "@/util/fetchData";
-import { API_URL } from "../../config";
+import { API_URL } from "@/config";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
 const Warranty = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -29,12 +28,11 @@ const Warranty = () => {
         formData
       );
 
-      // Handle response, show OTP input
       if (response) {
         setShowOtpInput(true);
       }
     } catch (error) {
-      // Handle error
+      toast.error("Registration failed. Please try again.");
       console.error(error);
     }
   };
@@ -47,33 +45,21 @@ const Warranty = () => {
         otp,
       });
 
-      // Handle success
       if (response.data.success) {
         toast.success(response.data.message);
         setFormData({
-          name: '',
-          email: '',
+          name: "",
+          phone: "",
           orderNumber: "",
           purchaseSource: "",
         });
-        setOtp('')
+        setOtp("");
         setShowOtpInput(false);
       } else {
         toast.error(response.data.error);
       }
     } catch (error) {
-      // Handle error
-      if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
-        toast.error(error.response.data.error || "An error occurred");
-      } else if (error.request) {
-        // The request was made but no response was received
-        toast.error("No response from server");
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        toast.error("Error", error.message);
-      }
+      toast.error(error.response?.data?.error || "An error occurred");
       console.error(error);
     }
   };
@@ -82,7 +68,7 @@ const Warranty = () => {
     <div className="max-w-md mx-auto mt-10">
       <ToastContainer />
       <h1 className="mb-4 text-2xl">Register Your Product Warranty</h1>
-      
+
       {!showOtpInput ? (
         <form onSubmit={handleRegister} className="space-y-4">
           <input
@@ -92,6 +78,7 @@ const Warranty = () => {
             onChange={handleChange}
             placeholder="Name"
             className="w-full p-2 border border-gray-300 rounded"
+            required
           />
           <input
             type="text"
@@ -100,6 +87,7 @@ const Warranty = () => {
             onChange={handleChange}
             placeholder="Phone Number"
             className="w-full p-2 border border-gray-300 rounded"
+            required
           />
           <input
             type="text"
@@ -108,12 +96,14 @@ const Warranty = () => {
             onChange={handleChange}
             placeholder="Order Number"
             className="w-full p-2 border border-gray-300 rounded"
+            required
           />
           <select
             name="purchaseSource"
             value={formData.purchaseSource}
             onChange={handleChange}
             className="w-full p-2 border border-gray-300 rounded"
+            required
           >
             <option value="">Select Purchase Source</option>
             <option value="amazon">Amazon</option>
@@ -134,6 +124,7 @@ const Warranty = () => {
             onChange={(e) => setOtp(e.target.value)}
             placeholder="Enter OTP"
             className="w-full p-2 border border-gray-300 rounded"
+            required
           />
           <button
             type="submit"
@@ -143,18 +134,11 @@ const Warranty = () => {
           </button>
         </form>
       )}
-      <p className="my-4 text-sm">If you bought from SATLAA website, Warranty is already registered.</p>
+      <p className="my-4 text-sm">
+        If you bought from SATLAA website, Warranty is already registered.
+      </p>
     </div>
   );
 };
-export const getServerSideProps = wrapper.getServerSideProps(
-  (store) => async () => {
-    await fetchData(store.dispatch);
-
-    return {
-      props: {},
-    };
-  }
-);
 
 export default Warranty;

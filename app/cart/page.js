@@ -1,3 +1,5 @@
+"use client";
+
 import Breadcrumbs from "../../myapp/components/Utils/BreadCrumbs";
 import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
@@ -34,12 +36,12 @@ const Page = () => {
         {cart.products && cart.products.length > 0 ? (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 w-full max-w-7xl">
             {/* Cart List */}
-            <div className="lg:col-span-8 bg-white shadow-lg rounded-lg">
+            <div className="lg:col-span-8 bg-white shadow-lg rounded-lg p-4">
               <CartList />
             </div>
 
             {/* Price Details */}
-            <div className="lg:col-span-4 bg-white shadow-lg rounded-lg">
+            <div className="lg:col-span-4 bg-white shadow-lg rounded-lg p-4">
               <DetailPrice />
             </div>
           </div>

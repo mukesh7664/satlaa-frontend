@@ -15,7 +15,10 @@ import { productsApi } from "../../../redux/api/productsApi";
 import { useMediaQuery } from "react-responsive";
 
 const Page = () => {
-  const { subcategory } = useSelector(({ subcategory }) => subcategory);
+
+  const  {subcategory} = useSelector((state) => state.subcategory);
+  console.log("Redux State: ", subcategory);
+
   const { filterProducts } = useSelector(({ filterProducts }) => filterProducts);
   const dispatch = useDispatch();
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
@@ -42,17 +45,17 @@ const Page = () => {
   }, [subcategory, filterProducts.subcategory]);
 
   const handleSelection = (value) => {
-    setState((prev) => {
-      const updatedSubcategory = prev.selectedSubcategory.includes(value)
-        ? prev.selectedSubcategory.filter((tag) => tag !== value)
-        : [...prev.selectedSubcategory, value];
+    const updatedSubcategory = state.selectedSubcategory.includes(value)
+      ? state.selectedSubcategory.filter((subcat) => subcat !== value)
+      : [...state.selectedSubcategory, value];
 
-      dispatch(productsApi.util.resetApiState());
-      dispatch(filterProducts_r({ ...filterProducts, subcategory: updatedSubcategory, page: 1 }));
-      filterRouteLinkGenerate({ ...filterProducts, subcategory: updatedSubcategory, page: 1 });
+    // Dispatch Redux actions first
+    dispatch(productsApi.util.resetApiState());
+    dispatch(filterProducts_r({ ...filterProducts, subcategory: updatedSubcategory, page: 1 }));
+    filterRouteLinkGenerate({ ...filterProducts, subcategory: updatedSubcategory, page: 1 });
 
-      return { ...prev, selectedSubcategory: updatedSubcategory };
-    });
+    // Update local state separately
+    setState((prev) => ({ ...prev, selectedSubcategory: updatedSubcategory }));
   };
 
   return (

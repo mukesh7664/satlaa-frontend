@@ -85,7 +85,7 @@ export default async function ProductPage({ params }) {
             <ProductGallery images={product.allImages} productData={product} />
           </Suspense>
         </div>
-        <div className="col-span-6 lg:col-span-5">
+        <div className="col-span-4 lg:col-span-5">
           <ProductVariants data={product} reviews={reviews} parentCategory={parentCategory} />
         </div>
       </div>

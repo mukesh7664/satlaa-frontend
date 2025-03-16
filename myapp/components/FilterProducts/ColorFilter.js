@@ -33,17 +33,17 @@ const Page = ({ isMobile }) => {
 
   const handleCheckboxChange = (event) => {
     const { checked, value } = event.target;
-    setState((prevState) => {
-      const updatedColors = checked
-        ? [...prevState.selectedColors, value]
-        : prevState.selectedColors.filter((color) => color !== value);
+    const updatedColors = checked
+      ? [...state.selectedColors, value]
+      : state.selectedColors.filter((color) => color !== value);
 
-      dispatch(productsApi.util.resetApiState());
-      dispatch(filterProducts_r({ ...filterProducts, colors: updatedColors, page: 1 }));
-      filterRouteLinkGenerate({ ...filterProducts, colors: updatedColors, page: 1 });
+    // Update state first
+    setState((prevState) => ({ ...prevState, selectedColors: updatedColors }));
 
-      return { ...prevState, selectedColors: updatedColors };
-    });
+    // Then dispatch Redux actions and update route
+    dispatch(productsApi.util.resetApiState());
+    dispatch(filterProducts_r({ ...filterProducts, colors: updatedColors, page: 1 }));
+    filterRouteLinkGenerate({ ...filterProducts, colors: updatedColors, page: 1 });
   };
 
   return (

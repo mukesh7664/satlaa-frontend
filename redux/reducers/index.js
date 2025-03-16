@@ -13,6 +13,7 @@ import couponsReducer from "./Coupons";
 import stylesReducer from "./Styles";
 import subcategoryReducer from "./SubCategory";
 import { productsApi } from "../api/productsApi";
+import dataSlice from './DataSlice';
 
 const rootReducer = combineReducers({
   settings: settingsReducer,
@@ -29,6 +30,7 @@ const rootReducer = combineReducers({
   topmenu: topmenuReducer,
   coupons:couponsReducer,
   [productsApi.reducerPath]: productsApi.reducer,
+  data: dataSlice
 });
 
 export default rootReducer;
