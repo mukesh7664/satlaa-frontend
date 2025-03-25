@@ -1,10 +1,9 @@
-//components/FilterProducts/FilterSelectedTop.js 
-
 import { useSelector, useDispatch } from "react-redux";
-import Chip from "@mui/material/Chip";
 import { filterProducts as filterProducts_r } from "../../../redux/reducers/FilterProducts";
 import filterRouteLinkGenerate from "./filterRouterLink";
 import { productsApi } from "../../../redux/api/productsApi";
+import { Badge } from "@/components/ui/badge";
+import { X } from "lucide-react";
 
 const Page = ({ category }) => {
   const { filterProducts } = useSelector(({ filterProducts }) => filterProducts);
@@ -34,34 +33,21 @@ const Page = ({ category }) => {
     filterRouteLinkGenerate({ ...filterProducts, text: "", page: 1 });
   };
 
-  const renderChip = (key, label, onDelete) => (
-    <Chip
-      key={key}
-      label={label}
-      onDelete={onDelete}
-      color="default"
-      className="m-1"
-      sx={{
-        backgroundColor: "#f0f0f0",
-        color: "black",
-        border: "1px solid #ccc",
-        height: "25px",
-        "& .MuiChip-deleteIcon": {
-          color: "rgba(1, 0, 0, 0.6)",
-          "&:hover": {
-            color: "rgba(0, 0, 0, 0.9)",
-          }
-        }
-      }}
-    />
+  const renderBadge = (key, label, onDelete) => (
+    <Badge key={key} variant="outline" className="flex items-center gap-2 px-3 py-1 bg-gray-100 text-black border-gray-300">
+      {label}
+      <button onClick={onDelete} className="text-gray-500 hover:text-black">
+        <X className="w-4 h-4" />
+      </button>
+    </Badge>
   );
 
   return (
     <div className="flex flex-wrap gap-2">
-      {filterProducts.text && renderChip("text-filter", `Text: ${filterProducts.text}`, handleTextClose)}
+      {filterProducts.text && renderBadge("text-filter", `Text: ${filterProducts.text}`, handleTextClose)}
 
       {filterProducts.tags.map((val) =>
-        renderChip(
+        renderBadge(
           `tag-${val}`,
           tags.find((find) => find.seo === val)?.title,
           () => handleClose("tags", val)
@@ -69,7 +55,7 @@ const Page = ({ category }) => {
       )}
 
       {filterProducts.colors.map((val) =>
-        renderChip(
+        renderBadge(
           `color-${val}`,
           colors.find((find) => find.seo === val)?.title,
           () => handleClose("colors", val)
@@ -77,7 +63,7 @@ const Page = ({ category }) => {
       )}
 
       {filterProducts.styles.map((val) =>
-        renderChip(
+        renderBadge(
           `style-${val}`,
           styles.find((find) => find.seo === val)?.title,
           () => handleClose("styles", val)
@@ -85,7 +71,7 @@ const Page = ({ category }) => {
       )}
 
       {filterProducts.subcategory.map((val) =>
-        renderChip(
+        renderBadge(
           `subcategory-${val}`,
           subcategory.find((find) => find.seo === val)?.title,
           () => handleClose("subcategory", val)
@@ -93,14 +79,14 @@ const Page = ({ category }) => {
       )}
 
       {filterProducts.minPrice > 0 &&
-        renderChip(`min-price-${filterProducts.minPrice}`, `Min Price: ${filterProducts.minPrice}`, () => handlePriceClose("minPrice"))}
+        renderBadge(`min-price-${filterProducts.minPrice}`, `Min Price: ${filterProducts.minPrice}`, () => handlePriceClose("minPrice"))}
 
       {filterProducts.maxPrice > 0 &&
-        renderChip(`max-price-${filterProducts.maxPrice}`, `Max Price: ${filterProducts.maxPrice}`, () => handlePriceClose("maxPrice"))}
+        renderBadge(`max-price-${filterProducts.maxPrice}`, `Max Price: ${filterProducts.maxPrice}`, () => handlePriceClose("maxPrice"))}
 
       {!category &&
         filterProducts.categories.map((val) =>
-          renderChip(
+          renderBadge(
             `category-${val}`,
             categories.find((find) => find.seo === val)?.title,
             () => handleClose("categories", val)

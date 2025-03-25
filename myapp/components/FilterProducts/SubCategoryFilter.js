@@ -1,61 +1,58 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  Button,
-  Menu,
-  MenuItem,
-  Checkbox,
-  FormControlLabel,
-  ListItemText,
-} from "@mui/material";
-import { BiChevronDown } from "react-icons/bi";
-import filterRouteLinkGenerate from "./filterRouterLink";
 import { filterProducts as filterProducts_r } from "../../../redux/reducers/FilterProducts";
 import { productsApi } from "../../../redux/api/productsApi";
 import { useMediaQuery } from "react-responsive";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { BiChevronDown } from "react-icons/bi";
+import filterRouteLinkGenerate from "./filterRouterLink";
 
 const Page = () => {
-
-  const  {subcategory} = useSelector((state) => state.subcategory);
-  console.log("Redux State: ", subcategory);
-
-  const { filterProducts } = useSelector(({ filterProducts }) => filterProducts);
   const dispatch = useDispatch();
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
 
+  // Redux state
+  const { subcategory } = useSelector((state) => state.subcategory);
+  const { filterProducts } = useSelector((state) => state.filterProducts);
+
+  // ✅ Local state (syncs with Redux)
   const [state, setState] = useState({
     subcategory: [],
     selectedSubcategory: filterProducts.subcategory || [],
   });
 
-  const [anchorEl, setAnchorEl] = useState(null);
-
+  // ✅ Sync subcategory list when `subcategory` updates
   useEffect(() => {
     if (subcategory.length > 0) {
-      const formattedSubcategories = subcategory.map((subcat) => ({
-        label: subcat.title,
-        value: subcat.seo,
-      }));
       setState((prev) => ({
         ...prev,
-        subcategory: formattedSubcategories,
-        selectedSubcategory: filterProducts.subcategory || [],
+        subcategory: subcategory.map((subcat) => ({
+          label: subcat.title,
+          value: subcat.seo,
+        })),
       }));
     }
-  }, [subcategory, filterProducts.subcategory]);
+  }, [subcategory]);
+
+  // ✅ Sync `selectedSubcategory` when Redux filter state updates
+  useEffect(() => {
+    setState((prev) => ({
+      ...prev,
+      selectedSubcategory: filterProducts.subcategory || [],
+    }));
+  }, [filterProducts.subcategory]);
 
   const handleSelection = (value) => {
     const updatedSubcategory = state.selectedSubcategory.includes(value)
       ? state.selectedSubcategory.filter((subcat) => subcat !== value)
       : [...state.selectedSubcategory, value];
 
-    // Dispatch Redux actions first
+    // ✅ Immediately dispatch Redux update
     dispatch(productsApi.util.resetApiState());
     dispatch(filterProducts_r({ ...filterProducts, subcategory: updatedSubcategory, page: 1 }));
     filterRouteLinkGenerate({ ...filterProducts, subcategory: updatedSubcategory, page: 1 });
-
-    // Update local state separately
-    setState((prev) => ({ ...prev, selectedSubcategory: updatedSubcategory }));
   };
 
   return (
@@ -63,70 +60,41 @@ const Page = () => {
       {isMobile ? (
         <div className="flex flex-col">
           {state.subcategory.map((subcat) => (
-            <FormControlLabel
-              key={subcat.value}
-              control={
-                <Checkbox
-                  checked={state.selectedSubcategory.includes(subcat.value)}
-                  onChange={() => handleSelection(subcat.value)}
-                />
-              }
-              label={subcat.label}
-            />
+            <label key={subcat.value} className="flex items-center space-x-2 text-sm">
+              <Checkbox
+                checked={state.selectedSubcategory.includes(subcat.value)}
+                onCheckedChange={() => handleSelection(subcat.value)}
+              />
+              <span>{subcat.label}</span>
+            </label>
           ))}
         </div>
       ) : (
-        <div
-          onMouseEnter={(e) => setAnchorEl(e.currentTarget)}
-          onMouseLeave={() => setAnchorEl(null)}
-        >
-          <Button
-            variant="contained"
-            endIcon={<BiChevronDown />}
-            className="w-full bg-white py-1 text-black px-2 text-[12px]"
-            sx={{
-              border: "1px solid black",
-              boxShadow: "none",
-              ":hover": { borderColor: "#4690ff", color: '#4690ff', boxShadow: "none" }
-            }}
-          >
-            Sub Category
-          </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="w-full text-black bg-white px-2 py-1 text-[12px] flex items-center justify-between">
+              Sub Category <BiChevronDown />
+            </Button>
+          </DropdownMenuTrigger>
 
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={() => setAnchorEl(null)}
-            anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-            keepMounted
-            MenuListProps={{
-              onMouseLeave: () => setAnchorEl(null),
-            }}
-            sx={{
-              "& .MuiPaper-root": {
-                minWidth: "150px",
-              },
-            }}
-          >
-            {state.subcategory.map((tag) => (
-              <MenuItem key={tag.value} onClick={(e) => e.stopPropagation()} sx={{ padding: "1px 29px" }}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={state.selectedSubcategory.includes(tag.value)}
-                      onChange={() => handleSelection(tag.value)}
-                      sx={{
-                        transform: "scale(1)",
-                        "& .MuiSvgIcon-root": { fontSize: 16 },
-                      }}
-                    />
-                  }
-                  label={<ListItemText primary={tag.label} sx={{ fontSize: "10px" }} />}
-                />
-              </MenuItem>
-            ))}
-          </Menu>
-        </div>
+          <DropdownMenuContent align="start" className="w-[180px]">
+            {state.subcategory.length > 0 ? (
+              state.subcategory.map((tag) => (
+                <DropdownMenuItem key={tag.value} className="flex items-center space-x-2 py-2 px-3">
+                  <Checkbox
+                    checked={state.selectedSubcategory.includes(tag.value)}
+                    onCheckedChange={() => handleSelection(tag.value)}
+                  />
+                  <span className="text-sm">{tag.label}</span>
+                </DropdownMenuItem>
+              ))
+            ) : (
+              <DropdownMenuItem disabled className="text-sm text-gray-500">
+                No subcategories available
+              </DropdownMenuItem>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
       )}
     </div>
   );

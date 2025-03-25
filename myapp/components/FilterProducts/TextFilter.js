@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { IoSearchOutline } from "react-icons/io5";
-import { TextField, Button, InputAdornment, Stack } from "@mui/material";
-import filterRouteLinkGenerate from "./filterRouterLink";
 import { filterProducts as filterProducts_r } from "../../../redux/reducers/FilterProducts";
 import { productsApi } from "../../../redux/api/productsApi";
+import filterRouteLinkGenerate from "./filterRouterLink";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 const Page = () => {
   const { filterProducts } = useSelector(({ filterProducts }) => filterProducts);
@@ -20,11 +21,7 @@ const Page = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-
-    // ✅ Ensure API state resets before dispatching new filters
     dispatch(productsApi.util.resetApiState());
-
-    // ✅ Dispatch updated filter with correct text input
     dispatch(filterProducts_r({ ...filterProducts, text: state.text, page: 1 }));
     filterRouteLinkGenerate({ ...filterProducts, text: state.text, page: 1 });
   };
@@ -35,32 +32,21 @@ const Page = () => {
 
   return (
     <div className="py-2 mb-4">
-      <h6>Search</h6>
-      <form onSubmit={handleSearch}>
-        <Stack direction="row" spacing={1} alignItems="center">
-          <TextField
-            fullWidth
-            variant="outlined"
+      <h6 className="text-sm font-semibold">Search</h6>
+      <form onSubmit={handleSearch} className="flex gap-2 mt-2">
+        <div className="relative flex-grow">
+          <IoSearchOutline className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+          <Input
+            type="text"
             placeholder="Enter text..."
             value={state.text}
             onChange={handleChange}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <IoSearchOutline />
-                </InputAdornment>
-              ),
-            }}
+            className="pl-10"
           />
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            sx={{ minWidth: "64px" }}
-          >
-            Search
-          </Button>
-        </Stack>
+        </div>
+        <Button type="submit" variant="default">
+          Search
+        </Button>
       </form>
     </div>
   );

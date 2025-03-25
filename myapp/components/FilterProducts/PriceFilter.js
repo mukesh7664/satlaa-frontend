@@ -1,27 +1,32 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Box, Stack, TextField, Button, Popover, Divider } from "@mui/material";
-import filterRouteLinkGenerate from "./filterRouterLink";
 import { filterProducts as filterProducts_r } from "../../../redux/reducers/FilterProducts";
 import { productsApi } from "../../../redux/api/productsApi";
+import filterRouteLinkGenerate from "./filterRouterLink";
 import { FiSearch } from "react-icons/fi";
 import { BiChevronDown } from "react-icons/bi";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import { Separator } from "@/components/ui/separator";
 
 const Page = ({ isMobile }) => {
-  const { filterProducts } = useSelector(({ filterProducts }) => filterProducts);
   const dispatch = useDispatch();
+  const { filterProducts } = useSelector(({ filterProducts }) => filterProducts);
+
+  // ✅ Ensure local state reflects Redux filters
   const [state, setState] = useState({
     minPrice: filterProducts.minPrice || "",
     maxPrice: filterProducts.maxPrice || "",
   });
-  const [anchorEl, setAnchorEl] = useState(null);
 
+  // ✅ Keep local state in sync when Redux updates
   useEffect(() => {
     setState({
       minPrice: filterProducts.minPrice || "",
       maxPrice: filterProducts.maxPrice || "",
     });
-  }, [filterProducts]);
+  }, [filterProducts.minPrice, filterProducts.maxPrice]);
 
   const handleFilter = (e) => {
     e.preventDefault();
@@ -33,107 +38,76 @@ const Page = ({ isMobile }) => {
       page: 1,
     };
 
+    // ✅ Reset Redux state before updating
     dispatch(productsApi.util.resetApiState());
     dispatch(filterProducts_r(updatedFilters));
     filterRouteLinkGenerate(updatedFilters);
-
-    setAnchorEl(null);
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setState((prev) => ({
       ...prev,
-      [name]: value ? Number(value) : "",
+      [name]: value || "", // ✅ Allow empty values instead of forcing `0`
     }));
-  };
-
-  const handleMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
   };
 
   return (
     <>
       {isMobile ? (
         // Mobile Layout
-        (<Box className="p-2 bg-white border rounded-md">
-          <form onSubmit={handleFilter}>
-            <Stack spacing={2}>
-              <TextField
+        <div className="p-2 bg-white border rounded-md">
+          <form onSubmit={handleFilter} className="space-y-3">
+            <Input
+              name="minPrice"
+              placeholder="Min Price"
+              type="number"
+              value={state.minPrice}
+              onChange={handleChange}
+            />
+            <Input
+              name="maxPrice"
+              placeholder="Max Price"
+              type="number"
+              value={state.maxPrice}
+              onChange={handleChange}
+            />
+            <Button type="submit" className="w-full flex items-center gap-2">
+              <FiSearch /> Apply
+            </Button>
+          </form>
+          <Separator className="mt-3" />
+        </div>
+      ) : (
+        // Desktop Layout with Popover
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" className="flex items-center gap-2">
+              Price Filter <BiChevronDown />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent align="start" className="w-[200px] p-4 bg-white shadow-md border rounded-md">
+            <form onSubmit={handleFilter} className="space-y-3">
+              <Input
                 name="minPrice"
-                label="Min Price"
+                placeholder="Min Price"
                 type="number"
-                variant="outlined"
-                size="small"
                 value={state.minPrice}
                 onChange={handleChange}
               />
-              <TextField
+              <Input
                 name="maxPrice"
-                label="Max Price"
+                placeholder="Max Price"
                 type="number"
-                variant="outlined"
-                size="small"
                 value={state.maxPrice}
                 onChange={handleChange}
               />
-              <Button type="submit" variant="contained" startIcon={<FiSearch />}>
-                Apply
+              <Button type="submit" className="w-full flex items-center gap-2 bg-[#e76e81] text-white">
+                <FiSearch /> Apply
               </Button>
-            </Stack>
-          </form>
-          <Divider className="mt-2" />
-        </Box>)
-      ) : (
-        //  Desktop Layout with Popover
-        (<>
-          <Button
-            className="flex justify-center items-center text-black h-[31px] px-2 text-[12px]"
-            sx={{border: "1px solid black", boxShadow: "none", ":hover" : {borderColor: "#4690ff", color: '#4690ff'}}}
-            onClick={handleMenuOpen}
-            endIcon={<BiChevronDown />}
-          >
-            Price Filter
-          </Button>
-          <Popover
-            open={Boolean(anchorEl)}
-            anchorEl={anchorEl}
-            onClose={handleMenuClose}
-            anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-          >
-            <Box p={2} className="bg-white shadow-md border rounded-md">
-              <form onSubmit={handleFilter}>
-                <Stack spacing={2}>
-                  <TextField
-                    name="minPrice"
-                    label="Min Price"
-                    type="number"
-                    variant="outlined"
-                    size="small"
-                    value={state.minPrice}
-                    onChange={handleChange}
-                  />
-                  <TextField
-                    name="maxPrice"
-                    label="Max Price"
-                    type="number"
-                    variant="outlined"
-                    size="small"
-                    value={state.maxPrice}
-                    onChange={handleChange}
-                  />
-                  <Button type="submit" variant="contained" startIcon={<FiSearch />} sx={{backgroundColor: "#e76e81"}}>
-                    Apply
-                  </Button>
-                </Stack>
-              </form>
-            </Box>
-          </Popover>
-        </>)
+            </form>
+          </PopoverContent>
+        </Popover>
       )}
     </>
   );
