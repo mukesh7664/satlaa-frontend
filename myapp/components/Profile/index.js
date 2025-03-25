@@ -1,153 +1,132 @@
 import { useEffect, useState } from "react";
-import { Button, Form, Input, message, Select, Divider } from "@mui/material";
-
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Form, FormField, FormItem, FormLabel, FormControl } from "@/components/ui/form";
 import { useDispatch, useSelector } from "react-redux";
 import { API_URL } from "../../../config";
 import AuthService from "../../../util/services/authservice";
-import { removeCookies, setCookie } from "cookies-next";
+import { removeCookies } from "cookies-next";
 import axiosInstance from "@/util/axios";
+import { setIsAuthenticated, setLogout } from "../../../redux/reducers/Login";
+import { useRouter } from "next/navigation";
+import { Separator } from "@/components/ui/separator";
+import { toast } from "sonner";
+
 const axios = axiosInstance();
-import {
-  setIsAuthenticated,
-  setLogout,
-} from "../../../redux/reducers/Login";
-import router from "next/router";
-const Defaut = () => {
-  const [form] = Form.useForm();
-  const { isAuthenticated } = useSelector(({ login }) => login);
-  const { user } = useSelector(({ login }) => login);
-  const [fieldsUser, seTfieldsUser] = useState(
+
+const Default = () => {
+  const { isAuthenticated, user } = useSelector(({ login }) => login);
+  const [fieldsUser, setFieldsUser] = useState(
     Object.entries(user).map(([name, value]) => ({ name, value }))
   );
-  const [state, seTstate] = useState([]);
+  const [state, setState] = useState({});
   const dispatch = useDispatch();
+  const router = useRouter();
+
   function getDataFc() {
     if (user.id) {
       axios.get(`${API_URL}/customers/${user.id}`).then((res) => {
         const data = res.data;
         data["password"] = "";
-        seTstate(data);
-        seTfieldsUser(
+        setState(data);
+        setFieldsUser(
           Object.entries(data).map(([name, value]) => ({ name, value }))
         );
       });
     }
   }
+
   useEffect(() => {
     getDataFc();
   }, [user]);
 
-  const onSubmit = (Data) => {
-    axios
-      .post(`${API_URL}/customers/${state._id}`, Data)
-      .then((res) => {
-        if (res.data.variant == "error") {
-          message.error(
-            "Not Updated" + res.data.messagge
-          );
-        } else {
-          message.success("Information Updated");
-        }
-      })
-      .catch((err) => console.log(err));
+  const onSubmit = async (data) => {
+    try {
+      const res = await axios.post(`${API_URL}/customers/${state._id}`, data);
+      if (res.data.variant === "error") {
+        toast.error(`Not Updated: ${res.data.message}`);
+      } else {
+        toast.success("Information Updated");
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const changePrefix = (selected) => {
-    seTstate({
+    setState({
       ...state,
       prefix: selected,
     });
   };
-  const prefixSelector = (
-    <Form.Item name="prefix" noStyle initialValue={"91"}>
-      <Select onChange={changePrefix} disabled style={{ width: 70 }}>
-        <Select.Option value="91">+91</Select.Option>
-      </Select>
-    </Form.Item>
-  );
 
   return (
-    <>
-      <div className="  h-full grid grid-cols-12 gap-0 sm:gap-10 p-0 m-0 w-full my-10 ">
-        <div className=" col-span-12 lg:col-span-6 ">
-          <Form
-            onFinish={onSubmit}
-            layout="vertical"
-            form={form}
-            fields={fieldsUser}
-            className="w-full"
+    <div className="h-full grid grid-cols-12 gap-0 sm:gap-10 p-0 m-0 w-full my-10">
+      <div className="col-span-12 lg:col-span-6">
+        <Form onSubmit={onSubmit} className="w-full">
+          <FormField name="email">
+            <FormItem>
+              <FormLabel>E-mail</FormLabel>
+              <FormControl>
+                <Input type="email" required />
+              </FormControl>
+            </FormItem>
+          </FormField>
+
+          <FormField name="name">
+            <FormItem>
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input required />
+              </FormControl>
+            </FormItem>
+          </FormField>
+
+          <FormField name="phone">
+            <FormItem>
+              <FormLabel>Phone</FormLabel>
+              <div className="flex gap-2">
+                <Select defaultValue="91" onValueChange={changePrefix} disabled>
+                  <SelectTrigger className="w-20">
+                    <SelectValue placeholder="+91" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="91">+91</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormControl>
+                  <Input required disabled />
+                </FormControl>
+              </div>
+            </FormItem>
+          </FormField>
+
+          <Separator className="my-4" />
+
+          <Button type="submit" className="w-full">
+            Update
+          </Button>
+
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full mt-2"
+            onClick={async () => {
+              await AuthService.logout();
+              await dispatch(setLogout());
+              await dispatch(setIsAuthenticated(false));
+              removeCookies("token");
+              router.refresh();
+              router.push("/");
+            }}
           >
-            <Form.Item
-              name="email"
-              label="E-mail"
-              rules={[
-                {
-                  type: "email",
-                  message: "The input is not valid E-mail!",
-                },
-                {
-                  required: true,
-                  message: "Input is not valid",
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-
-            <Form.Item
-              name="name"
-              label="Name"
-              rules={[
-                {
-                  required: true,
-                  message: "Please fill this input.",
-                  whitespace: true,
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-           
-            <Form.Item
-              name="phone"
-              label="Phone"
-              rules={[
-                {
-                  required: true,
-                  message: "Please fill this input.",
-                },
-              ]}
-            >
-              <Input addonBefore={prefixSelector} disabled />
-            </Form.Item>
-
-            <Divider />
-            <Form.Item>
-              <Button type="default" className="w-full" htmlType="submit">
-                Update
-              </Button>
-            </Form.Item>
-            <Form.Item>
-              <Button
-                type="default"
-                className="w-full mt-2"
-                onClick={async () => {
-                  await AuthService.logout();
-                  await dispatch(setLogout());
-                  await dispatch(setIsAuthenticated(false));
-                  removeCookies("token");
-                  router.reload();
-                  router.push("/");
-                }}
-              >
-                Logout
-              </Button>
-            </Form.Item>
-          </Form>
-        </div>
+            Logout
+          </Button>
+        </Form>
       </div>
-    </>
+    </div>
   );
 };
 
-export default Defaut;
+export default Default;
