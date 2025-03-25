@@ -6,7 +6,7 @@ import axiosInstance from "@/util/axios";
 const axios = axiosInstance();
 import func from "../../../util/helpers/func";
 import { API_URL } from "../../../config";
-import { Radio, message } from "@mui/material";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
 import { getCart as getCart_r } from "../../../redux/reducers/Cart";
@@ -320,21 +320,26 @@ const Page = () => {
             <div className="m-4 flex flex-col py-5 bg-white order-2 lg:order-1">
               <h2 className="font-semibold text-2xl mb-4">Payment Method</h2>
 
-              <Radio.Group
-  onChange={onChangePaymentMethod}
-  value={paymentMethod}
-  className="flex flex-col px-2 py-4 gap-y-2 text-lg"
->
-  {/* <Radio className="text-xl" value="phonepe">
-    UPI/Cards/Net Banking
-  </Radio> */}
-  <Radio className="text-xl" value="razorpay">
-    Online
-  </Radio>
-  <Radio className="text-xl" value="cod" disabled>
-    COD (COD not available for this order)
-  </Radio>
-</Radio.Group>
+            <RadioGroup
+            onValueChange={onChangePaymentMethod}
+            value={paymentMethod}
+            className="flex flex-col px-2 py-4 gap-y-2 text-lg"
+          >
+            {/* <div className="flex items-center gap-x-2">
+              <RadioGroupItem value="phonepe" id="phonepe" />
+              <Label htmlFor="phonepe" className="text-xl">UPI/Cards/Net Banking</Label>
+            </div> */}
+            
+            <div className="flex items-center gap-x-2">
+              <RadioGroupItem value="razorpay" id="razorpay" />
+              <Label htmlFor="razorpay" className="text-xl">Online</Label>
+            </div>
+
+            <div className="flex items-center gap-x-2 opacity-50 cursor-not-allowed">
+              <RadioGroupItem value="cod" id="cod" disabled />
+              <Label htmlFor="cod" className="text-xl">COD (COD not available for this order)</Label>
+            </div>
+          </RadioGroup>
               {paymentMethod === "cod" ? (
                 <p>
                   Choose Online Payment and Get ₹50 discount for Free Shipping
