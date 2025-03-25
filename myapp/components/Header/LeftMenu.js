@@ -1,63 +1,40 @@
+"use client";
+
 import React, { useState } from "react";
-import {
-  MenuList,
-  Popper,
-  ClickAwayListener,
-  Paper,
-  Grow,
-  MenuItem,
-} from "@mui/material";
-import Link from "next/link";
 import { useSelector } from "react-redux";
+import Link from "next/link";
 import { FaMinus, FaPlus } from "react-icons/fa";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
 
 const CustomExpandIcon = ({ isActive }) => (isActive ? <FaMinus /> : <FaPlus />);
 
 const LeftMenu = () => {
-  const [anchorElShop, setAnchorElShop] = useState(null);
-  const [anchorElMore, setAnchorElMore] = useState(null);
-
-  const openShop = Boolean(anchorElShop);
-  const openMore = Boolean(anchorElMore);
-
-  const handleShopClick = (event) => {
-    setAnchorElShop(event.currentTarget);
-  };
-
-  const handleMoreClick = (event) => {
-    setAnchorElMore(event.currentTarget);
-  };
-
-  const handleCloseShop = () => {
-    setAnchorElShop(null);
-  };
-
-  const handleCloseMore = () => {
-    setAnchorElMore(null);
-  };
+  const [shopOpen, setShopOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
 
   return (
     <div className="hover:bg-white md:w-full md:flex md:justify-center border-b-0 text-xl md:text-base md:items-center">
       {/* Shop All Button */}
-      <button
-        onClick={handleShopClick}
-        className="md:hover:underline md:hover:underline-offset-8 md:flex md:flex-row pl-0 items-center justify-center ml-6 pr-4 pb-1"
-      >
-        Shop All
-      </button>
-      <Popper open={openShop} anchorEl={anchorElShop} transition disablePortal>
-        {({ TransitionProps }) => (
-          <Grow {...TransitionProps}>
-            <Paper>
-              <ClickAwayListener onClickAway={handleCloseShop}>
-                <MenuList>
-                  <MegaMenu />
-                </MenuList>
-              </ClickAwayListener>
-            </Paper>
-          </Grow>
-        )}
-      </Popper>
+      <Popover open={shopOpen} onOpenChange={setShopOpen}>
+        <PopoverTrigger asChild>
+          <button className="md:hover:underline md:flex md:flex-row pl-0 items-center justify-center ml-6 pr-4 pb-1">
+            Shop All
+          </button>
+        </PopoverTrigger>
+        <PopoverContent align="start" className="w-full max-w-screen-lg bg-white shadow-lg rounded-lg">
+          <MegaMenu />
+        </PopoverContent>
+      </Popover>
 
       {/* Direct Navigation Links */}
       <Link className="md:hover:underline pb-1 md:mr-4" href="/Anklets">
@@ -74,30 +51,21 @@ const LeftMenu = () => {
       </Link>
 
       {/* More Button */}
-      <button
-        onClick={handleMoreClick}
-        className="md:hover:underline md:flex md:flex-row pl-0 items-center justify-center ml-6"
-      >
-        More &nbsp;
-      </button>
-      <Popper open={openMore} anchorEl={anchorElMore} transition disablePortal>
-        {({ TransitionProps }) => (
-          <Grow {...TransitionProps}>
-            <Paper>
-              <ClickAwayListener onClickAway={handleCloseMore}>
-                <MenuList>
-                  <MenuItem>
-                    <Link href="/about-us">About Us</Link>
-                  </MenuItem>
-                  <MenuItem>
-                    <a href="https://satlaa.com/dj">Gold Jewellery</a>
-                  </MenuItem>
-                </MenuList>
-              </ClickAwayListener>
-            </Paper>
-          </Grow>
-        )}
-      </Popper>
+      <DropdownMenu open={moreOpen} onOpenChange={setMoreOpen}>
+        <DropdownMenuTrigger asChild>
+          <button className="md:hover:underline md:flex md:flex-row pl-0 items-center justify-center ml-6">
+            More &nbsp;
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem>
+            <Link href="/about-us">About Us</Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <a href="https://satlaa.com/dj">Gold Jewellery</a>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 };
