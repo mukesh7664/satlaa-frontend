@@ -2,15 +2,17 @@
 
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { Grid, Card, CardActionArea, CardContent, Typography } from "@mui/material";
-import { useRouter } from "next/navigation"; // ✅ Use "next/navigation" instead of "next/router"
+import { useRouter } from "next/navigation"; 
 import { IMG_URL } from "../../../config";
 import Image from "next/image";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Default = () => {
-  const { collections } = useSelector((state) => state.collections); // ✅ Fixed selector
+  const { collections } = useSelector((state) => state.collections);
   const [collectionsData, setCollectionsData] = useState([]);
-  const router = useRouter(); // ✅ Works now because it's a Client Component
+  const router = useRouter();
 
   useEffect(() => {
     if (collections) setCollectionsData(collections);
@@ -21,35 +23,35 @@ const Default = () => {
   };
 
   return (
-    <Grid container spacing={3}>
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
       {collectionsData.length > 0 ? (
         collectionsData.map((val) => (
-          <Grid item xs={12} sm={6} md={4} lg={3} key={val.seo}>
-            <Card className="m-4 shadow-lg">
-              <CardActionArea onClick={() => onClickCard(val.seo)}>
-                <div className="relative w-full h-48">
-                  <Image
-                    alt={val.title || "Default Title"}
-                    src={val.image ? `${IMG_URL}${val.image}` : "/images/default.jpg"}
-                    layout="fill"
-                    objectFit="cover"
-                  />
-                </div>
-                <CardContent className="uppercase text-center">
-                  <Typography variant="h6" component="h2">
-                    {val.title}
-                  </Typography>
-                </CardContent>
-              </CardActionArea>
-            </Card>
-          </Grid>
+          <Card 
+            key={val.seo} 
+            className="overflow-hidden shadow-md transition-transform transform hover:scale-105 cursor-pointer"
+            onClick={() => onClickCard(val.seo)}
+          >
+            <div className="relative w-full h-48">
+              <Image
+                alt={val.title || "Default Title"}
+                src={val.image ? `${IMG_URL}${val.image}` : "/images/default.jpg"}
+                layout="fill"
+                objectFit="cover"
+                className="rounded-t-lg"
+              />
+            </div>
+            <CardContent className="flex flex-col items-center p-4">
+              <h2 className="text-lg font-semibold uppercase">{val.title}</h2>
+            </CardContent>
+          </Card>
         ))
       ) : (
-        <Typography variant="body1" className="m-4">
-          No collections available.
-        </Typography>
+        <div className="col-span-full flex flex-col items-center">
+          <Skeleton className="w-32 h-32 mb-4 rounded-full" />
+          <p className="text-gray-500">No collections available.</p>
+        </div>
       )}
-    </Grid>
+    </div>
   );
 };
 

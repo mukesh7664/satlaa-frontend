@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Drawer, Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
-import { MdExpandMore } from "react-icons/md";
+import { Button } from "@/components/ui/button";
+import { Drawer } from "@/components/ui/drawer";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { ChevronDown } from "lucide-react";
 import parse from "html-react-parser";
 import ProductCard from "@/myapp/components/ProductCard";
 import SkeletonProductCard from "@/myapp/components/ProductCard/skeleton";
@@ -33,17 +35,20 @@ const CollectionClient = ({ collectionData, collection }) => {
 
   return (
     <>
-      <div className="fixed bottom-0 left-0 z-10 w-full flex flex-row bg-white">
-        <Button variant="contained" color="primary" className="w-full md:hidden" onClick={() => setVisible(true)}>
+      {/* Filter & Sort Buttons (Mobile & Desktop) */}
+      <div className="fixed bottom-0 left-0 z-10 w-full flex flex-row bg-white border-t shadow-lg">
+        <Button variant="default" className="w-full md:hidden" onClick={() => setVisible(true)}>
           Filter Products
         </Button>
-        <div className="w-full md:w-6/12">
+        <div className="w-full md:w-6/12 p-2">
           <SortProducts />
         </div>
       </div>
 
+      {/* Selected Filters */}
       <FilterSelectedTop category="true" />
 
+      {/* Products List with Infinite Scroll */}
       <div className="mt-3">
         <InfiniteScroll
           dataLength={products.length}
@@ -63,25 +68,37 @@ const CollectionClient = ({ collectionData, collection }) => {
         </InfiniteScroll>
       </div>
 
+      {/* Collection Description */}
       <div className="px-4">
-        <h1 className="mb-4 text-2xl">{collectionData.h1tag}</h1>
+        <h1 className="mb-4 text-2xl font-bold">{collectionData.h1tag}</h1>
         {parse(collectionData.description || "")}
       </div>
 
+      {/* FAQs Section */}
       {collectionData.faqs && (
-        <div className="px-4 mt-4">
+        <div className="px-4 mt-6">
           <p className="text-lg font-bold">FAQs</p>
-          {collectionData.faqs.map((faq, i) => (
-            <Accordion key={i}>
-              <AccordionSummary expandIcon={<MdExpandMore />}>{faq.question}</AccordionSummary>
-              <AccordionDetails><p>{faq.answer}</p></AccordionDetails>
-            </Accordion>
-          ))}
+          <Accordion type="single" collapsible className="mt-2">
+            {collectionData.faqs.map((faq, i) => (
+              <AccordionItem key={i} value={`faq-${i}`} className="border-b">
+                <AccordionTrigger className="flex items-center justify-between">
+                  {faq.question} <ChevronDown className="w-4 h-4" />
+                </AccordionTrigger>
+                <AccordionContent>
+                  <p>{faq.answer}</p>
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
         </div>
       )}
 
-      <Drawer anchor="left" open={visible} onClose={() => setVisible(false)}>
-        <div className="p-4">Filter Options Here</div>
+      {/* Drawer for Mobile Filters */}
+      <Drawer open={visible} onClose={() => setVisible(false)}>
+        <div className="p-4">
+          <h2 className="text-lg font-bold mb-4">Filter Options</h2>
+          {/* Add filter options here */}
+        </div>
       </Drawer>
     </>
   );
