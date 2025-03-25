@@ -112,17 +112,12 @@ const SearchModal = ({ isOpen, onClose, router }) => {
       <DialogContent className="max-w-md">
         <DialogHeader className="flex justify-between items-center">
           <DialogTitle>Search Your Favorite Jewellery</DialogTitle>
-          <DialogClose asChild>
-            <Button variant="ghost">
-              <AiOutlineClose className="text-2xl" />
-            </Button>
-          </DialogClose>
         </DialogHeader>
         <div className="flex mt-4">
           <Input
             ref={searchInputRef}
             placeholder="Search"
-            className="w-full"
+            className="w-full mb-2"
             onKeyDown={(e) => e.key === "Enter" && handleSearch()}
           />
           <Button variant="default" onClick={handleSearch} className="ml-2 bg-[#e76e81] text-white">
