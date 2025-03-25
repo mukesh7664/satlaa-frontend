@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { API_URL } from "../../../config";
-import { TextField, Button, Typography } from "@mui/material";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 
 const DeliveryTime = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -28,36 +31,29 @@ const DeliveryTime = () => {
   };
 
   return (
-    <div className="my-5">
-      <Typography variant="h6" className="text-gray-700 font-semibold">
+    <div className="my-5 space-y-3">
+      <Label className="text-lg font-semibold text-gray-700">
         Expected Delivery Time
-      </Typography>
-      <form onSubmit={handleSubmit(checkDeliveryTime)} className="mt-2 mb-1">
-        <div className="flex border border-gray-300 rounded py-2 px-2">
-          <TextField
-            {...register("pinCode", { required: "Please enter your PIN code!" })}
-            variant="standard"
-            fullWidth
-            placeholder="Enter PIN Code"
-            error={!!errors.pinCode}
-            helperText={errors.pinCode?.message}
-            className="flex-grow"
-            InputProps={{
-              disableUnderline: true,  // Removes the underline
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                handleSubmit(checkDeliveryTime)();
-              }
-            }}
-          />
-          <Button type="submit" color="primary" className="ml-2" sx={{color: "#e76e81"}}>
-            Check
-          </Button>
-        </div>
+      </Label>
+      <form onSubmit={handleSubmit(checkDeliveryTime)} className="flex gap-2 border border-gray-300 rounded-lg p-2">
+        <Input
+          {...register("pinCode", { required: "Please enter your PIN code!" })}
+          type="text"
+          placeholder="Enter PIN Code"
+          className={cn("flex-grow border-none focus:ring-0", errors.pinCode && "border-red-500")}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleSubmit(checkDeliveryTime)();
+            }
+          }}
+        />
+        <Button type="submit" variant="outline" className="bg-primary text-white hover:bg-primary/90">
+          Check
+        </Button>
       </form>
-      {error && <Typography color="error">{errorMessage}</Typography>}
-      {!error && deliveryTime && <Typography>{deliveryTime}</Typography>}
+      {errors.pinCode && <p className="text-red-500 text-sm">{errors.pinCode.message}</p>}
+      {error && <p className="text-red-500">{errorMessage}</p>}
+      {!error && deliveryTime && <p className="text-green-600">{deliveryTime}</p>}
     </div>
   );
 };

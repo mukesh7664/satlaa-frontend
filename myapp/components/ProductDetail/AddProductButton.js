@@ -1,20 +1,17 @@
 "use client";
 
 import { useDispatch } from "react-redux";
-import { Snackbar } from "@mui/material";
-import { Modal } from "@mui/material";
-import LoginForm from "../Header/LoginForm";
-import Link from "next/link";
 import { useSelector } from "react-redux";
 import { useState } from "react";
+import { useRouter } from "next/navigation"; // Fixed import for App Router
 import { addProductToCart, cartFetch } from "../../../redux/reducers/Cart";
 import axiosInstance from "@/util/axios";
 import { API_URL } from "../../../config";
-import { useRouter } from "next/navigation"; // Fixed import for App Router
 import Loader from "@/components/Utils/Loader";
 import TagManager from "react-gtm-module";
-import Image from "next/image";
 import { useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 const axios = axiosInstance();
 
@@ -27,12 +24,11 @@ const Page = ({
   getCart,
 }) => {
   const dispatch = useDispatch();
-  const router = useRouter(); // Now properly used in a client component
+  const router = useRouter();
+  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const [snackbar, setSnackbar] = useState({ open: false, message: "", type: "success" });
 
   const { register, handleSubmit, reset } = useForm();
-
   const { isAuthenticated, user } = useSelector(({ login }) => login || {});
 
   const userInfo = user
@@ -142,15 +138,15 @@ const Page = ({
           getCart(user.id);
           setLoadingButton(true);
           reset();
-          setSnackbar({ open: true, message: "Product Added!", type: "success" });
+          toast({ title: "Success", description: "Product Added!", variant: "success" });
         })
         .catch(() => {
-          setSnackbar({ open: true, message: "Some Error, Please Try Again", type: "error" });
+          toast({ title: "Error", description: "Some Error, Please Try Again", variant: "destructive" });
         });
     } else {
       setLoadingButton(true);
       reset();
-      setSnackbar({ open: true, message: "Product Added!", type: "success" });
+      toast({ title: "Success", description: "Product Added!", variant: "success" });
       dispatch(cartFetch(post));
     }
   };
@@ -168,13 +164,13 @@ const Page = ({
             }
           })}
         >
-          <button
-            className="w-full rounded-sm shadow-md bg-primary py-2 text-white border transition duration-200 border-transparent hover:text-primary hover:bg-white hover:border-secondary hover:border capitalize"
+          <Button
+            className="w-full shadow-md bg-primary text-white border transition duration-200 border-transparent hover:text-primary hover:bg-white hover:border-secondary hover:border capitalize"
             disabled={!disabledVariant}
             type="submit"
           >
             ADD TO CART
-          </button>
+          </Button>
         </form>
 
         <form
@@ -187,22 +183,15 @@ const Page = ({
             }
           })}
         >
-          <button
-            className="w-full rounded-sm shadow-md bg-primary py-2 text-white border border-transparent transition duration-200"
+          <Button
+            className="w-full shadow-md bg-primary text-white border border-transparent transition duration-200"
             disabled={!disabledVariant}
             type="submit"
           >
             BUY NOW
-          </button>
+          </Button>
         </form>
       </div>
-
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={3000}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
-        message={snackbar.message}
-      />
     </div>
   );
 };
