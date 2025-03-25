@@ -2,7 +2,10 @@ import axiosInstance from "@/util/axios";
 const axios = axiosInstance();
 import { useState, useEffect } from "react";
 import router from "next/router";
-import { Button, Divider, Typography, Paper, Box, Stack } from "@mui/material";
+import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { Lock } from "lucide-react";
 import Price from "../Price";
 import { MdLockOutline } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
@@ -139,75 +142,64 @@ const Default = () => {
   }, [cart]);
 
   return (
-    <Paper elevation={3} sx={{ p: 3 }}>
-      <Typography variant="h6" gutterBottom sx={{ bgcolor: "grey.100", p: 2 }}>
+    <Card className="p-4">
+      <CardHeader className="bg-gray-100 p-3 font-semibold text-lg">
         Shipping Address Summary
-      </Typography>
-
-      <Box sx={{ p: 2 }}>
+      </CardHeader>
+      <CardContent>
         {shipping_address && shipping_address.address ? (
-          <>
-            <Typography variant="body1" fontWeight="bold">
-              {shipping_address.name}
-            </Typography>
-            <Typography variant="body2">
-              {shipping_address.address}, {shipping_address.district},{" "}
-              {shipping_address.state}, {shipping_address.pin_code}
-            </Typography>
-          </>
+          <div>
+            <p className="font-semibold">{shipping_address.name}</p>
+            <p className="text-sm text-gray-600">
+              {shipping_address.address}, {shipping_address.district}, {shipping_address.state}, {shipping_address.pin_code}
+            </p>
+          </div>
         ) : (
-          <Typography variant="h6" color="error" textAlign="center">
-            Please Select Address
-          </Typography>
+          <p className="text-center text-red-500 font-medium">Please Select Address</p>
         )}
-      </Box>
+      </CardContent>
 
-      <Typography variant="h6" gutterBottom sx={{ bgcolor: "grey.100", p: 2, mt: 3 }}>
+      <CardHeader className="bg-gray-100 p-3 mt-4 font-semibold text-lg">
         Cart Summary
-      </Typography>
-
-      <Stack spacing={1} sx={{ p: 2 }}>
-        <Box display="flex" justifyContent="space-between">
-          <Typography>Items Price</Typography>
-          <Typography fontWeight="bold">
+      </CardHeader>
+      <CardContent className="space-y-2">
+        <div className="flex justify-between">
+          <span>Items Price</span>
+          <span className="font-semibold">
             <Price data={allPrice.total} />
-          </Typography>
-        </Box>
+          </span>
+        </div>
 
-        <Box display="flex" justifyContent="space-between">
-          <Typography>Shipping</Typography>
-          <Typography fontWeight="bold">
+        <div className="flex justify-between">
+          <span>Shipping</span>
+          <span className="font-semibold">
             <Price data={cart.cargo_price} />
-          </Typography>
-        </Box>
+          </span>
+        </div>
 
-        <Divider />
+        <Separator />
 
-        <Box display="flex" justifyContent="space-between">
-          <Typography variant="h6">Total Price:</Typography>
-          <Typography fontWeight="bold" color="primary">
+        <div className="flex justify-between font-semibold text-lg">
+          <span>Total Price:</span>
+          <span className="text-primary">
             <Price data={allPrice.total + (cart.cargo_price || 0)} />
-          </Typography>
-        </Box>
-        <Typography variant="body2" color="textSecondary">
-          Apply Discount at Checkout
-        </Typography>
-      </Stack>
+          </span>
+        </div>
 
-      <Box textAlign="center" mt={3}>
-        <Button
-          variant="contained"
-          color="secondary"
-          size="large"
-          startIcon={<MdLockOutline />}
-          disabled={!shipping_address?.address}
-          sx={{ py: 1.5, px: 4 }}
+        <p className="text-xs text-gray-500">Apply Discount at Checkout</p>
+      </CardContent>
+
+      <CardFooter className="flex justify-center mt-4">
+        <Button 
+          className="px-6 py-3 text-lg" 
+          disabled={!shipping_address?.address} 
           onClick={onSubmit}
         >
+          <Lock className="mr-2 h-5 w-5" />
           Checkout Securely
         </Button>
-      </Box>
-    </Paper>
+      </CardFooter>
+    </Card>
   );
 };
 

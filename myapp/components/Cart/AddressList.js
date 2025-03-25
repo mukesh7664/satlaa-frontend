@@ -1,22 +1,15 @@
 import axiosInstance from "@/util/axios";
 import { useState, useEffect } from "react";
-import {
-  Button,
-  Radio,
-  RadioGroup,
-  FormControlLabel,
-  Typography,
-  Paper,
-  Box,
-  Card,
-} from "@mui/material";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { FaPlus } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { API_URL } from "../../../config";
 import AddressSelect from "./AddressSelect";
 import NewAddressForm from "./NewAddressForm";
 import { cartFetch, getCart as getCart_r, setShippingAddress } from "../../../redux/reducers/Cart";
 import router from "next/router";
-import { FaPlus } from "react-icons/fa";
 
 const axios = axiosInstance();
 
@@ -131,16 +124,14 @@ const Default = ({ initalAddress }) => {
   }, []);
 
   return (
-    <Box width="100%">
-      <Typography variant="h6" fontWeight="bold" ml={1}>
-        DELIVERY ADDRESS
-      </Typography>
+    <div className="w-full">
+      <h2 className="text-lg font-bold ml-1">DELIVERY ADDRESS</h2>
 
-      <Paper elevation={3} sx={{ mt: 3, p: 2 }}>
+      <div className="border rounded-lg p-4 mt-3 bg-white shadow-sm">
         <RadioGroup
-          value={selectedRadio}
-          onChange={(e) => {
-            const index = Number(e.target.value);
+          value={selectedRadio.toString()}
+          onValueChange={(value) => {
+            const index = Number(value);
             setSelectedRadio(index);
             setNewAddress({ ...newAddress, open: false });
             onChangeShippingAddress(address[index]);
@@ -149,59 +140,45 @@ const Default = ({ initalAddress }) => {
           {address.map((addr, i) => (
             <Card
               key={i}
-              variant="outlined"
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                p: 2,
-                mb: 1,
-                cursor: "pointer",
-                bgcolor: selectedRadio === i ? "grey.100" : "white",
-              }}
+              className={`flex items-center p-4 mb-2 border cursor-pointer ${
+                selectedRadio === i ? "bg-gray-100" : "bg-white"
+              }`}
             >
-              <FormControlLabel
-                value={i}
-                control={<Radio />}
-                label={
-                  <AddressSelect
-                    Data={addr}
-                    setNewAddress={setNewAddress}
-                    onDeleteAddress={onDeleteAddress}
-                    onSelectAddressToCheckout={() => {}}
-                    onSubmitAddress={onSubmitAddress}
-                    states={states}
-                  />
-                }
-                sx={{ width: "100%" }}
-              />
+              <RadioGroupItem id={`address-${i}`} value={i.toString()} className="mr-2" />
+              <label htmlFor={`address-${i}`} className="w-full">
+                <AddressSelect
+                  Data={addr}
+                  setNewAddress={setNewAddress}
+                  onDeleteAddress={onDeleteAddress}
+                  onSelectAddressToCheckout={() => {}}
+                  onSubmitAddress={onSubmitAddress}
+                  states={states}
+                />
+              </label>
             </Card>
           ))}
         </RadioGroup>
 
         {!newAddress.open ? (
           <Button
-            variant="outlined"
-            startIcon={<FaPlus />}
-            fullWidth
-            sx={{ mt: 2 }}
+            variant="outline"
+            className="mt-3 w-full flex items-center gap-2"
             onClick={() => setNewAddress({ ...newAddress, open: true })}
           >
-            Add A New Address
+            <FaPlus /> Add A New Address
           </Button>
         ) : (
-          <Paper elevation={3} sx={{ mt: 2, p: 2, bgcolor: "#f5fafe" }}>
-            <Typography variant="body1" fontWeight="bold" bgcolor="primary.main" color="white" p={1}>
-              ADD A NEW ADDRESS
-            </Typography>
+          <div className="border rounded-lg p-4 mt-3 bg-blue-50 shadow-sm">
+            <h3 className="text-white bg-primary p-2 font-semibold text-center">ADD A NEW ADDRESS</h3>
             <NewAddressForm
               onSubmitAddress={onSubmitAddress}
               states={states}
               handleCancel={() => setNewAddress({ open: false })}
             />
-          </Paper>
+          </div>
         )}
-      </Paper>
-    </Box>
+      </div>
+    </div>
   );
 };
 
