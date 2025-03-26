@@ -1,70 +1,58 @@
-import React from 'react';
-import { Drawer, Accordion, AccordionSummary, AccordionDetails, Typography, IconButton } from '@mui/material';
+import React from "react";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
 import { MdOutlineExpandMore } from "react-icons/md";
 import TagsFilter from "@/myapp/components/FilterProducts/TagsFilter";
 import PriceFilter from "@/myapp/components/FilterProducts/PriceFilter";
 import SubCategoryFilter from "@/myapp/components/FilterProducts/SubCategoryFilter";
 import ColorFilter from "@/myapp/components/FilterProducts/ColorFilter";
 import StyleFilter from "@/myapp/components/FilterProducts/StyleFilter";
+import { Button } from "@/components/ui/button";
 
 const CategoryDrawer = ({ onClose, visible }) => {
   return (
-    <Drawer
-      anchor="left"
-      open={visible}
-      onClose={onClose}
-      sx={{ width: "80vw", '& .MuiDrawer-paper': { width: "80vw" } }}
-    >
-      <div style={{ padding: "16px" }}>
-        <Typography variant="h6">Filter By</Typography>
-      </div>
-      
-      <Accordion>
-        <AccordionSummary expandIcon={<MdOutlineExpandMore />}>
-          <Typography>Prices</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <PriceFilter isMobile={true} />
-        </AccordionDetails>
-      </Accordion>
+    <Sheet open={visible} onOpenChange={onClose}>
+      <SheetContent side="left" className="w-[80vw]">
+        <SheetHeader>
+          <SheetTitle>Filter By</SheetTitle>
+        </SheetHeader>
 
-      <Accordion>
-        <AccordionSummary expandIcon={<MdOutlineExpandMore />}>
-          <Typography>Tags</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <TagsFilter isMobile={true} />
-        </AccordionDetails>
-      </Accordion>
+        <div className="mt-4 space-y-2">
+          <FilterSection title="Prices">
+            <PriceFilter isMobile={true} />
+          </FilterSection>
 
-      <Accordion>
-        <AccordionSummary expandIcon={<MdOutlineExpandMore />}>
-          <Typography>Sub Categories</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <SubCategoryFilter isMobile={true} />
-        </AccordionDetails>
-      </Accordion>
+          <FilterSection title="Tags">
+            <TagsFilter isMobile={true} />
+          </FilterSection>
 
-      <Accordion>
-        <AccordionSummary expandIcon={<MdOutlineExpandMore />}>
-          <Typography>Colors</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <ColorFilter isMobile={true} />
-        </AccordionDetails>
-      </Accordion>
+          <FilterSection title="Sub Categories">
+            <SubCategoryFilter isMobile={true} />
+          </FilterSection>
 
-      <Accordion>
-        <AccordionSummary expandIcon={<MdOutlineExpandMore />}>
-          <Typography>Styles</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <StyleFilter isMobile={true} />
-        </AccordionDetails>
-      </Accordion>
-    </Drawer>
+          <FilterSection title="Colors">
+            <ColorFilter isMobile={true} />
+          </FilterSection>
+
+          <FilterSection title="Styles">
+            <StyleFilter isMobile={true} />
+          </FilterSection>
+        </div>
+      </SheetContent>
+    </Sheet>
   );
 };
+
+const FilterSection = ({ title, children }) => (
+  <Collapsible>
+    <CollapsibleTrigger asChild>
+      <Button variant="ghost" className="w-full justify-between">
+        {title}
+        <MdOutlineExpandMore className="ml-2" />
+      </Button>
+    </CollapsibleTrigger>
+    <CollapsibleContent className="p-2">{children}</CollapsibleContent>
+  </Collapsible>
+);
 
 export default CategoryDrawer;
