@@ -47,7 +47,7 @@ const DeliveryTime = () => {
             }
           }}
         />
-        <Button type="submit" variant="outline" className="bg-primary text-white hover:bg-primary/90">
+        <Button type="submit" variant="outline" className="bg-[#e76e81] text-white hover:bg-white">
           Check
         </Button>
       </form>

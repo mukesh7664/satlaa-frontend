@@ -49,7 +49,7 @@ const Default = ({ data = null, className }) => {
                            {!data.type && data.before_price !== 0 ? <Price data={data.before_price} /> : ""}
                         </span>
                      </div>
-                     <Button variant="default" className="rounded-r rounded-t-none rounded-b-none absolute bottom-0 right-0 group-hover:text-white group-hover:shadow-lg">
+                     <Button variant="default" className="rounded-r bg-[#e76e81] rounded-t-none rounded-b-none absolute bottom-0 right-0 group-hover:text-white group-hover:shadow-lg">
                         Details
                      </Button>
                   </div>

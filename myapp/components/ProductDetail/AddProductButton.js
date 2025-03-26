@@ -165,7 +165,7 @@ const Page = ({
           })}
         >
           <Button
-            className="w-full shadow-md bg-primary text-white border transition duration-200 border-transparent hover:text-primary hover:bg-white hover:border-secondary hover:border capitalize"
+            className="w-full shadow-md bg-[#e76e81] text-white border transition duration-200 border-transparent hover:text-primary hover:bg-white hover:border-secondary hover:border capitalize"
             disabled={!disabledVariant}
             type="submit"
           >
@@ -184,7 +184,7 @@ const Page = ({
           })}
         >
           <Button
-            className="w-full shadow-md bg-primary text-white border border-transparent transition duration-200"
+            className="w-full shadow-md bg-[#e76e81] text-white border border-transparent transition duration-200 hover:bg-white hover:text-black"
             disabled={!disabledVariant}
             type="submit"
           >

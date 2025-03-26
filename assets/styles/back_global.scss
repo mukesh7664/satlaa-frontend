@@ -2,6 +2,186 @@
 @tailwind components;
 @tailwind utilities;
 
+
+/* Style your items */
+.my-masonry-column {
+  /* change div to reference your elements you put in <Masonry> */
+  margin-top: 20px;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+}
+
+ /*@import "react-slideshow-image/dist/styles.css";*/
+
+body {
+  @apply dark:bg-black;
+}
+.break-inside-avoid {
+  break-inside: avoid;
+}
+ant-input:hover {
+  border-color: transparent !important; /* Custom border color on hover */
+  border-inline-end-width: 0px !important ; /* Custom border width on hover */
+}
+.crt-logo {
+  display: none !important;
+}
+.ant-input-search-button {
+  background-color: #e76e81 !important; /* Replace #yourColor with the hex code of the color you want */
+}
+.gradient-border {
+  background-image: linear-gradient(white, white),
+    linear-gradient(45deg, #e76e81, purple, #e76e81, #a14189);
+  background-origin: border-box;
+  background-clip: content-box, border-box;
+  border: double 2px transparent;
+}
+.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected,
+.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-active,
+.ant-menu-submenu-popup .ant-menu-item:hover {
+  background-color: transparent; /* Remove background color */
+}
+.ant-menu-item:hover {
+  background-color: transparent !important;
+}
+/* Override for submenu items if necessary */
+.ant-menu-submenu-popup .ant-menu-item-selected,
+.ant-menu-submenu-popup .ant-menu-item-active {
+  background-color: transparent;
+}
+/******************************************* 
+  Rich Text Styles
+*******************************************/
+mux-player {
+  aspect-ratio: 1 / 1 !important;
+}
+mux-player {
+  --media-object-fit: cover;
+  --media-object-position: center;
+}
+.next-video-container {
+  aspect-ratio: 1 / 1 !important;
+}
+/* Headers */
+.rich-text h1 {
+  @apply text-4xl font-bold mb-4 text-violet-400;
+}
+
+.rich-text h2 {
+  @apply text-3xl font-bold mb-4 text-violet-400;
+}
+
+.rich-text h3 {
+  @apply text-2xl font-bold mb-4 text-violet-400;
+}
+
+.rich-text h4 {
+  @apply text-xl font-bold mb-4 text-violet-400;
+}
+
+.rich-text h5 {
+  @apply text-lg font-bold mb-4 text-violet-400;
+}
+
+.rich-text h6 {
+  @apply text-base font-bold mb-4 text-violet-200;
+}
+
+/* Horizontal rules */
+.rich-text hr {
+  @apply border-gray-300 my-8;
+}
+
+.rich-text a {
+  @apply text-violet-400 underline;
+}
+
+/* Typographic replacements */
+.rich-text p {
+  @apply mb-4;
+}
+
+/* Emphasis */
+.rich-text strong {
+  @apply font-bold;
+}
+
+.rich-text em {
+  @apply italic;
+}
+
+.rich-text del {
+  @apply line-through;
+}
+
+/* Blockquotes */
+.rich-text blockquote {
+  @apply border-l-4 border-gray-400 pl-4 py-2 mb-4;
+}
+
+/* Lists */
+.rich-text ul {
+  @apply list-disc pl-4 mb-4;
+}
+
+.rich-text ol {
+  @apply list-decimal pl-4 mb-4;
+}
+
+.rich-text li {
+  @apply mb-2;
+}
+
+.rich-text li > ul {
+  @apply list-disc pl-4 mb-2;
+}
+
+.rich-text li > ol {
+  @apply list-decimal pl-4 mb-2;
+}
+
+/* Code blocks */
+.rich-text pre {
+  @apply font-mono bg-gray-900 text-gray-100 rounded p-4  my-6;
+}
+
+.rich-text code {
+  @apply font-mono bg-gray-900 text-gray-100 rounded px-2 py-1;
+}
+
+/* Tables */
+.rich-text table {
+  @apply w-full border-collapse border-gray-300 my-6;
+}
+
+.rich-text th {
+  @apply bg-gray-900 text-left py-2 px-4 font-semibold border-b border-gray-300;
+}
+
+.rich-text td {
+  @apply py-2 px-4 border-b border-gray-300;
+}
+
+/* Images */
+.rich-text img {
+  @apply w-full object-cover rounded-xl my-6;
+}
+
+/* Custom containers */
+.rich-text .warning {
+  @apply bg-yellow-100 border-yellow-500 text-yellow-700 px-4 py-2 rounded-lg mb-4;
+}
+
+/******************************************* 
+  React Slideshow Styles
+*******************************************/
+
+.react-slideshow-container [aria-label="Previous Slide"] {
+  margin-left: 1rem;
+}
+
+.react-slideshow-container [aria-label="Next Slide"] {
+  margin-right: 1rem;
+}
 @layer base {
   @keyframes fade-in {
     from {
@@ -128,18 +308,33 @@
     --chart-5: 340 75% 55%;
   }
 }
-
+.ant-form-item {
+  margin-bottom: 0 !important;
+}
 .hiddenArrowInputNumber::-webkit-inner-spin-button,
 .hiddenArrowInputNumber::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 /* Navbar */
+.ant-menu-horizontal > .ant-menu-item::after,
+.ant-menu-horizontal > .ant-menu-submenu::after {
+  border-bottom: none !important;
+  transition: none !important;
+}
 /*  a:hover {
    color: inherit;  reset text color 
    text-decoration: none;  remove underline 
  }*/
-
+.ant-menu-horizontal .ant-menu-submenu {
+  padding-inline: 0px !important;
+}
+.ant-collapse-header {
+  padding-left: 0 !important;
+}
+.ant-drawer-body {
+  padding: 0 !important;
+}
 .homeFirsBoxs {
   display: table;
 
@@ -163,10 +358,21 @@
 
 $primary_color: #e76e81;
 
+.ant-btn-primary {
+  @apply bg-[#4b71a0];
+  -webkit-appearance: button;
+}
 .my-slider .swiper-slide {
   @apply w-[22vw] md:w-36 lg:w-44 p-1;
 }
 
+.ant-layout {
+  background: transparent;
+}
+.ant-input-search-button {
+  background-color: $primary_color !important;
+  @apply text-2xl;
+}
 html,
 body {
   height: 100%;
@@ -180,6 +386,20 @@ a {
 a:hover {
   color: #262626;
   text-decoration: none;
+}
+
+.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
+  background-color: white;
+  color: inherit;
+}
+.ant-menu-light:not(.ant-menu-horizontal) .ant-menu-submenu-title {
+  background-color: white;
+}
+
+.ant-menu-horizontal > .ant-menu-item::after,
+.ant-menu-horizontal > .ant-menu-submenu::after {
+  right: 0px;
+  left: 0;
 }
 
 .homeSliderReslative {
@@ -399,6 +619,50 @@ ul.topmenu {
   overflow: scroll;
   border: 1px solid #dfe2e6;
   padding-left: 5px;
+
+  .ant-tree-treenode-disabled {
+    margin-top: 5px;
+  }
+
+  .ant-tree-treenode-switcher-open {
+    padding: 0;
+  }
+
+  .ant-tree .ant-tree-treenode-disabled .ant-tree-node-content-wrapper {
+    color: #464646;
+    cursor: s-resize;
+    font-weight: bold;
+  }
+
+  .ant-checkbox-group {
+    float: left;
+
+    .ant-checkbox-group-item {
+      float: left;
+      width: 100%;
+    }
+  }
+
+  .ant-tree-switcher-noop {
+    display: none;
+  }
+
+  .ant-tree-indent-unit {
+    width: 10px;
+  }
+
+  .ant-tree-switcher_open {
+    display: none;
+  }
+
+  .ant-tree .ant-tree-node-content-wrapper.ant-tree-node-selected {
+    background-color: #dddddd;
+  }
+}
+
+.ant-select-tree
+  .ant-select-tree-node-content-wrapper.ant-select-tree-node-selected {
+  background-color: #dddddd;
 }
 
 ul.footermenu {
@@ -437,158 +701,16 @@ ul.footermenu {
   }
 }
 
-body {
-  @apply dark:bg-black;
-}
-.break-inside-avoid {
-  break-inside: avoid;
-}
-
-.crt-logo {
-  display: none !important;
+.ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+  color: rgba(0, 0, 0, 0.85);
+  font-weight: 600;
+  background-color: #d4d4d4;
 }
 
-.gradient-border {
-  background-image: linear-gradient(white, white),
-    linear-gradient(45deg, #e76e81, purple, #e76e81, #a14189);
-  background-origin: border-box;
-  background-clip: content-box, border-box;
-  border: double 2px transparent;
-}
-
-/******************************************* 
-  Rich Text Styles
-*******************************************/
-mux-player {
-  aspect-ratio: 1 / 1 !important;
-}
-mux-player {
-  --media-object-fit: cover;
-  --media-object-position: center;
-}
-.next-video-container {
-  aspect-ratio: 1 / 1 !important;
-}
-/* Headers */
-.rich-text h1 {
-  @apply text-4xl font-bold mb-4 text-violet-400;
-}
-
-.rich-text h2 {
-  @apply text-3xl font-bold mb-4 text-violet-400;
-}
-
-.rich-text h3 {
-  @apply text-2xl font-bold mb-4 text-violet-400;
-}
-
-.rich-text h4 {
-  @apply text-xl font-bold mb-4 text-violet-400;
-}
-
-.rich-text h5 {
-  @apply text-lg font-bold mb-4 text-violet-400;
-}
-
-.rich-text h6 {
-  @apply text-base font-bold mb-4 text-violet-200;
-}
-
-/* Horizontal rules */
-.rich-text hr {
-  @apply border-gray-300 my-8;
-}
-
-.rich-text a {
-  @apply text-violet-400 underline;
-}
-
-/* Typographic replacements */
-.rich-text p {
-  @apply mb-4;
-}
-
-/* Emphasis */
-.rich-text strong {
-  @apply font-bold;
-}
-
-.rich-text em {
-  @apply italic;
-}
-
-.rich-text del {
-  @apply line-through;
-}
-
-/* Blockquotes */
-.rich-text blockquote {
-  @apply border-l-4 border-gray-400 pl-4 py-2 mb-4;
-}
-
-/* Lists */
-.rich-text ul {
-  @apply list-disc pl-4 mb-4;
-}
-
-.rich-text ol {
-  @apply list-decimal pl-4 mb-4;
-}
-
-.rich-text li {
-  @apply mb-2;
-}
-
-.rich-text li > ul {
-  @apply list-disc pl-4 mb-2;
-}
-
-.rich-text li > ol {
-  @apply list-decimal pl-4 mb-2;
-}
-
-/* Code blocks */
-.rich-text pre {
-  @apply font-mono bg-gray-900 text-gray-100 rounded p-4  my-6;
-}
-
-.rich-text code {
-  @apply font-mono bg-gray-900 text-gray-100 rounded px-2 py-1;
-}
-
-/* Tables */
-.rich-text table {
-  @apply w-full border-collapse border-gray-300 my-6;
-}
-
-.rich-text th {
-  @apply bg-gray-900 text-left py-2 px-4 font-semibold border-b border-gray-300;
-}
-
-.rich-text td {
-  @apply py-2 px-4 border-b border-gray-300;
-}
-
-/* Images */
-.rich-text img {
-  @apply w-full object-cover rounded-xl my-6;
-}
-
-/* Custom containers */
-.rich-text .warning {
-  @apply bg-yellow-100 border-yellow-500 text-yellow-700 px-4 py-2 rounded-lg mb-4;
-}
-
-/******************************************* 
-  React Slideshow Styles
-*******************************************/
-
-.react-slideshow-container [aria-label="Previous Slide"] {
-  margin-left: 1rem;
-}
-
-.react-slideshow-container [aria-label="Next Slide"] {
-  margin-right: 1rem;
+.ant-form-item-label {
+  font-weight: bold;
+  opacity: 0.8;
+  padding-bottom: 0 !important;
 }
 
 @media screen and (max-width: 1200px) {
@@ -602,6 +724,9 @@ mux-player {
   .home-seccound-box-arrow-left {
     display: none;
   }
+}
+.ant-menu-submenu-title {
+  padding-left: 0px !important;
 }
 
 .form-input-new {

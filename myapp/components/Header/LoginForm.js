@@ -183,7 +183,7 @@ const Default = ({ onSuccessfulLogin, handleCancelLogin }) => {
             render={({ field }) => <Input {...field} type="tel" placeholder="Phone Number" />} />
           {errors.phone && <Alert>{errors.phone.message}</Alert>}
 
-          <Button type="submit" className="w-full bg-red-500 hover:bg-red-600">
+          <Button type="submit" className="w-full bg-[#e76e81] hover:bg-red-600">
             {loading ? "Loading..." : "Send OTP"}
           </Button>
         </form>

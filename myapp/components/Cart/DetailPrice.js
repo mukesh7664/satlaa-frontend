@@ -229,7 +229,7 @@ const Default = () => {
 
       <CardFooter>
         <Button 
-          className="w-full bg-secondary" 
+          className="w-full bg-primary" 
           disabled={cart?.products.length === 0} 
           onClick={onSubmit}
         >
