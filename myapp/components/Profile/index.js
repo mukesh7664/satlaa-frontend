@@ -1,8 +1,23 @@
+"use client";
+
 import { useEffect, useState } from "react";
+import { useForm, FormProvider } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Form, FormField, FormItem, FormLabel, FormControl } from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+} from "@/components/ui/form";
 import { useDispatch, useSelector } from "react-redux";
 import { API_URL } from "../../../config";
 import AuthService from "../../../util/services/authservice";
@@ -15,31 +30,33 @@ import { toast } from "sonner";
 
 const axios = axiosInstance();
 
-const Default = () => {
+const ProfileForm = () => {
   const { isAuthenticated, user } = useSelector(({ login }) => login);
-  const [fieldsUser, setFieldsUser] = useState(
-    Object.entries(user).map(([name, value]) => ({ name, value }))
-  );
-  const [state, setState] = useState({});
   const dispatch = useDispatch();
   const router = useRouter();
+  const [state, setState] = useState(user || {});
 
-  function getDataFc() {
-    if (user.id) {
-      axios.get(`${API_URL}/customers/${user.id}`).then((res) => {
-        const data = res.data;
-        data["password"] = "";
-        setState(data);
-        setFieldsUser(
-          Object.entries(data).map(([name, value]) => ({ name, value }))
-        );
-      });
-    }
-  }
+  const formMethods = useForm({
+    defaultValues: {
+      email: user?.email || "",
+      name: user?.name || "",
+      phone: user?.phone || "",
+      prefix: user?.prefix || "91",
+    },
+  });
+
+  const { handleSubmit, control, reset } = formMethods;
 
   useEffect(() => {
-    getDataFc();
-  }, [user]);
+    if (user?.id) {
+      axios.get(`${API_URL}/customers/${user.id}`).then((res) => {
+        const data = res.data;
+        data.password = "";
+        setState(data);
+        reset(data);
+      });
+    }
+  }, [user, reset]);
 
   const onSubmit = async (data) => {
     try {
@@ -48,85 +65,50 @@ const Default = () => {
         toast.error(`Not Updated: ${res.data.message}`);
       } else {
         toast.success("Information Updated");
+        setState(data);
       }
     } catch (err) {
       console.error(err);
     }
   };
 
-  const changePrefix = (selected) => {
-    setState({
-      ...state,
-      prefix: selected,
-    });
-  };
-
   return (
     <div className="h-full grid grid-cols-12 gap-0 sm:gap-10 p-0 m-0 w-full my-10">
       <div className="col-span-12 lg:col-span-6">
-        <Form onSubmit={onSubmit} className="w-full">
-          <FormField name="email">
-            <FormItem>
-              <FormLabel>E-mail</FormLabel>
-              <FormControl>
-                <Input type="email" required />
-              </FormControl>
-            </FormItem>
-          </FormField>
+        <FormProvider {...formMethods}>
+          <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-4">
+            <FormField name="email">
+              {(field) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input type="email" required {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            </FormField>
 
-          <FormField name="name">
-            <FormItem>
-              <FormLabel>Name</FormLabel>
-              <FormControl>
-                <Input required />
-              </FormControl>
-            </FormItem>
-          </FormField>
+            <FormField name="name">
+              {(field) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input required {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            </FormField>
 
-          <FormField name="phone">
-            <FormItem>
-              <FormLabel>Phone</FormLabel>
-              <div className="flex gap-2">
-                <Select defaultValue="91" onValueChange={changePrefix} disabled>
-                  <SelectTrigger className="w-20">
-                    <SelectValue placeholder="+91" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="91">+91</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormControl>
-                  <Input required disabled />
-                </FormControl>
-              </div>
-            </FormItem>
-          </FormField>
+            <Separator className="my-4" />
 
-          <Separator className="my-4" />
-
-          <Button type="submit" className="w-full">
-            Update
-          </Button>
-
-          <Button
-            type="button"
-            variant="outline"
-            className="w-full mt-2"
-            onClick={async () => {
-              await AuthService.logout();
-              await dispatch(setLogout());
-              await dispatch(setIsAuthenticated(false));
-              removeCookies("token");
-              router.refresh();
-              router.push("/");
-            }}
-          >
-            Logout
-          </Button>
-        </Form>
+            <Button type="submit" className="w-full">
+              Update
+            </Button>
+          </form>
+        </FormProvider>
       </div>
     </div>
   );
 };
 
-export default Default;
+export default ProfileForm;

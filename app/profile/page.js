@@ -6,11 +6,6 @@ import { useRouter } from "next/navigation";
 import Profile from "@/myapp/components/Profile";
 import ProfileLeftMenu from "@/myapp/components/Profile/LeftMenu";
 
-export const metadata = {
-  title: "Profile - SATLAA",
-  description: "Manage your profile information and account settings.",
-};
-
 const ProfilePage = () => {
   const router = useRouter();
   const { isAuthenticated } = useSelector((state) => state.login);
