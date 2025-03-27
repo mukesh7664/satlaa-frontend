@@ -174,6 +174,7 @@ const ProductDetail = ({ data = {}, reviews, banners }) => {
           user={user}
           state={data}
           priceAdd={priceAdd}
+          getCart={getCart_r}
         />
       ) : (
         <p className="text-red-600 text-xl font-semibold">Currently Out Of Stock</p>
