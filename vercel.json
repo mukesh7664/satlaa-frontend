@@ -5,7 +5,8 @@
         "dev" : false,
         "main": false,
         "ucat": true,
-        "migration" : false
+        "migration" : false,
+        "shadcn": false
       }
     }
   }
