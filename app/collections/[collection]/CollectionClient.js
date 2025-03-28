@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Drawer } from "@/components/ui/drawer";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { ChevronDown } from "lucide-react";
+import { FaAngleDown } from "react-icons/fa6";
 import parse from "html-react-parser";
 import ProductCard from "@/myapp/components/ProductCard";
 import SkeletonProductCard from "@/myapp/components/ProductCard/skeleton";
@@ -82,7 +82,7 @@ const CollectionClient = ({ collectionData, collection }) => {
             {collectionData.faqs.map((faq, i) => (
               <AccordionItem key={i} value={`faq-${i}`} className="border-b">
                 <AccordionTrigger className="flex items-center justify-between">
-                  {faq.question} <ChevronDown className="w-4 h-4" />
+                  {faq.question} <FaAngleDown className="w-4 h-4" />
                 </AccordionTrigger>
                 <AccordionContent>
                   <p>{faq.answer}</p>
