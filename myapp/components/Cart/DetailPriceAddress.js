@@ -5,7 +5,7 @@ import router from "next/router";
 import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Lock } from "lucide-react";
+import { MdLockOutline } from "react-icons/md";
 import Price from "../Price";
 import { MdLockOutline } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
@@ -195,7 +195,7 @@ const Default = () => {
           disabled={!shipping_address?.address} 
           onClick={onSubmit}
         >
-          <Lock className="mr-2 h-5 w-5" />
+          <MdLockOutline className="mr-2 h-5 w-5" />
           Checkout Securely
         </Button>
       </CardFooter>

@@ -3,7 +3,7 @@ import { filterProducts as filterProducts_r } from "../../../redux/reducers/Filt
 import filterRouteLinkGenerate from "./filterRouterLink";
 import { productsApi } from "../../../redux/api/productsApi";
 import { Badge } from "@/components/ui/badge";
-import { X } from "lucide-react";
+import { IoMdClose } from "react-icons/io";
 
 const Page = ({ category }) => {
   const { filterProducts } = useSelector(({ filterProducts }) => filterProducts);
@@ -37,7 +37,7 @@ const Page = ({ category }) => {
     <Badge key={key} variant="outline" className="flex items-center gap-2 px-3 py-1 bg-gray-100 text-black border-gray-300">
       {label}
       <button onClick={onDelete} className="text-gray-500 hover:text-black">
-        <X className="w-4 h-4" />
+        <IoMdClose className="w-4 h-4" />
       </button>
     </Badge>
   );

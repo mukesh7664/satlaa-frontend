@@ -3,9 +3,7 @@ const axios = axiosInstance();
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Separator } from "@/components/ui/separator";
-import { MdDeleteOutline } from "react-icons/md";
-import { Trash2 } from "lucide-react";
+import { FiTrash2 } from "react-icons/fi";
 import Price from "../Price";
 import { useDispatch, useSelector } from "react-redux";
 import { API_URL } from "../../../config";
@@ -217,7 +215,7 @@ const Default = () => {
                 </TableCell>
                 <TableCell className="text-center">
                   <Button variant="destructive" size="icon" onClick={() => deleteProduct(record)}>
-                    <Trash2 className="w-5 h-5" />
+                    <FiTrash2 className="w-5 h-5" />
                   </Button>
                 </TableCell>
               </TableRow>
