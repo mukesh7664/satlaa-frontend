@@ -1,34 +1,23 @@
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  Button,
-  Menu,
-  MenuItem,
-  ListItemIcon,
-  Typography,
-  IconButton,
-} from "@mui/material";
-import { MdOutlineSortByAlpha } from "react-icons/md";
 import { filterProducts as filterProducts_r } from "../../../redux/reducers/FilterProducts";
 import filterRouteLinkGenerate from "./filterRouterLink";
 import { productsApi } from "../../../redux/api/productsApi";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
+import { MdOutlineSortByAlpha } from "react-icons/md";
 import { useMediaQuery } from "react-responsive";
+import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 const Page = () => {
   const { filterProducts } = useSelector(({ filterProducts }) => filterProducts);
   const dispatch = useDispatch();
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
 
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
+  const [open, setOpen] = useState(false);
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
+  const toggleMenu = () => {
+    setOpen((prev) => !prev);
   };
 
   const sortItem = (data) => {
@@ -38,47 +27,35 @@ const Page = () => {
     dispatch(filterProducts_r({ ...filterProducts, sort: newData, page: 1 }));
     filterRouteLinkGenerate({ ...filterProducts, sort: newData, page: 1 });
 
-    handleClose();
+    setOpen(false);
   };
 
   return (
     <div className="w-full">
-      {isMobile ? (
-        <IconButton onClick={handleClick} className="w-full bg-white border rounded-sm">
-          <Typography className="font-bold">Sort By</Typography>
-          {open ? <FiChevronUp className="ml-1 text-xl" /> : <FiChevronDown className="ml-1 text-xl" />}
-        </IconButton>
-      ) : (
-        <Button
-          onClick={handleClick}
-          variant="contained"
-          endIcon={<FiChevronDown />}
-          className="w-full bg-white text-black px-2 text-[12px]"
-          sx={{border: "1px solid black", boxShadow: "none"}}
-        >
-          Sort By
-        </Button>
-      )}
-
-      <Menu anchorEl={anchorEl} open={open} onClose={handleClose} anchorOrigin={{ vertical: "bottom", horizontal: "left" }}>
-        <MenuItem
-          onClick={() => sortItem(JSON.stringify({ "variant_products.price": -1, price: -1 }))}
-        >
-          <ListItemIcon>
-            <MdOutlineSortByAlpha />
-          </ListItemIcon>
-          <Typography>Increased Price</Typography>
-        </MenuItem>
-
-        <MenuItem
-          onClick={() => sortItem(JSON.stringify({ "variant_products.price": 1, price: 1 }))}
-        >
-          <ListItemIcon>
-            <MdOutlineSortByAlpha />
-          </ListItemIcon>
-          <Typography>Decreasing Price</Typography>
-        </MenuItem>
-      </Menu>
+      <DropdownMenu open={open} onOpenChange={setOpen}>
+        <DropdownMenuTrigger asChild>
+          {isMobile ? (
+            <Button variant="outline" className="w-full flex items-center justify-between">
+              <span className="font-bold">Sort By</span>
+              {open ? <FiChevronUp className="text-xl" /> : <FiChevronDown className="text-xl" />}
+            </Button>
+          ) : (
+            <Button variant="outline" className="w-full flex items-center justify-between">
+              Sort By <FiChevronDown className="ml-2 text-lg" />
+            </Button>
+          )}
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start" className="w-48">
+          <DropdownMenuItem onClick={() => sortItem(JSON.stringify({ "variant_products.price": -1, price: -1 }))}>
+            <MdOutlineSortByAlpha className="mr-2" />
+            Increased Price
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => sortItem(JSON.stringify({ "variant_products.price": 1, price: 1 }))}>
+            <MdOutlineSortByAlpha className="mr-2" />
+            Decreasing Price
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 };

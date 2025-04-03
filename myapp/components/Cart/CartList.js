@@ -1,19 +1,9 @@
 import axiosInstance from "@/util/axios";
 const axios = axiosInstance();
 import { useState, useEffect } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  IconButton,
-  Typography,
-  Button,
-  Paper,
-} from "@mui/material";
-import { MdDeleteOutline } from "react-icons/md";
+import { Button } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { FiTrash2 } from "react-icons/fi";
 import Price from "../Price";
 import { useDispatch, useSelector } from "react-redux";
 import { API_URL } from "../../../config";
@@ -180,82 +170,64 @@ const Default = () => {
   };
 
   return (
-    <TableContainer component={Paper} className="w-100">
+    <div className="w-full border rounded-lg overflow-hidden">
       <Table>
-        <TableHead>
-          <TableRow sx={{ background: "#f5f5f5" }}>
-            <TableCell>
-              <Typography variant="body2" fontWeight="bold">Title</Typography>
-            </TableCell>
-            <TableCell align="center">
-              <Typography variant="body2" fontWeight="bold">Price</Typography>
-            </TableCell>
-            <TableCell align="center">
-              <Typography variant="body2" fontWeight="bold">Qty</Typography>
-            </TableCell>
-            <TableCell align="center">
-              <Typography variant="body2" fontWeight="bold">Total Price</Typography>
-            </TableCell>
-            <TableCell align="center">
-              <Typography variant="body2" fontWeight="bold">Delete</Typography>
-            </TableCell>
+        <TableHeader className="bg-gray-100">
+          <TableRow>
+            <TableHead className="font-bold">Title</TableHead>
+            <TableHead className="text-center font-bold">Price</TableHead>
+            <TableHead className="text-center font-bold">Qty</TableHead>
+            <TableHead className="text-center font-bold">Total Price</TableHead>
+            <TableHead className="text-center font-bold">Delete</TableHead>
           </TableRow>
-        </TableHead>
+        </TableHeader>
         <TableBody>
           {state.length > 0 ? (
             state.map((record) => (
               <TableRow key={record._id}>
                 <TableCell>
-                  <Link href={`/products/${record.seo}`} passHref>
-                    <Typography variant="body1" fontWeight="bold">{record.title}</Typography>
+                  <Link href={`/products/${record.seo}`} className="font-semibold hover:text-blue-500">
+                    {record.title}
                   </Link>
                   {record.error.length > 0 && (
-                    <Typography variant="caption" color="error">
-                      {record.error.join(", ")}
-                    </Typography>
+                    <p className="text-red-500 text-sm">{record.error.join(", ")}</p>
                   )}
                 </TableCell>
-                <TableCell align="center">
+                <TableCell className="text-center">
                   {record.before_price !== 0 && (
-                    <Typography variant="body2" color="textSecondary" sx={{ textDecoration: "line-through" }}>
+                    <p className="text-gray-500 line-through">
                       <Price data={record.before_price} />
-                    </Typography>
+                    </p>
                   )}
-                  <Typography variant="body1" fontWeight="bold">
+                  <p className="font-semibold">
                     <Price data={record.price} />
-                  </Typography>
+                  </p>
                 </TableCell>
-                <TableCell align="center">
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <Button variant="outlined" onClick={() => modifyQuantity(record, -1)}>-</Button>
-                    <Typography variant="body1" component="span" sx={{ mx: 1 }}>
-                      {record.qty}
-                    </Typography>
-                    <Button variant="outlined" onClick={() => modifyQuantity(record, 1)}>+</Button>
+                <TableCell className="text-center">
+                  <div className="flex items-center justify-center gap-2">
+                    <Button variant="outline" size="icon" onClick={() => modifyQuantity(record, -1)}>-</Button>
+                    <span className="font-medium">{record.qty}</span>
+                    <Button variant="outline" size="icon" onClick={() => modifyQuantity(record, 1)}>+</Button>
                   </div>
                 </TableCell>
-                <TableCell align="center">
-                  <Typography variant="body1" fontWeight="bold">
-                    <Price data={record.total_price} />
-                  </Typography>
+                <TableCell className="text-center font-semibold">
+                  <Price data={record.total_price} />
                 </TableCell>
-                <TableCell align="center">
-                  <IconButton color="error" onClick={() => deleteProduct(record)}>
-                    <MdDeleteOutline />
-                  </IconButton>
+                <TableCell className="text-center">
+                  <Button variant="destructive" size="icon" onClick={() => deleteProduct(record)}>
+                    <FiTrash2 className="w-5 h-5" />
+                  </Button>
                 </TableCell>
               </TableRow>
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={5} align="center">
-                <Typography variant="body1">No products in cart.</Typography>
-              </TableCell>
+              <TableCell colSpan={5} className="text-center py-4 text-lg">No products in cart.</TableCell>
             </TableRow>
           )}
         </TableBody>
       </Table>
-    </TableContainer>
+    </div>
   );
 };
 

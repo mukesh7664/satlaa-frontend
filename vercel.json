@@ -4,7 +4,9 @@
       "deploymentEnabled" : {
         "dev" : false,
         "main": false,
-        "ucat": true
+        "ucat": true,
+        "migration" : false,
+        "shadcn": false
       }
     }
   }

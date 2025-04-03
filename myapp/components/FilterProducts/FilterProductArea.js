@@ -10,13 +10,16 @@ import { API_URL } from "../../../config";
 const FilterProductArea = ({ initialData, category }) => {
   const { filterProducts } = useSelector(({ filterProducts }) => filterProducts);
   const [productData, setProductData] = useState({
-    products: initialData.products ?? [],
-    pagination: initialData.pagination ?? {},
+    products: initialData?.products ?? [],
+    pagination: initialData?.pagination ?? {},
   });
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setProductData(initialData);
+    setProductData({
+      products: initialData?.products ?? [],
+      pagination: initialData?.pagination ?? {},
+    });
   }, [category, initialData]);
 
   const fetchData = useCallback(async () => {
@@ -27,8 +30,8 @@ const FilterProductArea = ({ initialData, category }) => {
         filterProducts
       );
       setProductData({
-        products: response.data.products,
-        pagination: response.data.pagination,
+        products: response.data?.products ?? [],
+        pagination: response.data?.pagination ?? {},
       });
     } catch (error) {
       console.error("Failed to fetch products:", error);
@@ -50,8 +53,8 @@ const FilterProductArea = ({ initialData, category }) => {
           page: nextPage,
         });
         setProductData((prevData) => ({
-          products: [...prevData.products, ...response.data.products],
-          pagination: response.data.pagination,
+          products: [...(prevData.products ?? []), ...(response.data?.products ?? [])],
+          pagination: response.data?.pagination ?? {},
         }));
       } catch (error) {
         console.error("Failed to fetch more products:", error);
@@ -73,16 +76,16 @@ const FilterProductArea = ({ initialData, category }) => {
   return (
     <div className="container">
       <InfiniteScroll
-        dataLength={productData.products.length}
+        dataLength={productData?.products?.length ?? 0}
         scrollThreshold="0.5"
         next={fetchMoreData}
-        hasMore={productData.pagination?.hasMorePages}
+        hasMore={productData?.pagination?.hasMorePages ?? false}
         loader={<div className="col-span-12">{generateSkeletons(1)}</div>}
         className="grid grid-cols-12 pb-16"
       >
-        {productData.products.map((data, i) => (
+        {productData?.products?.map((data, i) => (
           <ProductCard
-            key={data._id ? `${data._id}-${i}` : `product-${i}`}
+            key={data?._id ? `${data._id}-${i}` : `product-${i}`}
             data={data}
             category={category}
             className="xl:col-span-3 lg:col-span-4 border col-span-6 m-2 md:m-3 bg-gray-100 group overflow-hidden pb-0"

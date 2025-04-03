@@ -1,4 +1,4 @@
-import Router from "next/router";
+import Router from "next/navigation";
 
 export default (context = {}, target) => {
    if (context.res) {

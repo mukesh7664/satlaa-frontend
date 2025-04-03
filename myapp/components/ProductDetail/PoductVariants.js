@@ -1,9 +1,10 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Divider, RadioGroup, FormControl, FormLabel, FormControlLabel, Radio } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import dynamic from "next/dynamic";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -12,6 +13,10 @@ import Price from "../Price";
 import AddProductButton from "./AddProductButton";
 import func from "../../../util/helpers/func";
 import { API_URL, IMG_URL } from "../../../config";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 
 const HTMLParser = dynamic(() => import("../../components/Utils/HtmlParser"), { ssr: false });
 const ProductDrawer = dynamic(() => import("../../components/Drawer/ProductDrawer"), { ssr: false });
@@ -45,7 +50,7 @@ const ProductDetail = ({ data = {}, reviews, banners }) => {
   const { control, watch, setValue } = useForm();
 
   useEffect(() => {
-    if (user && user.id) {
+    if (user?.id) {
       dispatch(getCart_r(user.id));
     }
     const replaceStyle = (html) =>
@@ -84,16 +89,13 @@ const ProductDetail = ({ data = {}, reviews, banners }) => {
       <h2 className="font-semibold font-Roboto mt-5 md:mt-0 text-xl md:text-2xl">
         {data.brand === "satlaa" ? "925 Silver" : "Silver"} {data.title.replace(/\b(925|silver)\b\s*/gi, "")}
       </h2>
-
       <div className="flex items-center p-1">
         <StarRating className="text-lg" rating={data.reviewData.average_rating} />
         <p className="ml-1">
           {data.reviewData.average_rating} | {data.reviewData.total_rating} (Inc. Amazon/Flipkart)
         </p>
       </div>
-
       <h3 className="text-gray-500 font-bold mt-1 text-[24px] font-Samarkan md:ml-1">MADE IN PURE SILVER</h3>
-
       <div className="my-4 w-full">
         {data.type ? (
           disabledVariant ? (
@@ -123,74 +125,45 @@ const ProductDetail = ({ data = {}, reviews, banners }) => {
           </h1>
         )}
       </div>
-
-      <div className=" flex-row content-around px-1 my-2 pt-2 flex ">
-        {features.map((feature, i) => {
-          return (
-            <div
-              className="flex flex-1 flex-col justify-center content-center px-2"
-              key={i}
-            >
-              <Image
-                className=""
-                src={`/images/icons/${feature.icon}.png`}
-                width="60"
-                height="60"
-                alt={feature.title}
-              />
-              <p className="mt-2 text-gray-500 font-Montserrat text-sm">
-                {feature.title}
-              </p>
-            </div>
-          );
-        })}
+      <div className="flex-row content-around px-1 my-2 pt-2 flex">
+        {features.map((feature, i) => (
+          <div className="flex flex-1 flex-col justify-center content-center px-2" key={i}>
+            <Image src={`/images/icons/${feature.icon}.png`} width="60" height="60" alt={feature.title} />
+            <p className="mt-2 text-gray-500 font-Montserrat text-sm">{feature.title}</p>
+          </div>
+        ))}
       </div>
-
-      <Divider className="mt-4  mb-4 "/>
-
+      <Separator className="my-4" />
       <form>
         {data.variants?.map((variant) => (
-          <FormControl key={variant.name} component="fieldset" className="mb-4">
-            <FormLabel component="legend" className="font-semibold">
-              {variant.name}
-            </FormLabel>
+          <div key={variant.name} className="mb-4">
+            <Label className="font-semibold">{variant.name}</Label>
             <Controller
               name={variant.name}
               control={control}
               render={({ field }) => (
-                <RadioGroup
-                  {...field}
-                  onChange={(e) => handleVariantChange(variant.name, e.target.value)}
-                  className="pl-2 mt-2 mb-1"
-                >
+                <RadioGroup {...field} onValueChange={(value) => handleVariantChange(variant.name, value)} className="pl-2 mt-2 mb-1">
                   {variant.value.map((option, index) => (
-                    <FormControlLabel
-                    key={index}
-                    value={option}
-                    control={<Radio />}
-                    label={
-                      <div className="flex items-center space-x-2">
-                        {variant.images?.[index] && (
-                          <Image
-                            src={`${IMG_URL}${variant.images[index]}`}
-                            alt={option}
-                            width={40}
-                            height={40}
-                            className="border rounded-md"
-                          />
-                        )}
-                        <span>{option}</span>
-                      </div>
-                    }
-                  />
+                    <div key={index} className="flex items-center space-x-2">
+                      <RadioGroupItem value={option} />
+                      {variant.images?.[index] && (
+                        <Image
+                          src={`${IMG_URL}${variant.images[index]}`}
+                          alt={option}
+                          width={40}
+                          height={40}
+                          className="border rounded-md"
+                        />
+                      )}
+                      <Label>{option}</Label>
+                    </div>
                   ))}
                 </RadioGroup>
               )}
             />
-          </FormControl>
+          </div>
         ))}
       </form>
-
       {data.qty > 0 ? (
         <AddProductButton
           disabledVariant={disabledVariant}
@@ -201,21 +174,20 @@ const ProductDetail = ({ data = {}, reviews, banners }) => {
           user={user}
           state={data}
           priceAdd={priceAdd}
+          getCart={getCart_r}
         />
       ) : (
         <p className="text-red-600 text-xl font-semibold">Currently Out Of Stock</p>
       )}
-
       <DeliveryTime />
-      <Divider className="mb-4 mt-4"/>
-      {banners?.top && <Image src={`${IMG_URL}${banners.top.banner_mobile}`} width={1680} height={500} alt="Banner" />}
+      <Separator className="my-4" />
       <Offers />
       {contentPoints && <HTMLParser html={contentPoints} />}
       <ProductDrawer contentDescription={contentDescription} state={data} />
       <MoreInfo />
       <Share path={router.asPath} state={data} />
       {reviews?.length > 0 && <Reviews reviews={reviews} />}
-      <Divider /> 
+      <Separator />
     </div>
   );
 };

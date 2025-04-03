@@ -20,20 +20,42 @@
     "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"],
-      "@/util/*": ["./util/*"],
-      "@/config/*": ["../config/*"],
-      "@/redux/*": ["./redux/*"],
-      "@/components/*": ["./myapp/components/*"],
-      "@/myapp/*": ["./myapp/*"],
-      "@/hoc/*": ["./myapp/components/hoc/*"]
-    }
+      "@/*": [
+        "./*"
+      ],
+      "@/util/*": [
+        "./util/*"
+      ],
+      "@/config/*": [
+        "../config/*"
+      ],
+      "@/redux/*": [
+        "./redux/*"
+      ],
+      "@/components/*": [
+        "./myapp/components/*"
+      ],
+      "@/myapp/*": [
+        "./myapp/*"
+      ],
+      "@/hoc/*": [
+        "./myapp/components/hoc/*"
+      ]
+    },
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "strictNullChecks": true
   },
   "include": [
-    "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx"
-, "pages/404.jsx"  ],
+    "**/*.tsx",
+    "next-env.d.ts",
+    "app/404.jsx",
+    ".next/types/**/*.ts"
+, "app/layout.js", "lib/utils.js"  ],
   "exclude": [
     "node_modules"
   ]

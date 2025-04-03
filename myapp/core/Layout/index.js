@@ -1,28 +1,41 @@
+"use client";
+
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import dynamic from "next/dynamic";
 
 import { cartFetch } from "../../../redux/reducers/Cart";
 import { setLogin, setIsAuthenticated } from "../../../redux/reducers/Login";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import AuthService from "../../../util/services/authservice";
-
 import func from "../../../util/helpers/func";
-
-const Footer = dynamic(() => import("../../components/Footer"), { ssr: true });
-const Header = dynamic(() => import("../../components/Header"), { ssr: true });
 import { hasCookie } from "cookies-next";
-import AnnouncementHeader from "../../components/TopMenu/annoncements";
 import { FaWhatsapp } from "react-icons/fa";
+
+// Dynamic imports (no SSR needed in a client component)
+const Footer = dynamic(() => import("../../components/Footer"));
+const Header = dynamic(() => import("../../components/Header"));
+const AnnouncementHeader = dynamic(() => import("../../components/TopMenu/annoncements"));
+
 const haveCookie = hasCookie("token");
 
 const AppLayout = ({ children }) => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { settings } = useSelector(({ settings }) => settings);
-  const { errorFetch } = useSelector(({ settings }) => settings);
+  const { settings, errorFetch } = useSelector(({ settings }) => settings);
   const { isAuthenticated } = useSelector(({ login }) => login);
   const { topmenu } = useSelector(({ topmenu }) => topmenu);
+
+  useEffect(() => {
+    if (haveCookie) {
+      loginControl();
+    }
+    if (errorFetch) {
+      // Handle fetch error (uncomment below if using notifications)
+      // message.error(errorFetch);
+    }
+  }, [isAuthenticated]);
+
   const loginControl = () => {
     if (!isAuthenticated) {
       AuthService.isAuthenticated().then((auth) => {
@@ -35,39 +48,19 @@ const AppLayout = ({ children }) => {
     }
   };
 
-  const fetchError = () => {
-    if (errorFetch) {
-      // message.error(errorFetch);
-    }
-  };
-
-  useEffect(() => {
-    if (haveCookie) {
-      loginControl();
-    }
-    fetchError();
-  }, [isAuthenticated]);
-
-  const isUnRestrictedRoute = (pathname) => {
-    return pathname === "/sitemap.xml";
-  };
+  const isUnRestrictedRoute = (pathname) => pathname === "/sitemap.xml";
 
   return isUnRestrictedRoute(router.pathname) ? (
     children
   ) : (
     <>
-      {/* <CircularProgress className={!isLoaded ? "visible" : "hidden"} /> */}
       <div className="overflow-hidden">
-        <div className="border-b sticky top-0 bg-white z-50 ">
+        <div className="border-b sticky top-0 bg-white z-50">
           <div className="md:py-1 text-white bg-accent">
             <AnnouncementHeader announcements={settings.announcements} />
-            {/* <p>{haveCookie}</p> */}
           </div>
           <div className="mx-2 md:mx-8">
-            <Header className="" />
-            {/* <div className="h-11">
-                     <CategoriesMenu />
-                  </div> */}
+            <Header />
           </div>
         </div>
         <div className="min-h-[80vh] bg-white">{children}</div>
@@ -79,12 +72,7 @@ const AppLayout = ({ children }) => {
         >
           <FaWhatsapp className="text-2xl md:text-4xl" />
         </a>
-        <Footer
-          footerMenu={func.getCategoriesTree(
-            topmenu,
-            "6154a5a279053f941d1b786c"
-          )}
-        />
+        <Footer footerMenu={func.getCategoriesTree(topmenu, "6154a5a279053f941d1b786c")} />
       </div>
     </>
   );

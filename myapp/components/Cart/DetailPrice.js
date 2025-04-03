@@ -1,12 +1,16 @@
+"use client";
+
 import axiosInstance from "@/util/axios";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { API_URL } from "../../../config";
 import func from "../../../util/helpers/func";
 import { cartFetch, getCart as getCart_r } from "../../../redux/reducers/Cart";
 import TagManager from "react-gtm-module";
-import { Box, Typography, Divider, Button } from "@mui/material";
+import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import Price from "../Price";
 
 const Default = () => {
@@ -196,44 +200,43 @@ const Default = () => {
   };
 
   return (
-    <Box sx={{ p: 2, backgroundColor: "background.paper", borderRadius: 2 }}>
-      <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold", width: "100%"}}>
-        Cart Summary
-      </Typography>
-      
-      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
-        <Typography>Items Price</Typography>
-        <Typography fontWeight="bold">
-          <Price data={allPrice.total} />
-        </Typography>
-      </Box>
+    <Card className="p-4">
+      <CardHeader className="text-lg font-bold">Cart Summary</CardHeader>
+      <CardContent className="space-y-2">
+        <div className="flex justify-between">
+          <span>Items Price</span>
+          <span className="font-semibold">
+            <Price data={allPrice.total} />
+          </span>
+        </div>
 
-      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
-        <Typography>Shipping</Typography>
-        <Typography fontWeight="bold">
-          <Price data={shipping_price()} />
-        </Typography>
-      </Box>
+        <div className="flex justify-between">
+          <span>Shipping</span>
+          <span className="font-semibold">
+            <Price data={shipping_price()} />
+          </span>
+        </div>
 
-      <Divider sx={{ my: 2 }} />
+        <Separator className="my-2" />
 
-      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
-        <Typography>Total Price:</Typography>
-        <Typography fontWeight="bold" color="primary">
-          <Price data={allPrice.total + Math.floor(shipping_price() || 0)} />
-        </Typography>
-      </Box>
+        <div className="flex justify-between font-semibold text-lg">
+          <span>Total Price:</span>
+          <span className="text-primary">
+            <Price data={allPrice.total + Math.floor(shipping_price() || 0)} />
+          </span>
+        </div>
+      </CardContent>
 
-      <Button
-        variant="contained"
-        className="bg-secondary"
-        fullWidth
-        disabled={cart?.products.length === 0}
-        onClick={onSubmit}
-      >
-        Proceed to Checkout
-      </Button>
-    </Box>
+      <CardFooter>
+        <Button 
+          className="w-full bg-primary" 
+          disabled={cart?.products.length === 0} 
+          onClick={onSubmit}
+        >
+          Proceed to Checkout
+        </Button>
+      </CardFooter>
+    </Card>
   );
 };
 

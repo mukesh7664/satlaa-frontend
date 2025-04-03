@@ -1,110 +1,101 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Menu, MenuItem, Button, Checkbox, FormControlLabel, ListItemText } from "@mui/material";
-import filterRouteLinkGenerate from "./filterRouterLink";
 import { filterProducts as filterProducts_r } from "../../../redux/reducers/FilterProducts";
 import { productsApi } from "../../../redux/api/productsApi";
+import filterRouteLinkGenerate from "./filterRouterLink";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { BiChevronDown } from "react-icons/bi";
 
 const Page = ({ isMobile }) => {
+  const dispatch = useDispatch();
   const { colors } = useSelector(({ colors }) => colors);
   const { filterProducts } = useSelector(({ filterProducts }) => filterProducts);
-  const dispatch = useDispatch();
 
+  // ✅ Local state that syncs with Redux
   const [state, setState] = useState({
     colors: [],
     selectedColors: filterProducts.colors || [],
-    anchorEl: null,
   });
 
+  // ✅ Sync available colors when `colors` updates
   useEffect(() => {
     if (colors) {
-      const formattedColors = colors.map((color) => ({
-        label: color.title,
-        value: color.seo,
+      setState((prevState) => ({
+        ...prevState,
+        colors: colors.map((color) => ({
+          label: color.title,
+          value: color.seo,
+        })),
       }));
-      setState((prevState) => ({ ...prevState, colors: formattedColors }));
     }
   }, [colors]);
 
+  // ✅ Sync `selectedColors` with Redux state
   useEffect(() => {
-    setState((prevState) => ({ ...prevState, selectedColors: filterProducts.colors || [] }));
+    setState((prevState) => ({
+      ...prevState,
+      selectedColors: filterProducts.colors || [],
+    }));
   }, [filterProducts.colors]);
 
-  const handleCheckboxChange = (event) => {
-    const { checked, value } = event.target;
-    setState((prevState) => {
-      const updatedColors = checked
-        ? [...prevState.selectedColors, value]
-        : prevState.selectedColors.filter((color) => color !== value);
+  const handleCheckboxChange = (value) => {
+    const updatedColors = state.selectedColors.includes(value)
+      ? state.selectedColors.filter((color) => color !== value)
+      : [...state.selectedColors, value];
 
-      dispatch(productsApi.util.resetApiState());
-      dispatch(filterProducts_r({ ...filterProducts, colors: updatedColors, page: 1 }));
-      filterRouteLinkGenerate({ ...filterProducts, colors: updatedColors, page: 1 });
+    // ✅ Update local state first
+    setState((prevState) => ({ ...prevState, selectedColors: updatedColors }));
 
-      return { ...prevState, selectedColors: updatedColors };
-    });
+    // ✅ Dispatch Redux updates
+    dispatch(productsApi.util.resetApiState());
+    dispatch(filterProducts_r({ ...filterProducts, colors: updatedColors, page: 1 }));
+
+    // ✅ Ensure URL updates correctly
+    filterRouteLinkGenerate({ ...filterProducts, colors: updatedColors, page: 1 });
   };
 
   return (
     <>
       {isMobile ? (
-        <div className="flex flex-col">
+        <div className="flex flex-col space-y-2">
           {state.colors.map((color) => (
-            <FormControlLabel
-              key={color.value}
-              control={
-                <Checkbox
-                  checked={state.selectedColors.includes(color.value)}
-                  onChange={handleCheckboxChange}
-                  value={color.value}
-                />
-              }
-              label={color.label}
-            />
+            <label key={color.value} className="flex items-center space-x-2 text-sm">
+              <Checkbox
+                checked={state.selectedColors.includes(color.value)}
+                onCheckedChange={() => handleCheckboxChange(color.value)}
+              />
+              <span>{color.label}</span>
+            </label>
           ))}
         </div>
       ) : (
-        <div
-          onMouseEnter={(e) => setState((prev) => ({ ...prev, anchorEl: e.currentTarget }))}
-          onMouseLeave={() => setState((prev) => ({ ...prev, anchorEl: null }))}
-        >
-          <Button
-            className="flex items-center justify-between px-2 py-1 border text-black shadow-sm text-[12px]"
-            sx={{ border: "1px solid black", boxShadow: "none", ":hover": { borderColor: "#4690ff", color: '#4690ff' } }}
-          >
-            <span>Colors</span>
-            <BiChevronDown className="ml-1 text-lg" />
-          </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="flex items-center justify-between px-3 py-1 text-black">
+              <span>Colors</span> <BiChevronDown className="ml-1 text-lg" />
+            </Button>
+          </DropdownMenuTrigger>
 
-          <Menu
-            anchorEl={state.anchorEl}
-            open={Boolean(state.anchorEl)}
-            onClose={() => setState((prev) => ({ ...prev, anchorEl: null }))}
-            MenuListProps={{
-              onMouseLeave: () => setState((prev) => ({ ...prev, anchorEl: null })),
-            }}
-          >
-            {state.colors.map((color) => (
-              <MenuItem key={color.value} onClick={(e) => e.stopPropagation()} sx={{ padding: "1px 12px" }}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={state.selectedColors.includes(color.value)}
-                      onChange={handleCheckboxChange}
-                      value={color.value}
-                      sx={{
-                        transform: "scale(1)",
-                        "& .MuiSvgIcon-root": { fontSize: 16 },
-                      }}
-                    />
-                  }
-                  label={<ListItemText primary={color.label} sx={{ fontSize: "10px" }} />}
-                />
-              </MenuItem>
-            ))}
-          </Menu>
-        </div>
+          <DropdownMenuContent align="start" className="w-[180px]">
+            {state.colors.length > 0 ? (
+              state.colors.map((color) => (
+                <DropdownMenuItem key={color.value} className="flex items-center space-x-2 py-2 px-3">
+                  <Checkbox
+                    checked={state.selectedColors.includes(color.value)}
+                    onCheckedChange={() => handleCheckboxChange(color.value)}
+                  />
+                  <span className="text-sm">{color.label}</span>
+                </DropdownMenuItem>
+              ))
+            ) : (
+              <DropdownMenuItem disabled className="text-sm text-gray-500">
+                No colors available
+              </DropdownMenuItem>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
       )}
     </>
   );

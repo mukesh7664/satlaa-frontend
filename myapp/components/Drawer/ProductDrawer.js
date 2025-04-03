@@ -13,7 +13,7 @@ const ProductDrawer = ({ contentDescription, state }) => {
           <Typography variant="h6" className="font-bold">DESCRIPTION</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <Typography>
+          <Typography component='div'>
             <HTMLParser html={contentDescription} />
           </Typography>
         </AccordionDetails>

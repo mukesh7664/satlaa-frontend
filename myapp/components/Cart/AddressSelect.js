@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@mui/material";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import NewAddressForm from "./NewAddressForm";
 
 const AddressSelect = ({
@@ -32,17 +33,14 @@ const AddressSelect = ({
   return (
     <>
       {!editing ? (
-        <div className="w-full">
+        <div className="w-full border rounded-md p-3 bg-white shadow-sm">
           {activeRadioValue === radioValue && (
-            <div className="float-right font-xs p-2 cursor-pointer -mb-10 z-10 relative flex flex-row gap-x-3">
+            <div className="float-right text-xs p-2 cursor-pointer -mb-10 z-10 relative flex flex-row gap-x-3">
               <span
-                className=""
+                className="text-blue-600 cursor-pointer"
                 onClick={() => {
                   setEditing(true);
-                  setNewAddress({
-                    id: JSON.stringify(Data),
-                  });
-
+                  setNewAddress({ id: JSON.stringify(Data) });
                   setFields(
                     Object.entries(Data).map(([name, value]) => ({
                       name,
@@ -61,10 +59,12 @@ const AddressSelect = ({
               </button>
             </div>
           )}
+
           <div className="w-full px-1 md:px-2">
             <span className="font-semibold w-full p-1">{Data.name}</span>
             <span className="font-semibold w-full p-1">{Data.phone}</span>
           </div>
+
           <div className="w-full">
             <div className="w-full float-left px-2 md:px-3 pb-0">{Data.address},</div>
             <div className="w-full p-2 md:p-3 pt-1">
@@ -72,13 +72,14 @@ const AddressSelect = ({
               <span className="font-semibold">{Data.pin_code}</span>
             </div>
           </div>
+
           {activeRadioValue === radioValue && (
-            <button
+            <Button
               onClick={onSelectAddressToCheckout}
               className="bg-secondary px-4 py-2 md:px-8 rounded-sm text-white text-lg mb-2 ml-2 md:ml-3"
             >
               DELIVER HERE
-            </button>
+            </Button>
           )}
         </div>
       ) : (
@@ -97,26 +98,28 @@ const AddressSelect = ({
         </>
       )}
 
-      {/* MUI Dialog for deletion confirmation */}
-      <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
-        <DialogTitle>Confirm Deletion</DialogTitle>
+      {/* ShadCN Dialog for deletion confirmation */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Deletion</DialogTitle>
+          </DialogHeader>
           <p>Are you sure you want to delete this address?</p>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                setIsDialogOpen(false);
+                onDeleteAddress(Data._id);
+              }}
+            >
+              Delete
+            </Button>
+          </DialogFooter>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog} color="primary">
-            Cancel
-          </Button>
-          <Button
-            onClick={() => {
-              setIsDialogOpen(false);
-              onDeleteAddress(Data._id);
-            }}
-            color="error"
-          >
-            Delete
-          </Button>
-        </DialogActions>
       </Dialog>
     </>
   );

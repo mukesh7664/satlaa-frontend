@@ -1,149 +1,110 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  Button,
-  Menu,
-  MenuItem,
-  Checkbox,
-  FormControlLabel,
-  ListItemText,
-} from "@mui/material";
 import { BiChevronDown } from "react-icons/bi";
 import filterRouteLinkGenerate from "./filterRouterLink";
 import { filterProducts as filterProducts_r } from "../../../redux/reducers/FilterProducts";
 import { productsApi } from "../../../redux/api/productsApi";
 import { useMediaQuery } from "react-responsive";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 
-const Page = () => {
-  const { tags } = useSelector(({ tags }) => tags);
-  const { filterProducts } = useSelector(({ filterProducts }) => filterProducts);
+const TagsFilter = () => {
   const dispatch = useDispatch();
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
 
+  // Redux state
+  const { tags } = useSelector((state) => state.tags);
+  const { filterProducts } = useSelector((state) => state.filterProducts);
+
+  // ✅ Local state (syncs with Redux)
   const [state, setState] = useState({
     tags: [],
-    selectedTags: [],
+    selectedTags: filterProducts.tags || [],
   });
 
-  const [anchorEl, setAnchorEl] = useState(null);
-
+  // ✅ Sync tags list when `tags` updates
   useEffect(() => {
     if (tags.length > 0) {
-      const formattedTags = tags.map((tag) => ({
-        label: tag.title,
-        value: tag.seo,
-      }));
-
       setState((prev) => ({
         ...prev,
-        tags: formattedTags,
-        selectedTags: filterProducts.tags || [],
+        tags: tags.map((tag) => ({ label: tag.title, value: tag.seo })),
       }));
     }
-  }, [tags, filterProducts.tags]);
+  }, [tags]);
+
+  // ✅ Sync `selectedTags` when Redux filter state updates
+  useEffect(() => {
+    setState((prev) => ({ ...prev, selectedTags: filterProducts.tags || [] }));
+  }, [filterProducts.tags]);
 
   const handleSelection = (value) => {
-    setState((prev) => {
-      const updatedTags = prev.selectedTags.includes(value)
-        ? prev.selectedTags.filter((tag) => tag !== value)
-        : [...prev.selectedTags, value];
+    const updatedTags = state.selectedTags.includes(value)
+      ? state.selectedTags.filter((tag) => tag !== value)
+      : [...state.selectedTags, value];
 
-      dispatch(productsApi.util.resetApiState());
-      dispatch(filterProducts_r({ ...filterProducts, tags: updatedTags, page: 1 }));
-      filterRouteLinkGenerate({ ...filterProducts, tags: updatedTags, page: 1 });
+    // ✅ Update local state
+    setState((prev) => ({ ...prev, selectedTags: updatedTags }));
 
-      return { ...prev, selectedTags: updatedTags };
-    });
+    // ✅ Immediately dispatch Redux update (no need for setTimeout)
+    dispatch(productsApi.util.resetApiState());
+    dispatch(filterProducts_r({ ...filterProducts, tags: updatedTags, page: 1 }));
+    filterRouteLinkGenerate({ ...filterProducts, tags: updatedTags, page: 1 });
   };
 
   return (
     <div>
       {isMobile ? (
-        <div className="flex flex-col">
+        <div className="flex flex-col space-y-2">
           {state.tags.map((tag) => (
-            <FormControlLabel
-              key={tag.value}
-              control={
-                <Checkbox
-                  checked={state.selectedTags.includes(tag.value)}
-                  onChange={() => handleSelection(tag.value)}
-                  sx={{
-                    transform: "scale(1)",
-                    "& .MuiSvgIcon-root": { fontSize: 16 },
-                  }}
-                />
-              }
-              label={tag.label}
-              sx={{ fontSize: "12px" }}
-            />
+            <label key={tag.value} className="flex items-center space-x-2 text-sm">
+              <Checkbox
+                checked={state.selectedTags.includes(tag.value)}
+                onCheckedChange={() => handleSelection(tag.value)}
+              />
+              <span>{tag.label}</span>
+            </label>
           ))}
         </div>
       ) : (
-        <div
-          onMouseEnter={(e) => setAnchorEl(e.currentTarget)}
-          onMouseLeave={() => setAnchorEl(null)}
-        >
-          <Button
-            variant="contained"
-            endIcon={<BiChevronDown />}
-            className="w-full border text-black px-2 py-1 bg-white text-[12px]"
-            sx={{
-              border: "1px solid black",
-              boxShadow: "none",
-              fontSize: "12px",
-              ":hover": { borderColor: "#4690ff", color: "#4690ff", boxShadow: "none" },
-            }}
-          >
-            Tags
-          </Button>
-
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={() => setAnchorEl(null)}
-            anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-            keepMounted
-            sx={{
-              "& .MuiPaper-root": {
-                minWidth: "150px",
-              },
-            }}
-            MenuListProps={{
-              onMouseLeave: () => setAnchorEl(null),
-            }}
-          >
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="outline"
+              className="w-full flex items-center justify-between px-3 py-1 border text-black shadow-sm text-[12px]"
+            >
+              <span>Tags</span>
+              <BiChevronDown className="ml-1 text-lg" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="min-w-[150px] max-h-[200px] overflow-auto">
             {state.tags.length > 0 ? (
               state.tags.map((tag) => (
-                <MenuItem
-                  key={tag.value}
-                  onClick={(e) => e.stopPropagation()}
-                  sx={{ padding: "1px 12px" }}
-                >
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={state.selectedTags.includes(tag.value)}
-                        onChange={() => handleSelection(tag.value)}
-                        sx={{
-                          transform: "scale(1)",
-                          "& .MuiSvgIcon-root": { fontSize: 16 },
-                        }}
-                      />
-                    }
-                    label={<ListItemText primary={tag.label} sx={{ fontSize: "10px" }} />}
-                  />
-                </MenuItem>
+                <DropdownMenuItem key={tag.value} className="px-3 py-1">
+                  <label className="flex items-center space-x-2 text-sm w-full">
+                    <Checkbox
+                      checked={state.selectedTags.includes(tag.value)}
+                      onCheckedChange={() => handleSelection(tag.value)}
+                    />
+                    <span>{tag.label}</span>
+                  </label>
+                </DropdownMenuItem>
               ))
             ) : (
-              <MenuItem disabled sx={{ fontSize: "11px", padding: "4px 12px" }}>
+              <DropdownMenuItem disabled className="text-xs px-3 py-1">
                 No tags available
-              </MenuItem>
+              </DropdownMenuItem>
             )}
-          </Menu>
-        </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
       )}
     </div>
   );
 };
 
-export default Page;
+export default TagsFilter;

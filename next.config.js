@@ -12,8 +12,8 @@ const withPWA = require("next-pwa")({
   disable: process.env.NODE_ENV === "development",
   maximumFileSizeToCacheInBytes: 5 * 1024 * 1024
 });
+
 const sentryWebpackPluginOptions = {
-  // Sentry options are copied here from your previous configuration
   silent: true,
   org: "satlaa-tech",
   project: "satlaa",
@@ -25,21 +25,18 @@ const sentryWebpackPluginOptions = {
 };
 
 const nextConfig = {
-  swcMinify: true,
   compiler: {
-    // SWC compiler configuration for import on demand
-    styledComponents: true, // If you are using styled-components
-    removeConsole: process.env.NODE_ENV === "production", // To remove console statements in production
+    styledComponents: true, 
+    removeConsole: process.env.NODE_ENV === "production",
   },
   images: {
-    domains: [
-      "localhost",
-      "api.satlaa.com",
-      "uat.satlaa.com",
-      "satlaa.com",
-      "www.facebook.com",
-      "cms.satlaa.com",
-      "satlaa.vercel.app",
+    remotePatterns: [
+      { protocol: "https", hostname: "api.satlaa.com" },
+      { protocol: "https", hostname: "uat.satlaa.com" },
+      { protocol: "https", hostname: "satlaa.com" },
+      { protocol: "https", hostname: "www.facebook.com" },
+      { protocol: "https", hostname: "cms.satlaa.com" },
+      { protocol: "https", hostname: "satlaa.vercel.app" }
     ],
   },
 
@@ -58,7 +55,6 @@ const nextConfig = {
   },
 };
 
-// module.exports = nextConfig;
 module.exports = withPWA(
   withBundleAnalyzer(withSentryConfig(nextConfig, sentryWebpackPluginOptions))
 );
