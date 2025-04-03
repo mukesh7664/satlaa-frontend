@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Card, CardContent } from "@/components/ui/card";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { IMG_URL } from "../../../config";
 import Image from "next/image";
 

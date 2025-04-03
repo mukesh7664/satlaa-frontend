@@ -9,7 +9,6 @@ import { IoPricetagsOutline } from "react-icons/io5";
 import Price from "../Price";
 import { useDispatch, useSelector } from "react-redux";
 import { API_URL } from "../../../config";
-import { IoPricetagsOutline } from "react-icons/io5";
 import { cartFetch } from "../../../redux/reducers/Cart";
 
 const Coupon = ({ total_price }) => {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useSelector } from "react-redux";
-import router from "next/router";
+import router from "next/navigation";
 
 const Page = () => {
   const { categories } = useSelector(({ categories }) => categories);

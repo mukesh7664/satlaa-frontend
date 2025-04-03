@@ -7,7 +7,7 @@ const axios = axiosInstance();
 import func from "../../../util/helpers/func";
 import { API_URL } from "../../../config";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { getCart as getCart_r } from "../../../redux/reducers/Cart";
 import { cartFetch } from "../../../redux/reducers/Cart";

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import axiosInstance from "@/util/axios";
 const axios = axiosInstance();

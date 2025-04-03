@@ -9,7 +9,7 @@ import { API_URL } from "../../../config";
 import AddressSelect from "./AddressSelect";
 import NewAddressForm from "./NewAddressForm";
 import { cartFetch, getCart as getCart_r, setShippingAddress } from "../../../redux/reducers/Cart";
-import router from "next/router";
+import router from "next/navigation";
 
 const axios = axiosInstance();
 
@@ -127,7 +127,7 @@ const Default = ({ initalAddress }) => {
     <div className="w-full">
       <h2 className="text-lg font-bold ml-1">DELIVERY ADDRESS</h2>
 
-      <div className="border rounded-lg p-4 mt-3 bg-white shadow-sm">
+      {/* <div className="border rounded-lg p-4 mt-3 bg-white shadow-sm">
         <RadioGroup
           value={selectedRadio.toString()}
           onValueChange={(value) => {
@@ -177,7 +177,7 @@ const Default = ({ initalAddress }) => {
             />
           </div>
         )}
-      </div>
+      </div> */}
     </div>
   );
 };
