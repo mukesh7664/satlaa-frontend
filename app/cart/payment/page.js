@@ -56,13 +56,18 @@ const Page = () => {
   const { user, isAuthenticated } = useSelector((state) => state.login);
 
 
-  const onChangePaymentMethod = (e) => {
-    setPaymentMethod(e.target.value);
-    if (e.target.value === "razorpay") {
-      // Assuming 'updateCart' is your Redux action to update the cart
-      dispatch(cartFetch({ ...cart, cargo_price: 0 }));
+  const onChangePaymentMethod = (value) => {
+    console.log(value, 'test');
+    if (value) {
+      setPaymentMethod(value);
+      if (value === "razorpay") {
+        // Assuming 'updateCart' is your Redux action to update the cart
+        dispatch(cartFetch({ ...cart, cargo_price: 0 }));
+      } else {
+        dispatch(cartFetch({ ...cart, cargo_price: 50 }));
+      }
     } else {
-      dispatch(cartFetch({ ...cart, cargo_price: 50 }));
+      console.error("Invalid value in onChangePaymentMethod");
     }
   };
   const getCartProducts = (data = [], products = []) => {
@@ -321,25 +326,20 @@ const Page = () => {
               <h2 className="font-semibold text-2xl mb-4">Payment Method</h2>
 
             <RadioGroup
-            onValueChange={onChangePaymentMethod}
-            value={paymentMethod}
-            className="flex flex-col px-2 py-4 gap-y-2 text-lg"
-          >
-            {/* <div className="flex items-center gap-x-2">
-              <RadioGroupItem value="phonepe" id="phonepe" />
-              <Label htmlFor="phonepe" className="text-xl">UPI/Cards/Net Banking</Label>
-            </div> */}
-            
-            <div className="flex items-center gap-x-2">
-              <RadioGroupItem value="razorpay" id="razorpay" />
-              <Label htmlFor="razorpay" className="text-xl">Online</Label>
-            </div>
+              onValueChange={(value) => onChangePaymentMethod(value)}
+              value={paymentMethod}
+              className="flex flex-col px-2 py-4 gap-y-2 text-lg"
+            >
+              <div className="flex items-center gap-x-2">
+                <RadioGroupItem value="razorpay" id="razorpay" />
+                <label htmlFor="razorpay" className="text-xl">Online</label>
+              </div>
 
-            <div className="flex items-center gap-x-2 opacity-50 cursor-not-allowed">
-              <RadioGroupItem value="cod" id="cod" disabled />
-              <Label htmlFor="cod" className="text-xl">COD (COD not available for this order)</Label>
-            </div>
-          </RadioGroup>
+              <div className="flex items-center gap-x-2 opacity-50 cursor-not-allowed">
+                <RadioGroupItem value="cod" id="cod" disabled />
+                <label htmlFor="cod" className="text-xl">COD (COD not available for this order)</label>
+              </div>
+            </RadioGroup>
               {paymentMethod === "cod" ? (
                 <p>
                   Choose Online Payment and Get ₹50 discount for Free Shipping
