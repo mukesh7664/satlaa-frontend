@@ -7,14 +7,9 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import axios from "@/util/axios";
 
-import {
-  Modal,
-  Button,
-  TextField,
-  Box,
-  Typography,
-} from "@mui/material";
-
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { FiSearch, FiShoppingBag } from "react-icons/fi";
 import { AiOutlineUser, AiOutlineClose } from "react-icons/ai";
 
@@ -48,19 +43,15 @@ const RightMenu = ({ mode }) => {
       <div className="text-base text-right px-0 flex flex-row w-full">
         <div className="flex flex-row w-full justify-evenly items-center border-b-0 md:gap-x-4 md:mr-4">
           {/* Search Button */}
-          <button
-            onClick={() => setOpenModalSearch(true)}
-            className="py-2 w-auto h-auto inline-flex items-center text-xl"
-            aria-label="Search"
-          >
+          <Button variant="ghost" onClick={() => setOpenModalSearch(true)} aria-label="Search">
             <FiSearch className="text-2xl" />
-          </button>
+          </Button>
 
           {/* Cart Button */}
-          <Link href="/cart" className="py-2 relative text-lg flex justify-center">
+          <Link href="/cart" className="relative text-lg flex justify-center">
             <FiShoppingBag className="text-2xl" />
             {cart?.products?.length > 0 && (
-              <div className="absolute top-0 right-0 -mr-2 bg-secondary text-white rounded-full w-4 h-4 flex items-center justify-center">
+              <div className="absolute top-0 right-0 -mr-2 bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center">
                 <span className="text-xs">{cart.products.length}</span>
               </div>
             )}
@@ -72,41 +63,24 @@ const RightMenu = ({ mode }) => {
               <AiOutlineUser className="text-2xl" />
             </Link>
           ) : (
-            <span
-              className="cursor-pointer hover:text-primary text-xl"
-              onClick={() => setOpenModalLogin(true)}
-            >
+            <span className="cursor-pointer hover:text-primary text-xl" onClick={() => setOpenModalLogin(true)}>
               <AiOutlineUser className="text-2xl" />
-              <span className="hidden">Login</span>
             </span>
           )}
         </div>
       </div>
 
       {/* Login Modal */}
-      <Modal open={openModalLogin} onClose={() => setOpenModalLogin(false)}>
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 400,
-            bgcolor: "white",
-            boxShadow: 24,
-            p: 4,
-            borderRadius: 2,
-          }}
-        >
-          <Box sx={{ textAlign: "center", mb: 2 }}>
-            <Image src="/images/logo.png" alt="logo" height={70} width={140} />
-          </Box>
-          <LoginForm 
-            handleCancelLogin={() => setOpenModalLogin(false)} 
-            onSuccessfulLogin={handleSuccessfulLogin} 
-          />
-        </Box>
-      </Modal>
+      <Dialog open={openModalLogin} onOpenChange={setOpenModalLogin}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-center">
+              <Image src="/images/logo.png" alt="logo" height={70} width={140} />
+            </DialogTitle>
+          </DialogHeader>
+          <LoginForm handleCancelLogin={() => setOpenModalLogin(false)} onSuccessfulLogin={handleSuccessfulLogin} />
+        </DialogContent>
+      </Dialog>
 
       {/* Search Modal */}
       <SearchModal isOpen={openModalSearch} onClose={() => setOpenModalSearch(false)} router={router} />
@@ -133,36 +107,25 @@ const SearchModal = ({ isOpen, onClose, router }) => {
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-40 flex items-center justify-center">
-      <div className="bg-white p-6 rounded shadow-lg w-full max-w-md m-4">
-        <div className="flex justify-between items-center">
-          <Typography variant="h6">Search Your Favorite Jewellery</Typography>
-          <Button onClick={onClose}>
-            <AiOutlineClose className="text-2xl" />
-          </Button>
-        </div>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-md">
+        <DialogHeader className="flex justify-between items-center">
+          <DialogTitle>Search Your Favorite Jewellery</DialogTitle>
+        </DialogHeader>
         <div className="flex mt-4">
-          <TextField
-            inputRef={searchInputRef}
-            fullWidth
-            variant="outlined"
+          <Input
+            ref={searchInputRef}
             placeholder="Search"
+            className="w-full mb-2"
             onKeyDown={(e) => e.key === "Enter" && handleSearch()}
           />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleSearch}
-            sx={{ backgroundColor: "#e76e81", color: "white" }}
-          >
+          <Button variant="default" onClick={handleSearch} className="ml-2 bg-[#e76e81] text-white">
             <FiSearch className="text-2xl" />
           </Button>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 

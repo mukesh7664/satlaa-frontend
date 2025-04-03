@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { FaFilter } from "react-icons/fa";
@@ -26,6 +26,13 @@ const Category = ({ categoryData, productData, category }) => {
   const [visible, setVisible] = useState(false);
   const dispatch = useDispatch();
 
+  // 🔥 Force re-render when filters update
+  const [updateKey, setUpdateKey] = useState(0);
+  const { filterProducts } = useSelector(({ filterProducts }) => filterProducts);
+
+  // ✅ Function to force re-render on filter change
+  const refreshFilters = () => setUpdateKey((prev) => prev + 1);
+
   useEffect(() => {
     const fetchUserData = async () => {
       const auth = await authservice.isAuthenticated();
@@ -38,6 +45,11 @@ const Category = ({ categoryData, productData, category }) => {
 
     fetchUserData();
   }, [dispatch]);
+
+  useEffect(() => {
+    // ✅ Force re-render when filters change
+    refreshFilters();
+  }, [filterProducts]);
 
   if (!productData?.products.length) return <p>Loading...</p>;
 
@@ -75,8 +87,7 @@ const Category = ({ categoryData, productData, category }) => {
           image={categoryData?.image}
         />
 
-        <FilterBar />
-
+        <FilterBar key={updateKey} /> {/* ✅ Ensure filters update */}
         <CategoryDrawer visible={visible} onClose={() => setVisible(false)} />
 
         <div className="ml-2 md:ml-4">
@@ -103,7 +114,7 @@ const Category = ({ categoryData, productData, category }) => {
           </div>
 
           <div className="w-full float-left pb-0">
-            <FilterSelectedTop category="true" />
+            <FilterSelectedTop key={updateKey} category={true} /> {/* ✅ Ensure filters update */}
           </div>
 
           <div className="w-full mt-3 float-left">

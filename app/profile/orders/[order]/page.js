@@ -1,7 +1,6 @@
 import { useRouter } from "next/navigation";
 import axiosInstance from "@/util/axios";
 import { API_URL } from "../../../../config";
-import { Modal } from "@mui/material";
 import Link from "next/link";
 import Loader from "@/components/Utils/Loader";
 import { FiShoppingBag } from "react-icons/fi";
@@ -14,6 +13,9 @@ import { cartFetch } from "@/redux/reducers/Cart";
 import { setIsAuthenticated, setLogin } from "@/redux/reducers/Login";
 import { fetchData } from "@/util/fetchData";
 import { useSelector } from "react-redux";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { useToast } from "@/components/ui/use-toast";
 
 export function generateMetadata() {
   return {
@@ -24,44 +26,27 @@ export function generateMetadata() {
 function OrderPage({ order }) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [dialogAction, setDialogAction] = useState(null);
   const { user, isAuthenticated } = useSelector((state) => state.login);
+  const { toast } = useToast();
 
-  const cancelOrder = async () => {
-    Modal.confirm({
-      title: "Do you want to cancel this order?",
-      content: "Once you click on Yes, this order will be cancelled.",
-      onOk: async function () {
-        try {
-          const res = await axiosInstance().put(
-            `${API_URL}/orders/cancel/${order.ordernumber}`
-          );
-          if (res.status === 200) {
-            router.refresh(); // Refresh page instead of reload
-          }
-        } catch (err) {
-          console.error(err);
-        }
-      },
-    });
-  };
-
-  const returnOrder = async () => {
-    Modal.confirm({
-      title: "Do you want to return this order?",
-      content: "Once you click on Yes, this order will be returned.",
-      onOk: async function () {
-        try {
-          const res = await axiosInstance().put(
-            `${API_URL}/orders/return/${order.ordernumber}`
-          );
-          if (res.status === 200) {
-            router.refresh(); // Refresh page instead of reload
-          }
-        } catch (err) {
-          console.error(err);
-        }
-      },
-    });
+  const handleDialogConfirm = async () => {
+    if (!dialogAction) return;
+    
+    try {
+      const res = await axiosInstance().put(`${API_URL}/orders/${dialogAction}/${order.ordernumber}`);
+      if (res.status === 200) {
+        router.refresh();
+        toast({ title: `Order ${dialogAction} successful` });
+      }
+    } catch (err) {
+      console.error(err);
+      toast({ title: `Failed to ${dialogAction} order`, variant: "destructive" });
+    }
+    
+    setOpenDialog(false);
+    setDialogAction(null);
   };
 
   const retryPayment = async () => {
@@ -80,7 +65,7 @@ function OrderPage({ order }) {
         order_id: paymentDetails.id,
         handler: async (responseOrderCreated) => {
           if (!responseOrderCreated.razorpay_payment_id) {
-            alert("Payment cancelled by the user.");
+            toast({ title: "Payment cancelled by user", variant: "destructive" });
             return;
           }
 
@@ -107,6 +92,7 @@ function OrderPage({ order }) {
       paymentObject.open();
     } catch (error) {
       console.error("Error in retrying payment: ", error);
+      toast({ title: "Payment retry failed", variant: "destructive" });
     } finally {
       setIsLoading(false);
     }
@@ -114,10 +100,7 @@ function OrderPage({ order }) {
 
   return (
     <>
-      <script
-        id="razorpay-checkout-js"
-        src="https://checkout.razorpay.com/v1/checkout.js"
-      />
+      <script id="razorpay-checkout-js" src="https://checkout.razorpay.com/v1/checkout.js" />
       <div className="container mx-auto px-4">
         <Loader loading={isLoading} />
         <Breadcrumbs
@@ -129,19 +112,16 @@ function OrderPage({ order }) {
           ]}
         />
 
-        <div className="mt-8 p-4 bg-white shadow-lg">
+        <div className="mt-8 p-4 bg-white shadow-lg rounded-lg">
           {!order.isPaid && !order.orderEvents.cancelled.status && (
             <div className="p-2">
               <p className="text-bold text-xl">
                 Payment is Pending. Please try again, or your order will be
                 cancelled. If deducted, it will be refunded.
               </p>
-              <button
-                className="text-xl bg-green-500 mt-2 px-4 py-2 text-white"
-                onClick={retryPayment}
-              >
+              <Button className="mt-2" onClick={retryPayment}>
                 Retry Payment
-              </button>
+              </Button>
             </div>
           )}
           <h2 className="text-xl font-bold mb-4">Order Info</h2>
@@ -155,12 +135,7 @@ function OrderPage({ order }) {
             <dt className="font-bold">Tracking Link</dt>
             <dd>
               {order.tracking_link ? (
-                <a
-                  href={order.tracking_link}
-                  rel="noreferrer"
-                  className="text-blue-500 hover:underline"
-                  target="_blank"
-                >
+                <a href={order.tracking_link} rel="noreferrer" className="text-blue-500 hover:underline" target="_blank">
                   Track
                 </a>
               ) : (
@@ -172,10 +147,7 @@ function OrderPage({ order }) {
           <h2 className="text-xl font-bold mt-6 mb-4">Items</h2>
           {order.products.map((item, index) => (
             <div key={index} className="flex space-x-4 items-center">
-              <Link
-                href={`/products/${item.seo}`}
-                className="text-blue-500 hover:underline"
-              >
+              <Link href={`/products/${item.seo}`} className="text-blue-500 hover:underline">
                 {item.title}
               </Link>
               <dl className="grid grid-cols-2 gap-2 text-sm">
@@ -188,10 +160,7 @@ function OrderPage({ order }) {
           ))}
 
           <div className="flex justify-center space-x-4 mt-8">
-            <Link
-              href="/"
-              className="inline-flex items-center justify-center px-4 py-2 text-white bg-blue-500 rounded"
-            >
+            <Link href="/" className="inline-flex items-center justify-center px-4 py-2 text-white bg-blue-500 rounded">
               <FiShoppingBag className="mr-2" />
               Shop More
             </Link>
@@ -199,28 +168,44 @@ function OrderPage({ order }) {
             {!order.orderEvents.shipped.status &&
               !order.orderEvents.delivered.status &&
               !order.orderEvents.cancelled.status && (
-                <button
-                  onClick={cancelOrder}
-                  className="inline-flex items-center justify-center px-4 py-2 text-red-500 hover:underline"
-                >
+                <Button variant="destructive" onClick={() => {
+                  setDialogAction("cancel");
+                  setOpenDialog(true);
+                }}>
                   <FaBan className="mr-2" />
                   Cancel The Order
-                </button>
+                </Button>
               )}
 
             {order.orderEvents.delivered.status &&
               !order.orderEvents.returned.status && (
-                <button
-                  onClick={returnOrder}
-                  className="inline-flex items-center justify-center px-4 py-2 text-purple-500 hover:underline"
-                >
+                <Button variant="secondary" onClick={() => {
+                  setDialogAction("return");
+                  setOpenDialog(true);
+                }}>
                   <FaBan className="mr-2" />
                   Return The Order
-                </button>
+                </Button>
               )}
           </div>
         </div>
       </div>
+
+      {/* Confirmation Dialog */}
+      <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {dialogAction === "cancel" ? "Cancel Order" : "Return Order"}
+            </DialogTitle>
+          </DialogHeader>
+          <p>Are you sure you want to {dialogAction} this order?</p>
+          <DialogFooter>
+            <Button variant="secondary" onClick={() => setOpenDialog(false)}>No</Button>
+            <Button variant="destructive" onClick={handleDialogConfirm}>Yes</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

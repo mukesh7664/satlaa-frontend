@@ -1,32 +1,38 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Menu, MenuItem, Button, Checkbox, FormControlLabel, ListItemText } from "@mui/material";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import filterRouteLinkGenerate from "./filterRouterLink";
 import { filterProducts as filterProducts_r } from "../../../redux/reducers/FilterProducts";
 import { productsApi } from "../../../redux/api/productsApi";
 import { BiChevronDown } from "react-icons/bi";
 
 const Page = ({ isMobile }) => {
+  const dispatch = useDispatch();
   const { categories } = useSelector(({ categories }) => categories);
   const { filterProducts } = useSelector(({ filterProducts }) => filterProducts);
-  const dispatch = useDispatch();
 
+  // ✅ Local state that syncs with Redux
   const [state, setState] = useState({
     categories: [],
     selectedCategories: filterProducts.categories || [],
-    anchorEl: null,
   });
 
+  // ✅ Sync available categories when `categories` updates
   useEffect(() => {
     if (categories) {
-      const formattedCategories = categories.map((cat) => ({
-        label: cat.title,
-        value: cat.seo,
+      setState((prevState) => ({
+        ...prevState,
+        categories: categories.map((cat) => ({
+          label: cat.title,
+          value: cat.seo,
+        })),
       }));
-      setState((prevState) => ({ ...prevState, categories: formattedCategories }));
     }
   }, [categories]);
 
+  // ✅ Sync `selectedCategories` with Redux state
   useEffect(() => {
     setState((prevState) => ({
       ...prevState,
@@ -34,27 +40,20 @@ const Page = ({ isMobile }) => {
     }));
   }, [filterProducts.categories]);
 
-  const handleCheckboxChange = (event) => {
-    const { checked, value } = event.target;
-    setState((prevState) => {
-      const updatedCategories = checked
-        ? [...prevState.selectedCategories, value]
-        : prevState.selectedCategories.filter((category) => category !== value);
+  const handleCheckboxChange = (categoryValue, checked) => {
+    const updatedCategories = checked
+      ? [...state.selectedCategories, categoryValue]
+      : state.selectedCategories.filter((category) => category !== categoryValue);
 
-      dispatch(productsApi.util.resetApiState());
-      dispatch(filterProducts_r({ ...filterProducts, categories: updatedCategories, page: 1 }));
-      filterRouteLinkGenerate({ ...filterProducts, categories: updatedCategories, page: 1 });
+    // ✅ First, update the local state
+    setState((prevState) => ({ ...prevState, selectedCategories: updatedCategories }));
 
-      return { ...prevState, selectedCategories: updatedCategories };
-    });
-  };
+    // ✅ Dispatch Redux updates
+    dispatch(productsApi.util.resetApiState());
+    dispatch(filterProducts_r({ ...filterProducts, categories: updatedCategories, page: 1 }));
 
-  const handleMenuOpen = (event) => {
-    setState((prevState) => ({ ...prevState, anchorEl: event.currentTarget }));
-  };
-
-  const handleMenuClose = () => {
-    setState((prevState) => ({ ...prevState, anchorEl: null }));
+    // ✅ Ensure URL updates correctly
+    filterRouteLinkGenerate({ ...filterProducts, categories: updatedCategories, page: 1 });
   };
 
   return (
@@ -62,62 +61,38 @@ const Page = ({ isMobile }) => {
       {isMobile ? (
         <div className="text-base flex flex-col">
           {state.categories.map((subcat) => (
-            <FormControlLabel
-              key={subcat.value}
-              control={
-                <Checkbox
-                  checked={state.selectedCategories.includes(subcat.value)}
-                  onChange={handleCheckboxChange}
-                  value={subcat.value}
-                />
-              }
-              label={subcat.label}
-            />
+            <label key={subcat.value} className="flex items-center space-x-2">
+              <Checkbox
+                checked={state.selectedCategories.includes(subcat.value)}
+                onCheckedChange={(checked) => handleCheckboxChange(subcat.value, checked)}
+              />
+              <span>{subcat.label}</span>
+            </label>
           ))}
         </div>
       ) : (
-        <div onMouseLeave={handleMenuClose}>
-          <Button
-            className="flex items-center justify-between px-3 py-1 border text-black shadow-sm text-[12px]"
-            onMouseEnter={handleMenuOpen}
-            sx={{ border: "1px solid black", boxShadow: "none", ":hover": { borderColor: "#4690ff", color: "#4690ff", boxShadow: "none" } }}
-          >
-            <span>Categories</span>
-            <BiChevronDown className="ml-1 text-lg" />
-          </Button>
-
-          <Menu
-            anchorEl={state.anchorEl}
-            open={Boolean(state.anchorEl)}
-            onClose={handleMenuClose}
-            MenuListProps={{ onMouseLeave: handleMenuClose }}
-            PaperProps={{
-              sx: {
-                maxHeight: 200, // Reduced size of the dropdown list
-                width: 180, // Adjust width to fit content neatly
-              },
-            }}
-          >
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              className="flex items-center justify-between px-3 py-1 border text-black shadow-sm text-[12px] hover:border-blue-500 hover:text-blue-500"
+            >
+              <span>Categories</span>
+              <BiChevronDown className="ml-1 text-lg" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent align="start" className="w-44 max-h-52 overflow-y-auto p-2 bg-white border">
             {state.categories.map((category) => (
-              <MenuItem key={category.value} onClick={(e) => e.stopPropagation()} sx={{ padding: "1px 29px" }}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={state.selectedCategories.includes(category.value)}
-                      onChange={handleCheckboxChange}
-                      value={category.value}
-                      sx={{
-                        transform: "scale(1)",
-                        "& .MuiSvgIcon-root": { fontSize: 16 },
-                      }}
-                    />
-                  }
-                  label={<ListItemText primary={category.label} sx={{ fontSize: "10px" }} />}
+              <label key={category.value} className="flex items-center space-x-2 py-1 px-2 hover:bg-gray-100 rounded cursor-pointer">
+                <Checkbox
+                  checked={state.selectedCategories.includes(category.value)}
+                  onCheckedChange={(checked) => handleCheckboxChange(category.value, checked)}
                 />
-              </MenuItem>
+                <span className="text-sm">{category.label}</span>
+              </label>
             ))}
-          </Menu>
-        </div>
+          </PopoverContent>
+        </Popover>
       )}
     </>
   );

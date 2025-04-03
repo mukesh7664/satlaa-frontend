@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { Card, CardContent, CardActionArea, Grid, Typography } from "@mui/material";
+import { Card, CardContent } from "@/components/ui/card";
 import { useRouter } from "next/router";
 import { IMG_URL } from "../../../config";
 import Image from "next/image";
@@ -21,36 +21,31 @@ const Default = () => {
   };
 
   return (
-    <Grid container spacing={3}>
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       {categoriesData.length > 0 ? (
         categoriesData.map((val) => (
-          <Grid item xs={12} sm={6} md={4} lg={3} key={val.seo}>
-            <Card className="m-4 shadow-lg" onClick={() => onClickCard(val.seo)}>
-              <CardActionArea>
-                <Image
-                  alt={val.title || "Default Title"}
-                  width={300}
-                  height={200}
-                  src={val.image ? `${IMG_URL}${val.image}` : "/images/default.jpg"}
-                  priority
-                />
-                <CardContent>
-                  <Typography variant="h6" className="uppercase">
-                    {val.title || "Unnamed Category"}
-                  </Typography>
-                </CardContent>
-              </CardActionArea>
+          <div key={val.seo} className="cursor-pointer" onClick={() => onClickCard(val.seo)}>
+            <Card className="overflow-hidden shadow-lg transition-transform hover:scale-105">
+              <Image
+                alt={val.title || "Default Title"}
+                width={300}
+                height={200}
+                src={val.image ? `${IMG_URL}${val.image}` : "/images/default.jpg"}
+                className="w-full h-48 object-cover"
+                priority
+              />
+              <CardContent className="p-4 text-center">
+                <h3 className="text-lg font-semibold uppercase">{val.title || "Unnamed Category"}</h3>
+              </CardContent>
             </Card>
-          </Grid>
+          </div>
         ))
       ) : (
-        <Grid item xs={12}>
-          <Typography variant="h6" align="center" className="text-center">
-            No categories available
-          </Typography>
-        </Grid>
+        <div className="col-span-full text-center">
+          <h3 className="text-lg font-semibold">No categories available</h3>
+        </div>
       )}
-    </Grid>
+    </div>
   );
 };
 

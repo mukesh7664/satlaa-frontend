@@ -1,17 +1,19 @@
 import { useEffect, useState } from "react";
-import { FormControl, Button, Alert, Select, Box, Typography, TextField, Grid, InputLabel, MenuItem, Paper, IconButton } from "@mui/material";
-import { FaCheck } from "react-icons/fa";
-import { IoCloseOutline } from "react-icons/io5";
 import { useForm, Controller } from "react-hook-form";
 import { useDispatch } from "react-redux";
-import Link from "next/link";
 import { setCookie, getCookie } from "cookies-next";
 import AuthService from "../../../util/services/authservice";
 import { setLogin, setIsAuthenticated } from "../../../redux/reducers/Login";
 import TagManager from "react-gtm-module";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card } from "@/components/ui/card";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { Alert } from "@/components/ui/alert";
 
 const Default = ({ onSuccessfulLogin, handleCancelLogin }) => {
-  const { register, handleSubmit, control, formState: { errors } } = useForm({
+  const { register, handleSubmit, control, formState: { errors }, reset } = useForm({
     defaultValues: {
       phone: "",
       otp: "",
@@ -39,7 +41,7 @@ const Default = ({ onSuccessfulLogin, handleCancelLogin }) => {
       if (response) {
         setPhoneNumber(data.phone);
         setIsRegistered(response.isRegistered);
-        setStep(response.isRegistered ? 1 : 0);
+        setStep(1); // Always proceed to OTP verification step
       } else {
         alert("Failed to send OTP");
       }
@@ -49,24 +51,24 @@ const Default = ({ onSuccessfulLogin, handleCancelLogin }) => {
     }
   };
 
-  const setupTimer = () => {
-    setResendTimer(30);
-    const timer = setInterval(() => {
-      setResendTimer((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          setShowResendButton(true);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-    return () => clearInterval(timer);
-  };
-
   useEffect(() => {
-    if (showResendButton) setupTimer();
-  }, [showResendButton]);
+    if (resendTimer === 0) {
+      setShowResendButton(true);
+    } else if (resendTimer > 0) {
+      setShowResendButton(false);
+      const timer = setInterval(() => {
+        setResendTimer((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            setShowResendButton(true);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      return () => clearInterval(timer);
+    }
+  }, [resendTimer]);
 
   const handleResendOTP = async () => {
     setLoading(true);
@@ -75,8 +77,7 @@ const Default = ({ onSuccessfulLogin, handleCancelLogin }) => {
       setLoading(false);
       if (response) {
         alert("OTP resent successfully");
-        setShowResendButton(false);
-        setupTimer();
+        setResendTimer(30);
       } else {
         alert("Failed to resend OTP");
       }
@@ -94,7 +95,6 @@ const Default = ({ onSuccessfulLogin, handleCancelLogin }) => {
         dispatch(setLogin(response.user));
         dispatch(setIsAuthenticated(true));
         setCookie("token", response.token, { secure: true, sameSite: "none", maxAge: 60 * 60 * 24 * 60 });
-        setStep(0);
         onSuccessfulLogin(response.user, response.userCart);
         handleCancelLogin();
       } else {
@@ -110,7 +110,7 @@ const Default = ({ onSuccessfulLogin, handleCancelLogin }) => {
     data.utm = utmParams || "";
     setLoading(true);
     try {
-      const response = await AuthService.registerUser(data);
+      await AuthService.registerUser(data);
       setLoading(false);
       TagManager.dataLayer({ dataLayer: { event: "usersignup", user_phone: `+91${phoneNumber}` } });
       setIsRegistered(true);
@@ -122,67 +122,86 @@ const Default = ({ onSuccessfulLogin, handleCancelLogin }) => {
   };
 
   return (
-    <Paper sx={{ width: "100%", p: 4, bgcolor: "white", mx: "auto", position: "relative" }}>
-      <IconButton onClick={handleCancelLogin} sx={{ position: "absolute", top: 8, right: 8 }}>
-        <IoCloseOutline />
-      </IconButton>
+    <Card className="w-full p-6 bg-white relative">
+      <button className="absolute top-2 right-2 text-gray-600" onClick={handleCancelLogin}>
+        ✕
+      </button>
 
-      {isRegistered === false ? (
-        <Box component="form" onSubmit={handleSubmit(onSubmitRegistrationForm)} noValidate>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <Controller name="first_name" control={control} rules={{ required: "First name required" }}
-                render={({ field }) => <TextField {...field} label="First Name" fullWidth margin="normal" error={!!errors.first_name} helperText={errors.first_name?.message} />} />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Controller name="last_name" control={control} rules={{ required: "Last name required" }}
-                render={({ field }) => <TextField {...field} label="Last Name" fullWidth margin="normal" error={!!errors.last_name} helperText={errors.last_name?.message} />} />
-            </Grid>
-          </Grid>
-
-          <FormControl fullWidth margin="normal">
-            <InputLabel>Gender</InputLabel>
-            <Controller name="gender" control={control} rules={{ required: "Select gender" }}
-              render={({ field }) => <Select {...field} label="Gender">
-                <MenuItem value="Male">Male</MenuItem>
-                <MenuItem value="Female">Female</MenuItem>
-                <MenuItem value="Other">Other</MenuItem>
-              </Select>} />
-          </FormControl>
-
-          <Controller name="email" control={control} rules={{ required: "Email required" }}
-            render={({ field }) => <TextField {...field} label="Email" fullWidth margin="normal" type="email" error={!!errors.email} helperText={errors.email?.message} />} />
-
-          <Button type="submit" variant="contained" fullWidth sx={{ mt: 2, background: "#e76e81" }} disabled={loading}>
-            {loading ? "Registering..." : "Register"}
-          </Button>
-        </Box>
-      ) : step === 0 ? (
-        <Box component="form" onSubmit={handleSubmit(onSubmitPhoneForm)} noValidate>
-          <Typography variant="body1" gutterBottom>Enter Mobile Number</Typography>
+      {step === 0 ? (
+        <form onSubmit={handleSubmit(onSubmitPhoneForm)} className="space-y-4">
+          <Label>Enter Mobile Number</Label>
           <Controller name="phone" control={control} rules={{ required: "Phone number required", minLength: 10, maxLength: 10 }}
-            render={({ field }) => <TextField {...field} fullWidth margin="normal" type="tel" error={!!errors.phone} helperText={errors.phone?.message} />} />
+            render={({ field }) => <Input {...field} type="tel" placeholder="Phone Number" />} />
+          {errors.phone && <Alert>{errors.phone.message}</Alert>}
 
-          <Button type="submit" variant="contained" fullWidth sx={{ mt: 2, background: "#e76e81" }} disabled={loading}>
+          <Button type="submit" className="w-full bg-[#e76e81] hover:text-black">
             {loading ? "Loading..." : "Send OTP"}
           </Button>
-        </Box>
-      ) : (
-        <Box component="form" onSubmit={handleSubmit(onSubmitOTPForm)} noValidate>
-          <Typography variant="h6" gutterBottom textAlign="center">Enter OTP</Typography>
-          <Typography variant="body2" color="textSecondary" textAlign="center" gutterBottom>
-            OTP sent to <strong>{phoneNumber}</strong>
-          </Typography>
+        </form>
+      ) : step === 1 ? (
+        <form onSubmit={handleSubmit(onSubmitOTPForm)} className="space-y-4 text-center">
+          <h6 className="text-lg">Enter OTP</h6>
+          <p className="text-sm text-gray-600">OTP sent to <strong>{phoneNumber}</strong></p>
 
           <Controller name="otp" control={control} rules={{ required: "Enter OTP" }}
-            render={({ field }) => <TextField {...field} label="OTP" fullWidth margin="normal" type="tel" error={!!errors.otp} helperText={errors.otp?.message} />} />
+            render={({ field }) => <Input {...field} type="tel" placeholder="Enter OTP" />} />
+          {errors.otp && <Alert>{errors.otp.message}</Alert>}
 
-          <Button type="submit" variant="contained" fullWidth sx={{ mt: 3, py: 1.5, fontWeight: "bold" }} disabled={loading}>
+          <Button type="submit" className="w-full bg-green-500 hover:bg-green-600">
             {loading ? "Verifying..." : "Verify OTP"}
           </Button>
-        </Box>
+
+          {showResendButton && (
+            <Button type="button" onClick={handleResendOTP} className="w-full bg-blue-500 hover:bg-blue-600 mt-2">
+              Resend OTP
+            </Button>
+          )}
+
+          {!showResendButton && (
+            <p className="text-sm text-gray-500">Resend OTP in {resendTimer}s</p>
+          )}
+        </form>
+      ) : (
+        <form onSubmit={handleSubmit(onSubmitRegistrationForm)} className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <Label>First Name</Label>
+              <Controller name="first_name" control={control} rules={{ required: "First name required" }}
+                render={({ field }) => <Input {...field} placeholder="First Name" />} />
+              {errors.first_name && <Alert>{errors.first_name.message}</Alert>}
+            </div>
+            <div>
+              <Label>Last Name</Label>
+              <Controller name="last_name" control={control} rules={{ required: "Last name required" }}
+                render={({ field }) => <Input {...field} placeholder="Last Name" />} />
+              {errors.last_name && <Alert>{errors.last_name.message}</Alert>}
+            </div>
+          </div>
+
+          <div>
+            <Label>Gender</Label>
+            <Controller name="gender" control={control} rules={{ required: "Select gender" }}
+              render={({ field }) => (
+                <Select {...field}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Gender" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Male">Male</SelectItem>
+                    <SelectItem value="Female">Female</SelectItem>
+                    <SelectItem value="Other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            />
+          </div>
+
+          <Button type="submit" className="w-full mt-4 bg-red-500 hover:bg-red-600">
+            {loading ? "Registering..." : "Register"}
+          </Button>
+        </form>
       )}
-    </Paper>
+    </Card>
   );
 };
 

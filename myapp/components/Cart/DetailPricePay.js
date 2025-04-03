@@ -1,6 +1,8 @@
 import axiosInstance from "@/util/axios";
 import { useState, useEffect } from "react";
-import { Button, Divider, Typography, Box } from "@mui/material";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import Price from "../Price";
 import { useDispatch, useSelector } from "react-redux";
 import { API_URL } from "../../../config";
@@ -89,34 +91,28 @@ const Default = () => {
   };
 
   return (
-    <Box className="h-full relative">
-      <Typography variant="h6" className="p-3 my-5 bg-gray-50 font-semibold">
-        Cart Summary
-      </Typography>
-      <Box className="w-full px-4 mt-1">
-        <Typography display="inline">Items Price</Typography>
-        <Typography display="inline" className="float-right font-semibold">
-          <Price data={allPrice.total} />
-        </Typography>
-      </Box>
-      <Box className="w-full px-4 mt-1">
-        <Typography display="inline">Shipping</Typography>
-        <Typography display="inline" className="float-right font-semibold">
-          <Price data={cart.cargo_price || 0} />
-        </Typography>
-      </Box>
+    <Card className="p-4 shadow-md">
+      <h6 className="text-lg font-semibold bg-gray-50 p-3 mb-4">Cart Summary</h6>
+
+      <div className="w-full px-4 mt-1 flex justify-between">
+        <p>Items Price</p>
+        <p className="font-semibold"><Price data={allPrice.total} /></p>
+      </div>
+
+      <div className="w-full px-4 mt-1 flex justify-between">
+        <p>Shipping</p>
+        <p className="font-semibold"><Price data={cart.cargo_price || 0} /></p>
+      </div>
+
+      <Separator className="my-4" />
 
       <Coupon total_price={allPrice.total} />
 
-      <Box className="w-full px-4 text-lg mb-6 mt-4">
-        <Typography variant="h6" display="inline">
-          Total Price:
-        </Typography>
-        <Typography display="inline" className="float-right font-semibold text-primary">
-          <Price data={finalPrice()} />
-        </Typography>
-      </Box>
-    </Box>
+      <div className="w-full px-4 text-lg mt-4 flex justify-between">
+        <h6 className="font-semibold">Total Price:</h6>
+        <p className="font-semibold text-primary"><Price data={finalPrice()} /></p>
+      </div>
+    </Card>
   );
 };
 

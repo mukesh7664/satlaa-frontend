@@ -1,7 +1,11 @@
 import axiosInstance from "@/util/axios";
 const axios = axiosInstance();
 import { useState } from "react";
-import { Button, TextField, Alert, Chip } from "@mui/material";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { IoPricetagsOutline } from "react-icons/io5";
 import Price from "../Price";
 import { useDispatch, useSelector } from "react-redux";
 import { API_URL } from "../../../config";
@@ -52,9 +56,9 @@ const Coupon = ({ total_price }) => {
   return (
     <div className="flex flex-wrap justify-around items-start my-2">
       {couponApplied && (
-        <div className="w-full px-4 mt-1">
+        <div className="w-full px-4 mt-1 flex justify-between">
           <span>Discount:</span>
-          <span className="float-right font-semibold">
+          <span className="font-semibold">
             - <Price data={Math.ceil((total_price * cart.coupon_discount) / 100)} />
           </span>
         </div>
@@ -63,29 +67,27 @@ const Coupon = ({ total_price }) => {
       <div className="w-full px-4">
         {!couponApplied ? (
           <div className="flex flex-row mt-2 gap-x-2">
-            <TextField
+            <Input
               value={coupon}
               onChange={(e) => setCoupon(e.target.value)}
               placeholder="Coupon Code"
-              size="small"
-              variant="outlined"
-              fullWidth
             />
-            <Button onClick={handleCouponSubmit} variant="contained" color="primary">
+            <Button onClick={handleCouponSubmit} className="bg-primary">
               Apply
             </Button>
           </div>
         ) : (
-          <Chip
-            icon={<IoPricetagsOutline />}
-            label={coupon.toUpperCase()}
-            onDelete={removeCoupon}
-            color="primary"
-            className="mt-2"
-          />
+          <Badge variant="outline" className="mt-2 flex items-center gap-x-2">
+            <IoPricetagsOutline className="text-lg" />
+            {coupon.toUpperCase()}
+            <Button variant="ghost" size="icon" onClick={removeCoupon}>
+              ✕
+            </Button>
+          </Badge>
         )}
+        
         {error && (
-          <Alert severity="error" className="mt-2">
+          <Alert variant="destructive" className="mt-2">
             {error}
           </Alert>
         )}

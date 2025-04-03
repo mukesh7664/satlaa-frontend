@@ -1,73 +1,75 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import {
    PaymentElement,
    useStripe,
    useElements,
 } from "@stripe/react-stripe-js";
-import { Checkbox, Button, Form, Input } from "@mui/material";
-import router from "next/router";
 import { useDispatch, useSelector } from "react-redux";
-// import { getCart_r, updateCart_r } from "../../../redux/actions"; 
-
-import { getCart as getCart_r} from "../../../redux/reducers/Cart";
+import { getCart as getCart_r } from "../../../redux/reducers/Cart";
 import { cartFetch } from "../../../redux/reducers/Cart";
 import axiosInstance from "@/util/axios";
-const axios = axiosInstance();
 import { API_URL } from "../../../config";
+import { useRouter } from "next/navigation";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+
+const axios = axiosInstance();
 
 export default function CheckoutForm({ contract }) {
    const stripe = useStripe();
    const elements = useElements();
    const dispatch = useDispatch();
-   const cart= useSelector((state) => state.cart);
+   const router = useRouter();
+   const cart = useSelector((state) => state.cart);
    const { user, isAuthenticated } = useSelector((state) => state.login);
    const [message, setMessage] = useState(null);
    const [isLoading, setIsLoading] = useState(false);
-   const [isChecked, seTisChecked] = useState(false);
+   const [isChecked, setIsChecked] = useState(false);
 
    useEffect(() => {
-      if (!stripe) {
-         return;
-      }
+      if (!stripe) return;
 
       const clientSecret = new URLSearchParams(window.location.search).get(
          "payment_intent_client_secret"
       );
 
-      if (!clientSecret) {
-         return;
-      }
+      if (!clientSecret) return;
 
       stripe.retrievePaymentIntent(clientSecret).then(({ paymentIntent }) => {
          switch (paymentIntent.status) {
-         case "succeeded":
-            setMessage("Payment succeeded!");
-            break;
-         case "processing":
-            setMessage("Your payment is processing.");
-            break;
-         case "requires_payment_method":
-            setMessage("Your payment was not successful, please try again.");
-            break;
-         default:
-            setMessage("Something went wrong.");
-            break;
+            case "succeeded":
+               setMessage("Payment succeeded!");
+               break;
+            case "processing":
+               setMessage("Your payment is processing.");
+               break;
+            case "requires_payment_method":
+               setMessage("Your payment was not successful, please try again.");
+               break;
+            default:
+               setMessage("Something went wrong.");
+               break;
          }
       });
    }, [stripe, user]);
 
-   const handleSubmit = async (data) => {
-      cart.receiver_name = data.name;
-      cart.receiver_email = data.email;
-      cart.receiver_phone = data.phone;
+   const handleSubmit = async (event) => {
+      event.preventDefault();
 
-      if (!stripe || !elements) {
-      // Stripe.js has not yet loaded.
-      // Make sure to disable form submission until Stripe.js has loaded.
-         return;
-      }
+      if (!stripe || !elements) return;
 
       setIsLoading(true);
+
+      const data = new FormData(event.target);
+      cart.receiver_name = data.get("name");
+      cart.receiver_email = data.get("email");
+      cart.receiver_phone = data.get("phone");
 
       stripe
          .confirmPayment({
@@ -79,14 +81,11 @@ export default function CheckoutForm({ contract }) {
                setMessage(res.error.message);
             } else {
                if (cart.products?.length > 0) {
-                  const arrayId = [];
-
-                  cart.products?.map((x) => {
-                     arrayId.push(x.product_id);
-                  });
+                  const arrayId = cart.products.map((x) => x.product_id);
                   cart.payment_intent = res.paymentIntent.id;
                   const id = cart._id;
                   delete cart._id;
+
                   const dataRes = await axios.post(`${API_URL}/payment/stripeokey`, {
                      ids: arrayId,
                      items: cart.products,
@@ -101,27 +100,16 @@ export default function CheckoutForm({ contract }) {
                   cart.cargo_price_discount = 0;
 
                   if (isAuthenticated) {
-                     await axios
-                        .post(`${API_URL}/cart/${id}`, cart)
-                        .then(async () => {
-                           await dispatch(getCart_r(user.id));
-                           router.push(
-                              "/cart/checkout?payment_intent=" +
-                      dataRes.data.payment_intent +
-                      "&ordernumber=" +
-                      dataRes.data.ordernumber
-                           );
-                        })
-                        .catch((err) => {
-                           console.log(err);
-                        });
+                     await axios.post(`${API_URL}/cart/${id}`, cart).then(async () => {
+                        await dispatch(getCart_r(user.id));
+                        router.push(
+                           `/cart/checkout?payment_intent=${dataRes.data.payment_intent}&ordernumber=${dataRes.data.ordernumber}`
+                        );
+                     });
                   } else {
                      await dispatch(cartFetch(cart));
                      router.push(
-                        "/cart/checkout?payment_intent=" +
-                  dataRes.data.payment_intent +
-                  "&ordernumber=" +
-                  dataRes.data.ordernumber
+                        `/cart/checkout?payment_intent=${dataRes.data.payment_intent}&ordernumber=${dataRes.data.ordernumber}`
                      );
                   }
                }
@@ -130,106 +118,77 @@ export default function CheckoutForm({ contract }) {
 
       setIsLoading(false);
    };
-   return (
-      <Form onFinish={handleSubmit} layout="vertical">
-         <div className="grid grid-cols-12 lg:gap-10 lg:m-10 lg:p-0 p-5 ">
-            <div className="lg:col-span-4 col-span-12 ">
-               <div className="text-lg font-semibold col-span-12 text-primary  mb-5  mt-5">
-            Receiver{" "}
-               </div>
-               <Form.Item
-                  name="name"
-                  label="Name"
-                  className="col-span-4 mb-3"
-                  initialValue={user.name}
-                  rules={[
-                     {
-                        required: true,
-                        message: "Please Fill",
-                     },
-                  ]}
-               >
-                  <Input size="large" className="p-2" />
-               </Form.Item>
-               <Form.Item
-                  name="email"
-                  label="E-mail"
-                  className="col-span-4 mb-3"
-                  initialValue={user.email}
-                  rules={[
-                     {
-                        type: "email",
-                        message: "input not valid",
-                     },
-                     {
-                        required: true,
-                        message: "The input is not valid E-mail!",
-                     },
-                  ]}
-               >
-                  <Input size="large" className="p-2" />
-               </Form.Item>
-               <Form.Item
-                  name="phone"
-                  label="Phone"
-                  className="col-span-4 mb-3"
-                  initialValue={user.phone ? user.prefix + user.phone : ""}
-                  rules={[
-                     {
-                        required: true,
-                        message: "Please Fill",
-                     },
-                  ]}
-               >
-                  <Input size="large" className="p-2" />
-               </Form.Item>
-            </div>
-            <div className="lg:col-span-8 col-span-12">
-               <div className="text-lg font-semibold    text-primary  mt-5">
-            Stripe Payment{" "}
-               </div>
-               <PaymentElement className="  mt-5" />
-            </div>
-            <div className="col-span-12">
-               <div className="text-lg font-semibold    text-primary">
-            Contract
-               </div>
-               <div className=" overflow-y-scroll h-36   my-2 bg-gray-50 text-gray-500 p-7 rounded-t-none  rounded-lg w-auto">
-                  {contract}
-               </div>
 
-               <Checkbox
-                  className=" w-auto   my-4 "
-                  onChange={() => {
-                     seTisChecked(!isChecked);
-                  }}
-                  checked={isChecked}
-               >
-            I accept the contract
-               </Checkbox>
-               {message && (
-                  <div className="text-red-600 font-semibold text-center text-xl m-10">
-                     {message}
+   return (
+      <form onSubmit={handleSubmit} className="grid grid-cols-12 lg:gap-10 lg:m-10 lg:p-0 p-5">
+         <div className="lg:col-span-4 col-span-12">
+            <h2 className="text-lg font-semibold text-primary mb-5 mt-5">Receiver</h2>
+            <Card className="p-4">
+               <CardContent className="space-y-4">
+                  <div>
+                     <Label htmlFor="name">Name</Label>
+                     <Input id="name" name="name" defaultValue={user.name} required />
                   </div>
-               )}
-               <div className="  ">
-                  <Button
-                     disabled={(!isChecked && !isLoading) || !stripe || !elements}
-                     className="bg-black  focus:bg-black  w-full h-auto mb-5   cursor-pointer hover:text-white hover:bg-primary transition-all text-xl text-white focus:text-white p-5"
-                     htmlType="submit"
-                  >
-                     <span id="button-text">
-                        {isLoading ? (
-                           <div className="spinner" id="spinner"></div>
-                        ) : (
-                           "Pay now"
-                        )}
-                     </span>
-                  </Button>
-               </div>
-            </div>
+                  <div>
+                     <Label htmlFor="email">E-mail</Label>
+                     <Input
+                        id="email"
+                        name="email"
+                        type="email"
+                        defaultValue={user.email}
+                        required
+                     />
+                  </div>
+                  <div>
+                     <Label htmlFor="phone">Phone</Label>
+                     <Input
+                        id="phone"
+                        name="phone"
+                        defaultValue={user.phone ? user.prefix + user.phone : ""}
+                        required
+                     />
+                  </div>
+               </CardContent>
+            </Card>
          </div>
-         {/* Show any error or success messages */}
-      </Form>
+
+         <div className="lg:col-span-8 col-span-12">
+            <h2 className="text-lg font-semibold text-primary mt-5">Stripe Payment</h2>
+            <Card className="p-4 mt-5">
+               <CardContent>
+                  <PaymentElement />
+               </CardContent>
+            </Card>
+         </div>
+
+         <div className="col-span-12">
+            <h2 className="text-lg font-semibold text-primary">Contract</h2>
+            <div className="overflow-y-scroll h-36 my-2 bg-gray-50 text-gray-500 p-7 rounded-lg">
+               {contract}
+            </div>
+
+            <div className="flex items-center gap-2 my-4">
+               <Checkbox id="contract" checked={isChecked} onCheckedChange={setIsChecked} />
+               <Label htmlFor="contract">I accept the contract</Label>
+            </div>
+
+            {message && (
+               <div className="text-red-600 font-semibold text-center text-xl m-10">{message}</div>
+            )}
+
+            <Button
+               type="submit"
+               disabled={!isChecked || isLoading || !stripe || !elements}
+               className={cn(
+                  "w-full h-auto mb-5 text-xl text-white p-5 transition-all",
+                  isChecked
+                     ? "bg-black hover:bg-primary focus:bg-black"
+                     : "bg-gray-400 cursor-not-allowed"
+               )}
+            >
+               {isLoading ? <div className="spinner" id="spinner"></div> : "Pay now"}
+            </Button>
+         </div>
+      </form>
    );
 }

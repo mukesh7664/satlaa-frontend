@@ -1,66 +1,47 @@
-import { Box, Button, Divider, Typography } from "@mui/material";
-import { FaInstagram, FaWhatsapp } from "react-icons/fa";
 import React from "react";
+import { FaInstagram, FaWhatsapp } from "react-icons/fa";
+import { Button } from "@/components/ui/button";
 
 const MoreInfo = ({ path }) => {
   return (
     <>
-      <Box display="flex" flexDirection="column" gap={2} mt={2}>
+      <div className="flex flex-col gap-3 mt-2">
         {/* WhatsApp Chat Button */}
         <Button
-          component="a"
-          href={`https://api.whatsapp.com/send?phone=919257120925&text=I%20want%20to%20know%20about%20https://satlaa.com${path}`}
-          target="_blank"
-          rel="noreferrer"
-          startIcon={<FaWhatsapp />}
-          sx={{
-            backgroundColor: "#25D366",
-            color: "white",
-            "&:hover": {
-              backgroundColor: "white",
-              color: "#25D366",
-              border: "1px solid #25D366",
-            },
-            px: 3,
-            py: 1.5,
-            fontSize: "1rem",
-            borderRadius: "8px",
-            textTransform: "none",
-          }}
+          asChild
+          className="flex items-center gap-2 px-6 py-3 text-white bg-[#25D366] rounded-lg text-lg transition hover:bg-white hover:text-[#25D366] border border-transparent hover:border-[#25D366]"
         >
-          Chat for More Info
+          <a
+            href={`https://api.whatsapp.com/send?phone=919257120925&text=I%20want%20to%20know%20about%20https://satlaa.com${path}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <FaWhatsapp />
+            Chat for More Info
+          </a>
         </Button>
 
         {/* Call Info */}
-        <Typography variant="body1">
+        <p className="text-lg">
           Or call us on{" "}
-          <a href="tel:+919257120925" style={{ textDecoration: "underline", color: "#0073e6" }}>
+          <a href="tel:+919257120925" className="underline text-blue-600">
             +91 925-7120-925
           </a>
-        </Typography>
-      </Box>
+        </p>
+      </div>
 
-      <Divider sx={{ my: 2 }} />
+      <div className="border-t my-4"></div>
 
       {/* Instagram Community */}
-      <Box display="flex" alignItems="center">
-        <Typography variant="body1">Join 120K+ Insta Community</Typography>
-        <Button
-          component="a"
-          href="https://instagram.com/satlaa.in"
-          target="_blank"
-          rel="noreferrer"
-          startIcon={<FaInstagram />}
-          sx={{
-            textTransform: "none",
-            color: "#E1306C",
-            textDecoration: "underline",
-            ml: 1,
-          }}
-        >
-          SATLAA.in
+      <div className="flex items-center">
+        <p className="text-lg">Join 120K+ Insta Community</p>
+        <Button asChild variant="link" className="ml-2 text-[#E1306C] text-lg">
+          <a href="https://instagram.com/satlaa.in" target="_blank" rel="noreferrer">
+            <FaInstagram />
+            SATLAA.in
+          </a>
         </Button>
-      </Box>
+      </div>
     </>
   );
 };

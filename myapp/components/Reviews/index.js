@@ -3,28 +3,18 @@
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
 import { BiSolidStar } from "react-icons/bi";
-import { API_URL } from "../../../config";
 import { GoCheckCircleFill } from "react-icons/go";
-import { 
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Card,
-  CardMedia,
-  CardContent,
-  Grid,
-  Typography,
-  Button,
-  Container,
-  Box
-} from "@mui/material";
+import { API_URL } from "../../../config";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
 
 const Reviews = ({ reviews }) => {
   const [displayedReviews, setDisplayedReviews] = useState([]);
   const [showMore, setShowMore] = useState(true);
   const [selectedReview, setSelectedReview] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const reviewsPerPage = 10;
 
   useEffect(() => {
@@ -40,99 +30,85 @@ const Reviews = ({ reviews }) => {
     }
   };
 
-  const openReviewModal = (review) => {
-    setSelectedReview(review);
-    setIsModalOpen(true);
-  };
-
-  const closeReviewModal = () => {
-    setIsModalOpen(false);
-  };
-
   return (
-    <Container sx={{ mt: 4 }}>
-      <Typography variant="h4" fontWeight="bold" gutterBottom>
-        Customer Reviews
-      </Typography>
+    <div className="container mx-auto mt-6">
+      <h2 className="text-2xl font-bold mb-4">Customer Reviews</h2>
 
-      <Grid container spacing={2}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {displayedReviews.map((review, index) => (
-          <Grid item xs={12} sm={6} md={4} key={index}>
-            <Card sx={{ cursor: "pointer" }} onClick={() => openReviewModal(review)}>
+          <Dialog key={index}>
+            <DialogTrigger asChild>
+              <Card className="cursor-pointer hover:shadow-lg transition">
+                {review.media?.length > 0 && (
+                  <div className="w-full h-[250px] relative">
+                    <Image
+                      src={review.media[0].url ? `${API_URL + review.media[0].url}` : "/images/nofoto.jpg"}
+                      alt="Review Image"
+                      fill
+                      className="object-cover rounded-t-lg"
+                    />
+                  </div>
+                )}
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-lg font-semibold">
+                      {review.name.length > 11 ? `${review.name.slice(0, 11)}...` : review.name}
+                    </h3>
+                    {review.verified && <GoCheckCircleFill className="text-green-500" />}
+                  </div>
+                  <div className="flex my-1">
+                    {[...Array(5)].map((_, i) => (
+                      <BiSolidStar
+                        key={i}
+                        className={cn("w-5 h-5", i < review.rating ? "text-yellow-500" : "text-gray-300")}
+                      />
+                    ))}
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    {review.reviewText.length > 100 ? `${review.reviewText.slice(0, 100)}...` : review.reviewText}
+                  </p>
+                </CardContent>
+              </Card>
+            </DialogTrigger>
+            <DialogContent className="max-w-lg">
+              <div className="flex items-center gap-2 text-lg font-semibold">
+                {review.name} {review.verified && <GoCheckCircleFill className="text-green-500" />}
+                {review.verified && <span className="text-sm text-gray-500">Verified Purchase</span>}
+              </div>
+              <div className="flex my-2">
+                {[...Array(5)].map((_, i) => (
+                  <BiSolidStar
+                    key={i}
+                    className={cn("w-5 h-5", i < review.rating ? "text-yellow-500" : "text-gray-300")}
+                  />
+                ))}
+              </div>
               {review.media?.length > 0 && (
-                <CardMedia
-                  component="img"
-                  height="250"
-                  image={review.media[0].url ? `${API_URL + review.media[0].url}` : "/images/nofoto.jpg"}
-                  alt="Review Image"
-                />
-              )}
-              <CardContent>
-                <Typography variant="h6" display="flex" alignItems="center" gap={1}>
-                  {review.name.length > 11 ? `${review.name.slice(0, 11)}...` : review.name}
-                  {review.verified && <GoCheckCircleFill />}
-                </Typography>
-                <Box display="flex" mb={1}>
-                  {[...Array(5)].map((_, i) => (
-                    <BiSolidStar key={i} style={{ width: 20, height: 20, color: i < review.rating ? "#f59e0b" : "#d1d5db" }} />
+                <div className="space-y-2">
+                  {review.media.map((image, i) => (
+                    <Image
+                      key={i}
+                      src={image.url ? `${API_URL + image.url}` : "/images/nofoto.jpg"}
+                      alt="Review Image"
+                      width={500}
+                      height={400}
+                      className="rounded-lg object-cover"
+                    />
                   ))}
-                </Box>
-                <Typography variant="body2" color="textSecondary">
-                  {review.reviewText.length > 100 ? `${review.reviewText.slice(0, 100)}...` : review.reviewText}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
+                </div>
+              )}
+              <p className="text-gray-700">{review.reviewText}</p>
+            </DialogContent>
+          </Dialog>
         ))}
-      </Grid>
+      </div>
 
       {showMore && (
-        <Button variant="outlined" sx={{ mt: 3 }} onClick={loadMoreReviews}>
+        <Button variant="outline" className="mt-4 w-full" onClick={loadMoreReviews}>
           Load More Reviews
         </Button>
       )}
-
-      {/* Review Modal */}
-      <Dialog open={isModalOpen} onClose={closeReviewModal} maxWidth="sm" fullWidth>
-        {selectedReview && (
-          <>
-            <DialogTitle display="flex" alignItems="center" gap={1}>
-              {selectedReview.name} {selectedReview.verified && <GoCheckCircleFill />}
-              {selectedReview.verified && <Typography variant="body2">Verified Purchase</Typography>}
-            </DialogTitle>
-            <DialogContent>
-              <Box display="flex" mb={2}>
-                {[...Array(5)].map((_, i) => (
-                  <BiSolidStar key={i} style={{ width: 20, height: 20, color: i < selectedReview.rating ? "#f59e0b" : "#d1d5db" }} />
-                ))}
-              </Box>
-              {selectedReview.media?.length > 0 && (
-                <Box mb={2}>
-                  {selectedReview.media.map((image) => (
-                    <CardMedia
-                      key={image.url}
-                      component="img"
-                      height="400"
-                      image={image.url ? `${API_URL + image.url}` : "/images/nofoto.jpg"}
-                      alt="Review Image"
-                      sx={{ mb: 2, borderRadius: 1 }}
-                    />
-                  ))}
-                </Box>
-              )}
-              <Typography variant="body1" color="textSecondary">
-                {selectedReview.reviewText}
-              </Typography>
-            </DialogContent>
-            <DialogActions>
-              <Button variant="contained" color="primary" onClick={closeReviewModal}>
-                Close
-              </Button>
-            </DialogActions>
-          </>
-        )}
-      </Dialog>
-    </Container>
+    </div>
   );
 };
 

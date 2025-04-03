@@ -1,7 +1,6 @@
 "use client"; // Ensure this runs only on the client
 
 import { useSelector } from "react-redux";
-import { Drawer } from "@mui/material";
 import Image from "next/image";
 import LeftMenu from "./LeftMenu";
 import RightMenu from "./RightMenu";
@@ -9,15 +8,12 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { FaBars } from "react-icons/fa";
 import { useRouter } from "next/navigation"; // ✅ Correct import for Next.js 15
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"; // ShadCN Sheet
 
 const Default = () => {
   const { settings } = useSelector(({ settings }) => settings);
   const [visible, setVisible] = useState(false);
   const router = useRouter(); // ✅ Use it directly
-
-  const showDrawer = () => {
-    setVisible(!visible);
-  };
 
   useEffect(() => {
     if (typeof window === "undefined") return; // Ensure it's running in the browser
@@ -51,26 +47,19 @@ const Default = () => {
         </div>
         <div className="w-5/12 md:w-auto flex flex-row mr-2">
           <RightMenu mode={"horizontal"} />
-          <button
-            className="block text-black md:hidden text-2xl ml-1"
-            onClick={showDrawer}
-            aria-label="Menu"
-          >
-            <FaBars />
-          </button>
-        </div>
 
-        <Drawer
-          title={<p className="text-2xl font-Montserrat font-semibold">SATLAA</p>}
-          placement="right"
-          closable={true}
-          onClose={showDrawer}
-          open={visible}
-          style={{ zIndex: 99999 }}
-          width={"80vw"}
-        >
-          <LeftMenu mode="inline" />
-        </Drawer>
+          <Sheet open={visible} onOpenChange={setVisible}>
+            <SheetTrigger asChild>
+              <button className="block text-black md:hidden text-2xl ml-1" aria-label="Menu">
+                <FaBars />
+              </button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-80">
+              <p className="text-2xl font-semibold mb-4">SATLAA</p>
+              <LeftMenu mode="inline" />
+            </SheetContent>
+          </Sheet>
+        </div>
       </header>
     </div>
   );

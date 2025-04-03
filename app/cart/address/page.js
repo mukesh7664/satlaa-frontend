@@ -15,7 +15,7 @@ import AddressList from "@/myapp/components/Cart/AddressList";
 import { fetchData } from "@/util/fetchData";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { message } from "@mui/material";
+import { toast } from "sonner";
 
 const Page = () => {
   const dispatch = useDispatch();
@@ -48,9 +48,9 @@ const Page = () => {
       await axios.post(`${API_URL}/cart/${userCart._id}`, cart);
       getCart(user.id);
       setInitialAddress([]); // Clear and re-fetch addresses
-      message.success("User Logged In", { duration: 3 });
+      toast.success("User Logged In");
     } catch (err) {
-      message.error("Some Error, Please Try Again", { duration: 3 });
+      toast.error("Some Error, Please Try Again");
     }
   };
 
@@ -72,7 +72,7 @@ const Page = () => {
           <p className="text-lg font-semibold font-Montserrat mb-8">
             Please Log in to save your Address and Order Details
           </p>
-          <div className="p-4 shadow-square md:shadow-md rounded">
+          <div className="p-4 shadow-md rounded bg-white">
             <LoginForm
               handleCancelLogin={() => {}}
               onSuccessfulLogin={handleSuccessfulLogin}

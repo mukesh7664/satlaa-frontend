@@ -5,10 +5,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import LoginForm from "@/myapp/components/Header/LoginForm";
 import { fetchData } from "@/util/fetchData";
-import { message } from "@mui/material";
 import axiosInstance from "@/util/axios";
 import { getCart } from "@/redux/reducers/Cart";
 import { API_URL } from "@/config";
+import { toast } from "@/components/ui/use-toast";
 
 const axios = axiosInstance();
 
@@ -34,9 +34,9 @@ const SignInPage = () => {
     try {
       await axios.post(`${API_URL}/cart/${userCart._id}`, cart);
       dispatch(getCart(user.id));
-      message.success({ content: "User Logged In", duration: 3 });
+      toast({ title: "Success", description: "User Logged In", duration: 3000 });
     } catch (err) {
-      message.error({ content: "Some Error, Please Try Again", duration: 3 });
+      toast({ title: "Error", description: "Some Error, Please Try Again", duration: 3000, variant: "destructive" });
     }
   };
 

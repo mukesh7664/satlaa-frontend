@@ -55,7 +55,7 @@
     "next-env.d.ts",
     "app/404.jsx",
     ".next/types/**/*.ts"
-, "app/layout.js"  ],
+, "app/layout.js", "lib/utils.js"  ],
   "exclude": [
     "node_modules"
   ]

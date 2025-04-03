@@ -2,186 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
-/* Style your items */
-.my-masonry-column {
-  /* change div to reference your elements you put in <Masonry> */
-  margin-top: 20px;
-  box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
-}
-
-// @import "react-slideshow-image/dist/styles.css";
-
-body {
-  @apply dark:bg-black;
-}
-.break-inside-avoid {
-  break-inside: avoid;
-}
-ant-input:hover {
-  border-color: transparent !important; /* Custom border color on hover */
-  border-inline-end-width: 0px !important ; /* Custom border width on hover */
-}
-.crt-logo {
-  display: none !important;
-}
-.ant-input-search-button {
-  background-color: #e76e81 !important; /* Replace #yourColor with the hex code of the color you want */
-}
-.gradient-border {
-  background-image: linear-gradient(white, white),
-    linear-gradient(45deg, #e76e81, purple, #e76e81, #a14189);
-  background-origin: border-box;
-  background-clip: content-box, border-box;
-  border: double 2px transparent;
-}
-.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected,
-.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-active,
-.ant-menu-submenu-popup .ant-menu-item:hover {
-  background-color: transparent; /* Remove background color */
-}
-.ant-menu-item:hover {
-  background-color: transparent !important;
-}
-/* Override for submenu items if necessary */
-.ant-menu-submenu-popup .ant-menu-item-selected,
-.ant-menu-submenu-popup .ant-menu-item-active {
-  background-color: transparent;
-}
-/******************************************* 
-  Rich Text Styles
-*******************************************/
-mux-player {
-  aspect-ratio: 1 / 1 !important;
-}
-mux-player {
-  --media-object-fit: cover;
-  --media-object-position: center;
-}
-.next-video-container {
-  aspect-ratio: 1 / 1 !important;
-}
-/* Headers */
-.rich-text h1 {
-  @apply text-4xl font-bold mb-4 text-violet-400;
-}
-
-.rich-text h2 {
-  @apply text-3xl font-bold mb-4 text-violet-400;
-}
-
-.rich-text h3 {
-  @apply text-2xl font-bold mb-4 text-violet-400;
-}
-
-.rich-text h4 {
-  @apply text-xl font-bold mb-4 text-violet-400;
-}
-
-.rich-text h5 {
-  @apply text-lg font-bold mb-4 text-violet-400;
-}
-
-.rich-text h6 {
-  @apply text-base font-bold mb-4 text-violet-200;
-}
-
-/* Horizontal rules */
-.rich-text hr {
-  @apply border-gray-300 my-8;
-}
-
-.rich-text a {
-  @apply text-violet-400 underline;
-}
-
-/* Typographic replacements */
-.rich-text p {
-  @apply mb-4;
-}
-
-/* Emphasis */
-.rich-text strong {
-  @apply font-bold;
-}
-
-.rich-text em {
-  @apply italic;
-}
-
-.rich-text del {
-  @apply line-through;
-}
-
-/* Blockquotes */
-.rich-text blockquote {
-  @apply border-l-4 border-gray-400 pl-4 py-2 mb-4;
-}
-
-/* Lists */
-.rich-text ul {
-  @apply list-disc pl-4 mb-4;
-}
-
-.rich-text ol {
-  @apply list-decimal pl-4 mb-4;
-}
-
-.rich-text li {
-  @apply mb-2;
-}
-
-.rich-text li > ul {
-  @apply list-disc pl-4 mb-2;
-}
-
-.rich-text li > ol {
-  @apply list-decimal pl-4 mb-2;
-}
-
-/* Code blocks */
-.rich-text pre {
-  @apply font-mono bg-gray-900 text-gray-100 rounded p-4  my-6;
-}
-
-.rich-text code {
-  @apply font-mono bg-gray-900 text-gray-100 rounded px-2 py-1;
-}
-
-/* Tables */
-.rich-text table {
-  @apply w-full border-collapse border-gray-300 my-6;
-}
-
-.rich-text th {
-  @apply bg-gray-900 text-left py-2 px-4 font-semibold border-b border-gray-300;
-}
-
-.rich-text td {
-  @apply py-2 px-4 border-b border-gray-300;
-}
-
-/* Images */
-.rich-text img {
-  @apply w-full object-cover rounded-xl my-6;
-}
-
-/* Custom containers */
-.rich-text .warning {
-  @apply bg-yellow-100 border-yellow-500 text-yellow-700 px-4 py-2 rounded-lg mb-4;
-}
-
-/******************************************* 
-  React Slideshow Styles
-*******************************************/
-
-.react-slideshow-container [aria-label="Previous Slide"] {
-  margin-left: 1rem;
-}
-
-.react-slideshow-container [aria-label="Next Slide"] {
-  margin-right: 1rem;
-}
 @layer base {
   @keyframes fade-in {
     from {
@@ -254,34 +74,72 @@ mux-player {
   .formItems {
     @apply grid grid-cols-1 sm:grid-cols-2 gap-4;
   }
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 0% 53% 42% 11%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 18% 43% 0% 14%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0% 13% 10% 0%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+  }
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
 }
-.ant-form-item {
-  margin-bottom: 0 !important;
-}
+
 .hiddenArrowInputNumber::-webkit-inner-spin-button,
 .hiddenArrowInputNumber::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 /* Navbar */
-.ant-menu-horizontal > .ant-menu-item::after,
-.ant-menu-horizontal > .ant-menu-submenu::after {
-  border-bottom: none !important;
-  transition: none !important;
-}
-//  a:hover {
-//   color: inherit; /* reset text color */
-//   text-decoration: none; /* remove underline */
-// }
-.ant-menu-horizontal .ant-menu-submenu {
-  padding-inline: 0px !important;
-}
-.ant-collapse-header {
-  padding-left: 0 !important;
-}
-.ant-drawer-body {
-  padding: 0 !important;
-}
+/*  a:hover {
+   color: inherit;  reset text color 
+   text-decoration: none;  remove underline 
+ }*/
+
 .homeFirsBoxs {
   display: table;
 
@@ -305,21 +163,10 @@ mux-player {
 
 $primary_color: #e76e81;
 
-.ant-btn-primary {
-  @apply bg-[#4b71a0];
-  -webkit-appearance: button;
-}
 .my-slider .swiper-slide {
   @apply w-[22vw] md:w-36 lg:w-44 p-1;
 }
 
-.ant-layout {
-  background: transparent;
-}
-.ant-input-search-button {
-  background-color: $primary_color !important;
-  @apply text-2xl;
-}
 html,
 body {
   height: 100%;
@@ -333,20 +180,6 @@ a {
 a:hover {
   color: #262626;
   text-decoration: none;
-}
-
-.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
-  background-color: white;
-  color: inherit;
-}
-.ant-menu-light:not(.ant-menu-horizontal) .ant-menu-submenu-title {
-  background-color: white;
-}
-
-.ant-menu-horizontal > .ant-menu-item::after,
-.ant-menu-horizontal > .ant-menu-submenu::after {
-  right: 0px;
-  left: 0;
 }
 
 .homeSliderReslative {
@@ -508,39 +341,39 @@ ul.topmenu {
   opacity: 0.3;
 }
 
-// .tags-slider {
-//   display: flex;
-//   overflow-x: auto;
+/* .tags-slider {
+   display: flex;
+   overflow-x: auto;
 
-//   .item {
-//     flex-direction: row-reverse;
-//     align-items: center;
+   .item {
+     flex-direction: row-reverse;
+     align-items: center;
 
-//     img {
-//       margin: 0 auto;
-//       border: 1px solid #bbbbbb !important;
-//       box-sizing: border-box;
-//       display: block;
+     img {
+       margin: 0 auto;
+       border: 1px solid #bbbbbb !important;
+       box-sizing: border-box;
+       display: block;
 
-//       transition: all ease 0.2s;
-//     }
+       transition: all ease 0.2s;
+     }
 
-//     span {
-//       font-family: "source_sans_prosemibold", sans-serif;
-//       text-align: center;
-//       margin-top: 8px;
-//       color: #333;
-//       font-size: 12px;
-//       display: block;
-//       transition: all ease 0.2s;
-//       line-height: 14px;
-//       height: 42px;
-//       width: 110%;
-//       margin-left: -5%;
-//     }
-//   }
-// }
-
+     span {
+       font-family: "source_sans_prosemibold", sans-serif;
+       text-align: center;
+       margin-top: 8px;
+       color: #333;
+       font-size: 12px;
+       display: block;
+       transition: all ease 0.2s;
+       line-height: 14px;
+       height: 42px;
+       width: 110%;
+       margin-left: -5%;
+     }
+}
+ }
+*/
 .TagsFilter {
   width: 100%;
   float: left;
@@ -566,50 +399,6 @@ ul.topmenu {
   overflow: scroll;
   border: 1px solid #dfe2e6;
   padding-left: 5px;
-
-  .ant-tree-treenode-disabled {
-    margin-top: 5px;
-  }
-
-  .ant-tree-treenode-switcher-open {
-    padding: 0;
-  }
-
-  .ant-tree .ant-tree-treenode-disabled .ant-tree-node-content-wrapper {
-    color: #464646;
-    cursor: s-resize;
-    font-weight: bold;
-  }
-
-  .ant-checkbox-group {
-    float: left;
-
-    .ant-checkbox-group-item {
-      float: left;
-      width: 100%;
-    }
-  }
-
-  .ant-tree-switcher-noop {
-    display: none;
-  }
-
-  .ant-tree-indent-unit {
-    width: 10px;
-  }
-
-  .ant-tree-switcher_open {
-    display: none;
-  }
-
-  .ant-tree .ant-tree-node-content-wrapper.ant-tree-node-selected {
-    background-color: #dddddd;
-  }
-}
-
-.ant-select-tree
-  .ant-select-tree-node-content-wrapper.ant-select-tree-node-selected {
-  background-color: #dddddd;
 }
 
 ul.footermenu {
@@ -648,16 +437,158 @@ ul.footermenu {
   }
 }
 
-.ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
-  color: rgba(0, 0, 0, 0.85);
-  font-weight: 600;
-  background-color: #d4d4d4;
+body {
+  @apply dark:bg-black;
+}
+.break-inside-avoid {
+  break-inside: avoid;
 }
 
-.ant-form-item-label {
-  font-weight: bold;
-  opacity: 0.8;
-  padding-bottom: 0 !important;
+.crt-logo {
+  display: none !important;
+}
+
+.gradient-border {
+  background-image: linear-gradient(white, white),
+    linear-gradient(45deg, #e76e81, purple, #e76e81, #a14189);
+  background-origin: border-box;
+  background-clip: content-box, border-box;
+  border: double 2px transparent;
+}
+
+/******************************************* 
+  Rich Text Styles
+*******************************************/
+mux-player {
+  aspect-ratio: 1 / 1 !important;
+}
+mux-player {
+  --media-object-fit: cover;
+  --media-object-position: center;
+}
+.next-video-container {
+  aspect-ratio: 1 / 1 !important;
+}
+/* Headers */
+.rich-text h1 {
+  @apply text-4xl font-bold mb-4 text-violet-400;
+}
+
+.rich-text h2 {
+  @apply text-3xl font-bold mb-4 text-violet-400;
+}
+
+.rich-text h3 {
+  @apply text-2xl font-bold mb-4 text-violet-400;
+}
+
+.rich-text h4 {
+  @apply text-xl font-bold mb-4 text-violet-400;
+}
+
+.rich-text h5 {
+  @apply text-lg font-bold mb-4 text-violet-400;
+}
+
+.rich-text h6 {
+  @apply text-base font-bold mb-4 text-violet-200;
+}
+
+/* Horizontal rules */
+.rich-text hr {
+  @apply border-gray-300 my-8;
+}
+
+.rich-text a {
+  @apply text-violet-400 underline;
+}
+
+/* Typographic replacements */
+.rich-text p {
+  @apply mb-4;
+}
+
+/* Emphasis */
+.rich-text strong {
+  @apply font-bold;
+}
+
+.rich-text em {
+  @apply italic;
+}
+
+.rich-text del {
+  @apply line-through;
+}
+
+/* Blockquotes */
+.rich-text blockquote {
+  @apply border-l-4 border-gray-400 pl-4 py-2 mb-4;
+}
+
+/* Lists */
+.rich-text ul {
+  @apply list-disc pl-4 mb-4;
+}
+
+.rich-text ol {
+  @apply list-decimal pl-4 mb-4;
+}
+
+.rich-text li {
+  @apply mb-2;
+}
+
+.rich-text li > ul {
+  @apply list-disc pl-4 mb-2;
+}
+
+.rich-text li > ol {
+  @apply list-decimal pl-4 mb-2;
+}
+
+/* Code blocks */
+.rich-text pre {
+  @apply font-mono bg-gray-900 text-gray-100 rounded p-4  my-6;
+}
+
+.rich-text code {
+  @apply font-mono bg-gray-900 text-gray-100 rounded px-2 py-1;
+}
+
+/* Tables */
+.rich-text table {
+  @apply w-full border-collapse border-gray-300 my-6;
+}
+
+.rich-text th {
+  @apply bg-gray-900 text-left py-2 px-4 font-semibold border-b border-gray-300;
+}
+
+.rich-text td {
+  @apply py-2 px-4 border-b border-gray-300;
+}
+
+/* Images */
+.rich-text img {
+  @apply w-full object-cover rounded-xl my-6;
+}
+
+/* Custom containers */
+.rich-text .warning {
+  @apply bg-yellow-100 border-yellow-500 text-yellow-700 px-4 py-2 rounded-lg mb-4;
+}
+
+/******************************************* 
+  React Slideshow Styles
+*******************************************/
+
+.react-slideshow-container [aria-label="Previous Slide"] {
+  margin-left: 1rem;
+}
+
+.react-slideshow-container [aria-label="Next Slide"] {
+  margin-right: 1rem;
 }
 
 @media screen and (max-width: 1200px) {
@@ -672,13 +603,19 @@ ul.footermenu {
     display: none;
   }
 }
-.ant-menu-submenu-title {
-  padding-left: 0px !important;
-}
 
 .form-input-new {
   @apply block  px-2.5 pb-2.5 pt-5 w-full text-sm text-gray-900  border border-gray-300 appearance-none  focus:outline-none focus:ring-0 focus:border-blue-600;
 }
 .form-input-lable-new {
   @apply absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] left-2.5 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }

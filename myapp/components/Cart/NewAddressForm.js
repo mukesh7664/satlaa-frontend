@@ -1,6 +1,9 @@
 import React from "react";
 import { Formik, Form, Field } from "formik";
-import { TextField, MenuItem, Button, Box, Typography, Grid } from "@mui/material";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import * as Yup from "yup";
 import axiosInstance from "@/util/axios";
 const axios = axiosInstance();
@@ -33,125 +36,117 @@ const AddressForm = ({ initialValues = {}, onSubmitAddress, states, handleCancel
   return (
     <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmitAddress}>
       {({ errors, touched, values, handleChange, handleBlur, setFieldValue }) => (
-        <Form>
-          <Box p={2}>
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  label="Name"
-                  name="name"
-                  value={values.name}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.name && Boolean(errors.name)}
-                  helperText={touched.name && errors.name}
-                />
-              </Grid>
+        <Form className="space-y-4 p-4 bg-white rounded-lg shadow">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium">Name</label>
+              <Input
+                name="name"
+                value={values.name}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                className={touched.name && errors.name ? "border-red-500" : ""}
+              />
+              {touched.name && errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
+            </div>
 
-              <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  label="Phone Number"
-                  name="phone"
-                  type="number"
-                  value={values.phone}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.phone && Boolean(errors.phone)}
-                  helperText={touched.phone && errors.phone}
-                />
-              </Grid>
+            <div>
+              <label className="block text-sm font-medium">Phone Number</label>
+              <Input
+                name="phone"
+                type="number"
+                value={values.phone}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                className={touched.phone && errors.phone ? "border-red-500" : ""}
+              />
+              {touched.phone && errors.phone && <p className="text-red-500 text-sm">{errors.phone}</p>}
+            </div>
 
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Address (Area and Street)"
-                  name="address"
-                  multiline
-                  rows={2}
-                  value={values.address}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.address && Boolean(errors.address)}
-                  helperText={touched.address && errors.address}
-                />
-              </Grid>
+            <div className="col-span-2">
+              <label className="block text-sm font-medium">Address (Area and Street)</label>
+              <Textarea
+                name="address"
+                value={values.address}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                className={touched.address && errors.address ? "border-red-500" : ""}
+              />
+              {touched.address && errors.address && <p className="text-red-500 text-sm">{errors.address}</p>}
+            </div>
 
-              <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  label="Pincode"
-                  name="pin_code"
-                  type="number"
-                  value={values.pin_code}
-                  onChange={(e) => {
-                    handleChange(e);
-                    onPincodeChange(e, setFieldValue);
-                  }}
-                  onBlur={handleBlur}
-                  error={touched.pin_code && Boolean(errors.pin_code)}
-                  helperText={touched.pin_code && errors.pin_code}
-                />
-              </Grid>
+            <div>
+              <label className="block text-sm font-medium">Pincode</label>
+              <Input
+                name="pin_code"
+                type="number"
+                value={values.pin_code}
+                onChange={(e) => {
+                  handleChange(e);
+                  onPincodeChange(e, setFieldValue);
+                }}
+                onBlur={handleBlur}
+                className={touched.pin_code && errors.pin_code ? "border-red-500" : ""}
+              />
+              {touched.pin_code && errors.pin_code && <p className="text-red-500 text-sm">{errors.pin_code}</p>}
+            </div>
 
-              <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  label="District"
-                  name="district"
-                  value={values.district}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.district && Boolean(errors.district)}
-                  helperText={touched.district && errors.district}
-                />
-              </Grid>
+            <div>
+              <label className="block text-sm font-medium">District</label>
+              <Input
+                name="district"
+                value={values.district}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                className={touched.district && errors.district ? "border-red-500" : ""}
+              />
+              {touched.district && errors.district && <p className="text-red-500 text-sm">{errors.district}</p>}
+            </div>
 
-              <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  select
-                  label="State"
-                  name="state"
-                  value={values.state}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.state && Boolean(errors.state)}
-                  helperText={touched.state && errors.state}
-                >
+            <div>
+              <label className="block text-sm font-medium">State</label>
+              <Select
+                value={values.state}
+                onValueChange={(value) => setFieldValue("state", value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a state" />
+                </SelectTrigger>
+                <SelectContent>
                   {states.map((state) => (
-                    <MenuItem key={state.value} value={state.value}>
+                    <SelectItem key={state.value} value={state.value}>
                       {state.label}
-                    </MenuItem>
+                    </SelectItem>
                   ))}
-                </TextField>
-              </Grid>
+                </SelectContent>
+              </Select>
+              {touched.state && errors.state && <p className="text-red-500 text-sm">{errors.state}</p>}
+            </div>
 
-              <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  label="Alternate Number (Optional)"
-                  name="alternate_phone"
-                  type="number"
-                  value={values.alternate_phone}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.alternate_phone && Boolean(errors.alternate_phone)}
-                  helperText={touched.alternate_phone && errors.alternate_phone}
-                />
-              </Grid>
+            <div>
+              <label className="block text-sm font-medium">Alternate Number (Optional)</label>
+              <Input
+                name="alternate_phone"
+                type="number"
+                value={values.alternate_phone}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                className={touched.alternate_phone && errors.alternate_phone ? "border-red-500" : ""}
+              />
+              {touched.alternate_phone && errors.alternate_phone && (
+                <p className="text-red-500 text-sm">{errors.alternate_phone}</p>
+              )}
+            </div>
+          </div>
 
-              <Grid item xs={12} display="flex" justifyContent="space-between">
-                <Button type="submit" variant="contained" color="primary" sx={{ width: "70%" }}>
-                  Save Address
-                </Button>
-                <Button onClick={handleCancel} variant="text" color="error" sx={{ width: "30%" }}>
-                  Cancel
-                </Button>
-              </Grid>
-            </Grid>
-          </Box>
+          <div className="flex justify-between">
+            <Button type="submit" className="w-3/4">
+              Save Address
+            </Button>
+            <Button variant="outline" onClick={handleCancel} className="w-1/4 text-red-500">
+              Cancel
+            </Button>
+          </div>
         </Form>
       )}
     </Formik>
