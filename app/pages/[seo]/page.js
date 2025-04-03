@@ -1,4 +1,4 @@
-"use client";
+
 
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
@@ -10,8 +10,7 @@ import authservice from "../../../util/services/authservice";
 import parse from "html-react-parser";
 import { fetchData } from "../../../util/fetchData";
 import { API_URL
-  
- } from "../../../config";
+} from "../../../config";
 //const API_URL = process.env.NEXT_PUBLIC_API_URL; // Use env variable for flexibility
 
 export const metadata = {
