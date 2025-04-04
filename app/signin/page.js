@@ -8,7 +8,7 @@ import { fetchData } from "@/util/fetchData";
 import axiosInstance from "@/util/axios";
 import { getCart } from "@/redux/reducers/Cart";
 import { API_URL } from "@/config";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/hooks/use-toast";
 
 const axios = axiosInstance();
 

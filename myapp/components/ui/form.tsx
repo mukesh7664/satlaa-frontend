@@ -28,7 +28,7 @@ const FormField = <TFieldValues extends FieldValues, TName extends FieldPath<TFi
   children,
 }: {
   name: TName;
-  children: (field: any) => React.ReactNode;
+  children: (field: any) => React.ReactElement; // Changed from ReactNode to ReactElement
 }) => {
   const { control } = useFormContext();
 
@@ -48,8 +48,13 @@ const useFormField = () => {
     throw new Error("useFormField should be used within <FormField>");
   }
 
+  // Add this check to prevent accessing properties on null
+  if (!itemContext) {
+    throw new Error("useFormField should be used within <FormItem>");
+  }
+
   const fieldState = getFieldState(fieldContext.name, formState);
-  const { id } = itemContext;
+  const { id } = itemContext as FormItemContextValue;
 
   return {
     id,

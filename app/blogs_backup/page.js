@@ -1,3 +1,5 @@
+'use client'
+
 import { CMS_URL } from "@/config";
 import { useState, useEffect, useCallback } from "react";
 import { fetchAPI } from "@/util/strapi-fetch-api";
@@ -5,13 +7,6 @@ import Loader from "@/components/Blogs/Loader";
 import PostList from "@/components/Blogs/PostList";
 import PageHeader from "@/components/Blogs/PageHeader";
 import Link from "next/link";
-
-// ✅ Metadata for SEO
-export const metadata = {
-  title: "Satlaa Blogs",
-  description: "Explore our latest blogs on fashion, trends, and jewelry insights.",
-  keywords: "Satlaa Blogs, Fashion, Trends, Silver Jewelry, Style Tips",
-};
 
 const Profile = () => {
   const [meta, setMeta] = useState(null);

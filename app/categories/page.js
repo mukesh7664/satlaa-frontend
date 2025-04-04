@@ -1,10 +1,13 @@
 import CategoriesList from "@/components/categories/list";
+import { API_URL } from "@/config";
 
 // ✅ Fetch data on the server (if required)
 async function fetchCategoriesData() {
   try {
-    // Your data-fetching logic here (if needed)
-    return {};
+    // Your actual fetch logic will go here
+    const response = await fetch(`${API_URL}/categories/list`);
+    const data = await response.json();
+    return data;
   } catch (error) {
     console.error("Error fetching categories:", error);
     return {};
@@ -21,13 +24,13 @@ export async function generateMetadata() {
 
 // ✅ Server Component Page
 export default async function CategoriesPage() {
-  await fetchCategoriesData(); // Optional: Fetch data before rendering
+  const data = await fetchCategoriesData(); // Now we're using the returned data
 
   return (
     <div className="container-custom h-full">
       <p className="text-3xl w-full font-bold font-Montserrat mt-2 text-center">Categories</p>
       <div className="bg-white">
-        <CategoriesList />
+        <CategoriesList categoriesData={data} />
       </div>
     </div>
   );
