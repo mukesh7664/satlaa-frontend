@@ -1,7 +1,9 @@
+'use client'
+
 import axiosInstance from "@/util/axios";
 const axios = axiosInstance();
 import { useState, useEffect } from "react";
-import router from "next/navigation";
+import {useRouter} from "next/navigation";
 import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -13,6 +15,7 @@ import func from "../../../util/helpers/func";
 import { cartFetch, getCart as getCart_r } from "../../../redux/reducers/Cart";
 
 const Default = () => {
+  const router = useRouter();
   const cart = useSelector((state) => state.cart);
   const { user } = useSelector(({ login }) => login);
   const { shipping_address } = useSelector((state) => state.cart);

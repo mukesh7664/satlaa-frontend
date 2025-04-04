@@ -2,22 +2,21 @@ import axiosInstance from "@/util/axios";
 import { API_URL, WEBSITE_URL } from "@/config";
 
 export async function GET() {
-  const axios = axiosInstance();
-
   try {
+    // Using function expression instead of declaration
+    const escapeHtml = (text) => {
+      return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    };
+
+    const axios = axiosInstance();
+    
     const resDataProducts = await axios.get(`${API_URL}/productspublic/all`);
     const categories = await axios.get(`${API_URL}/categories/list`);
-
-    function escapeHtml(text) {
-      const map = {
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#039;",
-      };
-      return WEBSITE_URL + text.replace(/[&<>"']/g, (m) => map[m]);
-    }
 
     const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
     <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"

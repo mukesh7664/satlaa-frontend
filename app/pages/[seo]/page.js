@@ -14,11 +14,6 @@ import { API_URL
  } from "../../../config";
 //const API_URL = process.env.NEXT_PUBLIC_API_URL; // Use env variable for flexibility
 
-export const metadata = {
-  title: "Dynamic Page - Gold & Silver Rates",
-  description: "Find the latest Gold & Silver rates updated dynamically.",
-};
-
 const Page = () => {
   const { seo } = useParams();
   const dispatch = useDispatch();

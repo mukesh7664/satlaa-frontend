@@ -1,3 +1,5 @@
+'use client'
+
 import { useRouter } from "next/navigation";
 import axiosInstance from "@/util/axios";
 import { API_URL } from "../../../../config";
@@ -6,33 +8,69 @@ import Loader from "@/components/Utils/Loader";
 import { FiShoppingBag } from "react-icons/fi";
 import { FaBan } from "react-icons/fa";
 import Breadcrumbs from "@/myapp/components/Utils/BreadCrumbs";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { wrapper } from "@/redux/store";
 import authservice from "@/util/services/authservice";
 import { cartFetch } from "@/redux/reducers/Cart";
 import { setIsAuthenticated, setLogin } from "@/redux/reducers/Login";
 import { fetchData } from "@/util/fetchData";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
+import Script from "next/script";
 
-export function generateMetadata() {
-  return {
-    title: "Orders",
-  };
-}
+/*
+page component is expecting to receive an order prop directly, 
+but Next.js App Router pages need to receive standardized props like params and then fetch their own data.
 
-function OrderPage({ order }) {
+The key changes:
+
+Changed the component to receive params instead of order
+Added a state variable to store the fetched order data
+Added a useEffect to fetch the order data when the component mounts
+Added loading and error states to handle the asynchronous data fetching
+Made the component export default directly instead of exporting a named function
+*/
+
+export default function OrderPage({ params }) {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
+  const [order, setOrder] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogAction, setDialogAction] = useState(null);
   const { user, isAuthenticated } = useSelector((state) => state.login);
   const { toast } = useToast();
 
+  // Fetch order data on mount
+  useEffect(() => {
+    const fetchOrder = async () => {
+      try {
+        const auth = await authservice.isAuthenticated();
+        if (auth.isAuthenticated) {
+          dispatch(setLogin(auth.user));
+          dispatch(setIsAuthenticated(true));
+          dispatch(cartFetch(auth.userCart));
+          
+          const res = await axiosInstance().get(`${API_URL}/orders/${params.order}`);
+          setOrder(res.data);
+        } else {
+          router.push('/signin');
+        }
+      } catch (error) {
+        console.error("Failed to fetch order:", error);
+        toast({ title: "Failed to load order details", variant: "destructive" });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchOrder();
+  }, [params.order, dispatch, router, toast]);
+
   const handleDialogConfirm = async () => {
-    if (!dialogAction) return;
+    if (!dialogAction || !order) return;
     
     try {
       const res = await axiosInstance().put(`${API_URL}/orders/${dialogAction}/${order.ordernumber}`);
@@ -50,6 +88,8 @@ function OrderPage({ order }) {
   };
 
   const retryPayment = async () => {
+    if (!order) return;
+    
     setIsLoading(true);
     try {
       const responseServer = await axiosInstance().post(
@@ -98,9 +138,32 @@ function OrderPage({ order }) {
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <Loader loading={true} />
+      </div>
+    );
+  }
+
+  if (!order) {
+    return (
+      <div className="container mx-auto px-4 py-8 text-center">
+        <p className="text-xl text-red-500">Order not found</p>
+        <Link href="/profile/orders" className="mt-4 inline-block text-blue-500">
+          Return to orders
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <>
-      <script id="razorpay-checkout-js" src="https://checkout.razorpay.com/v1/checkout.js" />
+      <Script 
+        id="razorpay-checkout-js" 
+        src="https://checkout.razorpay.com/v1/checkout.js"
+        strategy="lazyOnload"
+      />
       <div className="container mx-auto px-4">
         <Loader loading={isLoading} />
         <Breadcrumbs
@@ -209,5 +272,3 @@ function OrderPage({ order }) {
     </>
   );
 }
-
-export default OrderPage;

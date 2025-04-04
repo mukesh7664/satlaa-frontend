@@ -12,11 +12,6 @@ import ProfileLeftMenu from "@/myapp/components/Profile/LeftMenu";
 import Orders from "@/myapp/components/Profile/Orders";
 import Breadcrumbs from "@/myapp/components/Utils/BreadCrumbs";
 
-export const metadata = {
-  title: "Orders - SATLAA",
-  description: "View and manage your orders effortlessly.",
-};
-
 const OrdersPage = () => {
   const router = useRouter();
   const dispatch = useDispatch();

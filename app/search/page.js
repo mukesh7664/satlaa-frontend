@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { BiFilterAlt } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "next/navigation";
@@ -25,7 +25,8 @@ import ColorFilter from "@/components/FilterProducts/ColorFilter";
 import StyleFilter from "@/components/FilterProducts/StyleFilter";
 import { Button } from "@/components/ui/button";
 
-const Search = () => {
+// Component that uses searchParams
+const SearchContent = () => {
   const searchParams = useSearchParams();
   const [visible, setVisible] = useState(false);
   const [productData, setProductData] = useState([]);
@@ -61,7 +62,7 @@ const Search = () => {
     };
 
     fetchDataAsync();
-  }, [dispatch, searchParams]);
+  }, [dispatch, searchParams, filterProducts]);
 
   return (
     <div className="container-custom">
@@ -153,6 +154,15 @@ const Search = () => {
         </div>
       </div>
     </div>
+  );
+};
+
+// Main component with Suspense boundary
+const Search = () => {
+  return (
+    <Suspense fallback={<div className="container-custom py-8 text-center">Loading search results...</div>}>
+      <SearchContent />
+    </Suspense>
   );
 };
 

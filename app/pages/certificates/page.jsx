@@ -9,14 +9,6 @@ import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import Download from "yet-another-react-lightbox/plugins/download";
 import NextJsImage from "@/myapp/components/Helper/FancyBox";
 
-export const metadata = {
-  title: "All Certificates of SATLAA",
-  description: "Check the SATLAA certificate obtained by Government of India",
-  openGraph: {
-    images: "https://api.satlaa.com/images/uploads/custom/startup_cert.png",
-  },
-};
-
 const certificates = [
   { title: "Startup India Certificate", img: "startup", link: "https://www.startupindia.gov.in/content/sih/en/startupgov/validate-startup-recognition.html" },
   { title: "Company Incorporation Certificate", img: "COI", link: "https://www.thecompanycheck.com/company/satlaa-jewel-private-limited/U32111RJ2023PTC088373" },

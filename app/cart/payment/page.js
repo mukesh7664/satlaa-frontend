@@ -17,6 +17,8 @@ import Loader from "@/components/Utils/Loader";
 import Head from "../../../myapp/core/Head";
 import DetailPricePay from "../../../myapp/components/Cart/DetailPricePay";
 import { FaWhatsapp } from "react-icons/fa";
+import { Label } from "@/components/ui/label";
+
 const items = [
   {
     path: "/",

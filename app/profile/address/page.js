@@ -10,11 +10,6 @@ import { setIsAuthenticated, setLogin } from "@/redux/reducers/Login";
 import ProfileLeftMenu from "@/myapp/components/Profile/LeftMenu";
 import AddressList from "@/myapp/components/Cart/AddressList";
 
-export const metadata = {
-  title: "Manage Addresses - SATLAA",
-  description: "Manage your saved addresses for faster checkouts and orders.",
-};
-
 const AddressPage = () => {
   const router = useRouter();
   const dispatch = useDispatch();
