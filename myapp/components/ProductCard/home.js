@@ -24,30 +24,32 @@ const Default = ({ data = null, className }) => {
    const img = allImgData?.[0] ? IMG_URL + allImgData[0].image : "/images/nofoto.jpg";
 
    return (
-      <div className={className} key={data._id}>
-         <div className="relative float-left h-full cursor-pointer">
+      <div className={`${className} h-[200px] w-full`} key={data._id}>
+         <div className="relative h-full w-full cursor-pointer">
             <Link href={`/products/${data.seo}`} legacyBehavior>
-               <div className="w-full float-left">
-                  <div className="w-5/12 float-left relative">
+               <div className="flex h-full w-full overflow-hidden">
+                  <div className="w-5/12 relative h-full">
                      <Image
-                        className="w-full bg-cover bg-center rounded-l-lg group-hover:scale-110 transition-all"
+                        className="object-cover h-full w-full rounded-l-lg group-hover:scale-110 transition-all"
                         src={img}
                         width="143"
                         height="143"
                         alt={data.title || "Default Title"}
                      />
                   </div>
-                  <div className="text-center float-left w-7/12">
-                     <div className="text-center text-md relative">
-                        <p className="w-full text-center float-left h-12 font-semibold overflow-hidden px-1 mt-2 pb-2">
+                  <div className="w-7/12 flex flex-col justify-between relative h-full bg-white">
+                     <div className="p-2">
+                        <p className="text-sm font-semibold line-clamp-2 h-12 overflow-hidden">
                            {data.title}
                         </p>
-                        <span className="font-semibold mt-4">
-                           {data.type ? getVariantPrice(data.variant_products) : <Price data={data.price} />}
-                        </span>
-                        <span className="line-through text-xs w-full float-left">
-                           {!data.type && data.before_price !== 0 ? <Price data={data.before_price} /> : ""}
-                        </span>
+                        <div className="mt-2">
+                           <span className="font-semibold block">
+                              {data.type ? getVariantPrice(data.variant_products) : <Price data={data.price} />}
+                           </span>
+                           <span className="line-through text-xs text-gray-500">
+                              {!data.type && data.before_price !== 0 ? <Price data={data.before_price} /> : ""}
+                           </span>
+                        </div>
                      </div>
                      <Button variant="default" className="rounded-r bg-[#e76e81] rounded-t-none rounded-b-none absolute bottom-0 right-0 group-hover:text-white group-hover:shadow-lg">
                         Details
