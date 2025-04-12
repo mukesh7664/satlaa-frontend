@@ -53,52 +53,55 @@ const Default = ({ data = null, className, category = null }) => {
   };
 
   return (
-    <div className={`${className} `} key={data._id}>
-      <div className="relative cursor-pointer h-full">
+    <div className={`${className} h-full`} key={data._id}>
+      <div className="relative cursor-pointer h-full flex flex-col border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300">
         <Link
           href={`/products/${data.seo}${category ? `?category=${category}` : ""}`}
-          className="h-full"
+          className="h-full flex flex-col"
         >
-          <div className="w-full">
-            <div className="w-full relative overflow-hidden">
-              <Image
-                className="w-full h-full bg-center md:group-hover:opacity-75 transition-all"
-                src={img}
-                width="220"
-                height="220"
-                alt={data.title}
-                placeholder="blur"
-                blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer(700, 475))}`}
-              />
-              <div className="absolute bottom-0 left-0 flex text-xs border bg-pink-50 pr-1">
-                <div className="flex text-xs flex-row justify-center items-center content-center bg-secondary text-white px-1">
-                  <p>{data.reviewData?.average_rating || "0.0"}</p>
-                  <AiFillStar className="" />
-                </div>
-                <p className="ml-2">{data.reviewData?.total_rating || 0}</p>
+          <div className="aspect-square w-full relative overflow-hidden bg-gray-100">
+            <Image
+              className="w-full h-full object-contain bg-center group-hover:scale-105 transition-transform duration-300"
+              src={img}
+              width="220"
+              height="220"
+              alt={data.title}
+              placeholder="blur"
+              blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer(700, 475))}`}
+            />
+            {/* Moved rating to bottom left */}
+            <div className="absolute bottom-2 left-2 flex text-xs border rounded-md overflow-hidden shadow-sm bg-white">
+              <div className="flex text-xs flex-row justify-center items-center content-center bg-[#e76e81] text-white px-2 py-1">
+                <p className="font-medium">{data.reviewData?.average_rating || "0.0"}</p>
+                <AiFillStar className="ml-1" />
               </div>
-              {data.badge && data.badges?.length > 0 && (
-                <p
-                  style={{
-                    backgroundColor: bg_color(data.badges[0]) || "#000000",
-                  }}
-                  className="absolute top-0 left-0 px-1 text-sm text-white"
-                >
-                  {data.badges[0]}
-                </p>
-              )}
+              <p className="px-2 py-1 text-gray-700">{data.reviewData?.total_rating || 0}</p>
             </div>
-            <div className="mt-2 w-full h-full flex flex-col">
-              <h3 className="w-full text-center px-1 text-black text-sm md:text-base py-2 group-hover:underline">
-                {data.title}
-              </h3>
-              <div className="text-center text-md items-center justify-center relative flex flex-row">
-                <p className="md:text-lg">
+            {data.badge && data.badges?.length > 0 && (
+              <p
+                style={{
+                  backgroundColor: bg_color(data.badges[0]) || "#000000",
+                }}
+                className="absolute top-2 left-2 px-2 py-1 text-xs font-medium text-white rounded-md"
+              >
+                {data.badges[0]}
+              </p>
+            )}
+          </div>
+          <div className="p-3 flex flex-col flex-grow justify-between">
+            <h3 className="text-sm font-medium line-clamp-2 text-gray-800 mb-2 min-h-[40px] text-left">
+              {data.title}
+            </h3>
+            <div className="flex items-center justify-between">
+              <div className="flex items-baseline">
+                <p className="font-semibold text-gray-900">
                   {data.type ? getVariantPrice(data.variant_products) : <Price data={data.price} />}
                 </p>
-                <p className="ml-2 line-through text-xs mb-0">
-                  {!data.type && data.before_price !== 0 ? <Price data={data.before_price} /> : ""}
-                </p>
+                {!data.type && data.before_price !== 0 && (
+                  <p className="ml-2 line-through text-xs text-gray-500">
+                    <Price data={data.before_price} />
+                  </p>
+                )}
               </div>
             </div>
           </div>

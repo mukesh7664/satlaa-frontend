@@ -39,7 +39,7 @@ const Default = ({ data = null, className }) => {
                   </div>
                   <div className="w-7/12 flex flex-col justify-between relative h-full bg-white">
                      <div className="p-2">
-                        <p className="text-sm font-semibold line-clamp-2 h-12 overflow-hidden">
+                        <p className="text-sm font-semibold line-clamp-2 h-15 overflow-hidden">
                            {data.title}
                         </p>
                         <div className="mt-2">
