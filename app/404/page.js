@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
-import { wrapper } from "../redux/store";
-import { fetchData } from "../util/fetchData";
+import { wrapper } from "../../redux/store";
+import { fetchData } from "../../util/fetchData";
 import { useDispatch } from "react-redux";
 import Link from "next/link";
 
