@@ -15,8 +15,8 @@ const withPWA = require("next-pwa")({
 
 const sentryWebpackPluginOptions = {
   silent: true,
-  org: "satlaa-tech",
-  project: "satlaa",
+  org: "your-org",
+  project: "satlaa-frontend",
   widenClientFileUpload: true,
   transpileClientSDK: true,
   tunnelRoute: "/monitoring",
