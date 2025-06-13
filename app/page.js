@@ -12,18 +12,44 @@ import Categories from "@/myapp/components/Tags";
 import HomeSlider from "@/myapp/components/Home/HomeSlider";
 import Features from "@/myapp/components/Home/Features";
 
-async function fetchWithRetry(url, options, retries = 3) {
+async function fetchWithRetry(url, options, retries = 5) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
     for (let i = 0; i < retries; i++) {
         try {
             const response = await fetch(url, {
                 ...options,
-                signal: AbortSignal.timeout(15000), // 15 second timeout
+                signal: controller.signal,
+                keepalive: true, // Keep connection alive
+                mode: 'cors', // Enable CORS
+                headers: {
+                    ...options?.headers,
+                    'Connection': 'keep-alive',
+                }
             });
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+            clearTimeout(timeoutId); // Clear timeout if fetch succeeds
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
             return await response.json();
         } catch (error) {
-            if (i === retries - 1) throw error;
-            await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1))); // Exponential backoff
+            // Clear timeout if fetch fails
+            clearTimeout(timeoutId);
+
+            console.error(`Attempt ${i + 1} failed:`, error.message);
+
+            if (i === retries - 1) {
+                console.error('All retry attempts failed:', error);
+                throw error;
+            }
+
+            // Exponential backoff with jitter
+            const delay = Math.min(1000 * Math.pow(2, i) + Math.random() * 1000, 10000);
+            await new Promise(resolve => setTimeout(resolve, delay));
         }
     }
 }

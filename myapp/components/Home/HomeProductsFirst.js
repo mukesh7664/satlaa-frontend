@@ -2,7 +2,14 @@
 
 import ProductCard from "../../components/ProductCard/";
 import { Swiper, SwiperSlide } from "swiper/react";
-const Default = ({ state = [], title = { title: "", description: "" } }) => {
+const Default = ({ state = { products: [] }, title = { title: "", description: "" } }) => {
+  const products = state?.products || [];
+
+  if (!Array.isArray(products)) {
+    console.error('Expected products array, received:', products);
+    return null;
+  }
+
   return (
     <div className="bg-gray-50 w-full ">
       <div className="md:px-10 pt-2 md:py-10">
@@ -27,8 +34,7 @@ const Default = ({ state = [], title = { title: "", description: "" } }) => {
           scrollbar={{ draggable: true }}
           className="tags-slider my-slider w-full text-center flex justify-center"
         >
-          {state &&
-            state.map((data, i) => (
+          {products.map((data, i) => (
               <SwiperSlide key={i} className="mr-0 p-0">
                 <div>
                   <ProductCard
