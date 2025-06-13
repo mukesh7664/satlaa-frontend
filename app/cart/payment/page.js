@@ -44,7 +44,7 @@ import { wrapper } from "../../../redux/store";
 import TagManager from "react-gtm-module";
 import { fetchData } from "../../../util/fetchData";
 import Script from "next/script";
-import { ErrorMessage, Field, Formik, Form } from "formik";
+import { useForm } from "react-hook-form";
 
 const Page = () => {
   const [isLoading, setIsLoading] = useState(false);

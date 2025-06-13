@@ -1,21 +1,23 @@
 import React from "react";
-import { Formik, Form, Field } from "formik";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import * as Yup from "yup";
 import axiosInstance from "@/util/axios";
 const axios = axiosInstance();
 import { API_URL } from "../../../config";
 
-const validationSchema = Yup.object().shape({
-  name: Yup.string().required("Missing Name"),
-  phone: Yup.string().required("Missing phone number"),
-  address: Yup.string().required("Missing Address"),
-  pin_code: Yup.number().min(6).required("Missing Pincode"),
-  district: Yup.string().required("Missing District"),
-  state: Yup.string().required("Please select your state!"),
+const formSchema = z.object({
+  name: z.string().min(1, "Missing Name"),
+  phone: z.string().min(1, "Missing phone number"),
+  address: z.string().min(1, "Missing Address"),
+  pin_code: z.string().min(6, "Invalid Pincode").max(6, "Invalid Pincode"),
+  district: z.string().min(1, "Missing District"),
+  state: z.string().min(1, "Please select your state!"),
+  alternate_phone: z.string().optional()
 });
 
 const AddressForm = ({ initialValues = {}, onSubmitAddress, states, handleCancel }) => {
@@ -33,81 +35,91 @@ const AddressForm = ({ initialValues = {}, onSubmitAddress, states, handleCancel
     }
   };
 
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: initialValues
+  });
+
+  const onPincodeInputChange = async (value) => {
+    if (value.length === 6) {
+      try {
+        const response = await axios.get(`${API_URL}/pincode/${value}`);
+        const data = response.data;
+        form.setValue("district", data.districtname);
+        form.setValue("state", data.statename);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
   return (
-    <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmitAddress}>
-      {({ errors, touched, values, handleChange, handleBlur, setFieldValue }) => (
-        <Form className="space-y-4 p-4 bg-white rounded-lg shadow">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium">Name</label>
-              <Input
-                name="name"
-                value={values.name}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                className={touched.name && errors.name ? "border-red-500" : ""}
-              />
-              {touched.name && errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
+    <form onSubmit={form.handleSubmit(onSubmitAddress)} className="space-y-4 p-4 bg-white rounded-lg shadow">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium">Name</label>
+          <Input
+            {...form.register("name")}
+            className={form.formState.errors.name ? "border-red-500" : ""}
+          />
+          {form.formState.errors.name && (
+            <p className="text-red-500 text-sm">{form.formState.errors.name.message}</p>
+          )}
             </div>
 
             <div>
               <label className="block text-sm font-medium">Phone Number</label>
               <Input
-                name="phone"
                 type="number"
-                value={values.phone}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                className={touched.phone && errors.phone ? "border-red-500" : ""}
+                {...form.register("phone")}
+                className={form.formState.errors.phone ? "border-red-500" : ""}
               />
-              {touched.phone && errors.phone && <p className="text-red-500 text-sm">{errors.phone}</p>}
+              {form.formState.errors.phone && (
+                <p className="text-red-500 text-sm">{form.formState.errors.phone.message}</p>
+              )}
             </div>
 
             <div className="col-span-2">
               <label className="block text-sm font-medium">Address (Area and Street)</label>
               <Textarea
-                name="address"
-                value={values.address}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                className={touched.address && errors.address ? "border-red-500" : ""}
+                {...form.register("address")}
+                className={form.formState.errors.address ? "border-red-500" : ""}
               />
-              {touched.address && errors.address && <p className="text-red-500 text-sm">{errors.address}</p>}
+              {form.formState.errors.address && (
+                <p className="text-red-500 text-sm">{form.formState.errors.address.message}</p>
+              )}
             </div>
 
             <div>
               <label className="block text-sm font-medium">Pincode</label>
               <Input
-                name="pin_code"
-                type="number"
-                value={values.pin_code}
-                onChange={(e) => {
-                  handleChange(e);
-                  onPincodeChange(e, setFieldValue);
-                }}
-                onBlur={handleBlur}
-                className={touched.pin_code && errors.pin_code ? "border-red-500" : ""}
+                type="text"
+                {...form.register("pin_code", {
+                  onChange: (e) => onPincodeInputChange(e.target.value)
+                })}
+                className={form.formState.errors.pin_code ? "border-red-500" : ""}
               />
-              {touched.pin_code && errors.pin_code && <p className="text-red-500 text-sm">{errors.pin_code}</p>}
+              {form.formState.errors.pin_code && (
+                <p className="text-red-500 text-sm">{form.formState.errors.pin_code.message}</p>
+              )}
             </div>
 
             <div>
               <label className="block text-sm font-medium">District</label>
               <Input
-                name="district"
-                value={values.district}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                className={touched.district && errors.district ? "border-red-500" : ""}
+                {...form.register("district")}
+                className={form.formState.errors.district ? "border-red-500" : ""}
               />
-              {touched.district && errors.district && <p className="text-red-500 text-sm">{errors.district}</p>}
+              {form.formState.errors.district && (
+                <p className="text-red-500 text-sm">{form.formState.errors.district.message}</p>
+              )}
             </div>
 
             <div>
               <label className="block text-sm font-medium">State</label>
               <Select
-                value={values.state}
-                onValueChange={(value) => setFieldValue("state", value)}
+                onValueChange={(value) => form.setValue("state", value)}
+                value={form.watch("state")}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select a state" />
@@ -120,21 +132,20 @@ const AddressForm = ({ initialValues = {}, onSubmitAddress, states, handleCancel
                   ))}
                 </SelectContent>
               </Select>
-              {touched.state && errors.state && <p className="text-red-500 text-sm">{errors.state}</p>}
+              {form.formState.errors.state && (
+                <p className="text-red-500 text-sm">{form.formState.errors.state.message}</p>
+              )}
             </div>
 
             <div>
               <label className="block text-sm font-medium">Alternate Number (Optional)</label>
               <Input
-                name="alternate_phone"
                 type="number"
-                value={values.alternate_phone}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                className={touched.alternate_phone && errors.alternate_phone ? "border-red-500" : ""}
+                {...form.register("alternate_phone")}
+                className={form.formState.errors.alternate_phone ? "border-red-500" : ""}
               />
-              {touched.alternate_phone && errors.alternate_phone && (
-                <p className="text-red-500 text-sm">{errors.alternate_phone}</p>
+              {form.formState.errors.alternate_phone && (
+                <p className="text-red-500 text-sm">{form.formState.errors.alternate_phone.message}</p>
               )}
             </div>
           </div>
@@ -147,9 +158,7 @@ const AddressForm = ({ initialValues = {}, onSubmitAddress, states, handleCancel
               Cancel
             </Button>
           </div>
-        </Form>
-      )}
-    </Formik>
+    </form>
   );
 };
 
