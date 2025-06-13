@@ -16,53 +16,82 @@ import SkeletonProductCard from "@/myapp/components/ProductCard/skeleton";
 
 import ClientProductLogic from "./ClientProductLogic"; // Client-side logic component
 
+// Configure axios with timeout and retry logic
+const axiosInstance = axios.create({
+  timeout: 10000, // 10 seconds timeout
+});
+
 export async function generateStaticParams() {
   try {
-    const response = await axios.get(`${API_URL}/productspublic/all`);
-    const products = response.data;
+    const response = await axiosInstance.get(`${API_URL}/productspublic/all`, {
+      retry: 3, // Retry failed requests 3 times
+      retryDelay: (retryCount) => retryCount * 1000, // Wait 1s, 2s, 3s between retries
+    });
+    
+    if (!response?.data) {
+      console.error("No data received from API");
+      return [];
+    }
 
+    const products = response.data;
     return products
       .filter((product) => product.seo && typeof product.seo === "string")
       .map((product) => ({ seo: product.seo }));
+
   } catch (error) {
-    console.error("Error fetching product list:", error);
-    return [];
+    console.error("Error fetching product list:", {
+      message: error.message,
+      code: error.code,
+      timeout: error.timeout,
+      config: error.config?.url,
+    });
+    return []; // Return empty array on error to prevent build failure
   }
 }
 
 export async function generateMetadata({ params }) {
   try {
     const { seo } = await params;
-    const productResponse = await axios.get(`${API_URL}/productspublic/product/${seo}`);
-    const product = productResponse?.data?.product?.[0];
+    if (!seo) return notFound();
 
-    console.log("Product data in metadata generation:", product);
+    const productResponse = await axiosInstance.get(`${API_URL}/productspublic/product/${seo}`);
+    
+    if (!productResponse?.data?.product?.[0]) {
+      console.error("No product found with SEO:", seo);
+      return notFound();
+    }
 
-    if (!product) return notFound();
+    const product = productResponse.data.product[0];
 
     return {
       title: `SATLAA ${product.brand === "satlaa" ? "925 Silver" : "Silver"} ${product.title}`,
-      description: product.description_short,
+      description: product.description_short || '',
       openGraph: {
         title: `SATLAA ${product.brand === "satlaa" ? "925 Silver" : "Silver"} ${product.title}`,
-        images: product.allImages.length > 0 ? [`${IMG_URL}${product.allImages[0].image}`] : [],
+        description: product.description_short || '',
+        images: product.allImages?.length > 0 ? [`${IMG_URL}${product.allImages[0].image}`] : [],
         url: `https://satlaa.com/products/${seo}`,
       },
     };
   } catch (error) {
-    console.error("Error generating metadata in product detail :", error);
+    console.error("Error generating metadata:", error?.response?.data || error.message);
     return notFound();
   }
 }
 
 export default async function ProductPage({ params }) {
   try {
-    const { seo } = await params; // Ensure params are awaited properly
-    const productResponse = await axios.get(`${API_URL}/productspublic/product/${seo}`);
-    const product = productResponse?.data?.product?.[0];
+    const { seo } = await params;
+    if (!seo) return notFound();
 
-    if (!product) return notFound();
+    const productResponse = await axiosInstance.get(`${API_URL}/productspublic/product/${seo}`);
+    
+    if (!productResponse?.data?.product?.[0]) {
+      console.error("No product found with SEO:", seo);
+      return notFound();
+    }
 
+    const product = productResponse.data.product[0];
     const { parentCategory, similarProducts, reviews } = productResponse.data;
 
     return (
@@ -70,7 +99,7 @@ export default async function ProductPage({ params }) {
         <Head
           title={`SATLAA ${product.brand === "satlaa" ? "925 Silver" : "Silver"} ${product.title}`}
           description={product.description_short}
-          canonical={`https://satlaa.com/products/${seo}`}
+          canonical={`https://satlaa.com/products/${params.seo}`}
           image={product.allImages.length > 0 ? product.allImages[0].image : ""}
         />
 
