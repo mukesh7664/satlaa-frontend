@@ -1,68 +1,144 @@
 "use client";
 
-import React, { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { hydrateData } from "@/redux/reducers/DataSlice";
+import React from "react";
 import Link from "next/link";
+import Image from "next/image";
+import { FaGem, FaUserFriends, FaHandHoldingHeart, FaMedal } from "react-icons/fa";
 
 const AboutUsClient = () => {
-//   const dispatch = useDispatch();
-
-//   useEffect(() => {
-//     if (data) {
-//       dispatch(hydrateData(data)); // ✅ Dispatch fetched data
-//     }
-//   }, [dispatch, data]);
-
   return (
-    <div className="container-custom text-center items-center pb-14">
-      <div className="text-left">
-        <div className="lg:col-span-9 sm:order-2 order-1 prose lg:prose-xl col-span-12">
-          <h2 className="text-2xl font-semibold text-primary mb-5">About Us</h2>
+    <div className="min-h-screen">
+      {/* Hero Section */}
+      <div className="relative bg-gradient-to-r from-primary to-secondary text-black py-24">
+        <div className="container-custom">
+          <div className="max-w-4xl mx-auto text-center">
+            <h1 className="text-4xl md:text-5xl font-bold mb-6">Crafting Timeless Beauty</h1>
+            <p className="text-xl md:text-2xl opacity-90">
+              At Satlaa, we transform premium silver into exquisite pieces of wearable art,
+              making luxury accessible to everyone.
+            </p>
+          </div>
+        </div>
+        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white to-transparent"></div>
+      </div>
 
-          <p>Welcome to Satlaa!</p>
+      {/* Values Section */}
+      <div className="py-16 bg-white">
+        <div className="container-custom">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="text-center p-6 rounded-lg bg-white shadow-lg hover:shadow-xl transition-shadow">
+              <FaGem className="w-12 h-12 mx-auto mb-4 text-primary" />
+              <h3 className="text-xl font-semibold mb-2">Premium Quality</h3>
+              <p className="text-gray-600">Finest silver craftsmanship with meticulous attention to detail</p>
+            </div>
+            <div className="text-center p-6 rounded-lg bg-white shadow-lg hover:shadow-xl transition-shadow">
+              <FaHandHoldingHeart className="w-12 h-12 mx-auto mb-4 text-primary" />
+              <h3 className="text-xl font-semibold mb-2">Customer First</h3>
+              <p className="text-gray-600">Dedicated to providing exceptional service and support</p>
+            </div>
+            <div className="text-center p-6 rounded-lg bg-white shadow-lg hover:shadow-xl transition-shadow">
+              <FaUserFriends className="w-12 h-12 mx-auto mb-4 text-primary" />
+              <h3 className="text-xl font-semibold mb-2">Expert Team</h3>
+              <p className="text-gray-600">Skilled artisans with years of jewelry crafting experience</p>
+            </div>
+            <div className="text-center p-6 rounded-lg bg-white shadow-lg hover:shadow-xl transition-shadow">
+              <FaMedal className="w-12 h-12 mx-auto mb-4 text-primary" />
+              <h3 className="text-xl font-semibold mb-2">Certified Quality</h3>
+              <p className="text-gray-600">Every piece certified for authenticity and quality</p>
+            </div>
+          </div>
+        </div>
+      </div>
 
-          <p>
-            At Satlaa, our mission is to provide exceptional products and services that cater to the diverse needs of our customers.
-            With years of experience in our industry, we are dedicated to delivering top-quality items while ensuring a seamless and enjoyable shopping experience.
-          </p>
+      {/* Story Section */}
+      <div className="py-16 bg-gray-50">
+        <div className="container-custom">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Our Story</h2>
+            <div className="w-20 h-1 bg-primary mx-auto mb-6"></div>
+            <p className="text-gray-600 mb-8 leading-relaxed">
+              Founded with a passion for crafting beautiful silver jewelry, Satlaa has grown into a trusted name
+              in the industry. Our journey began with a simple mission: to make premium silver jewelry accessible
+              to everyone without compromising on quality or design. Today, we continue to push boundaries in
+              jewelry craftsmanship while maintaining our commitment to authenticity and excellence.
+            </p>
+          </div>
+        </div>
+      </div>
 
-          <h3>Our Team:</h3>
-          <p>
-            Our team is composed of passionate and skilled professionals committed to delivering the best experience for our customers.
-            We take pride in our deep understanding of the market and our ability to offer a wide range of products tailored to your needs.
-          </p>
+      {/* Stats Section */}
+      <div className="py-16 bg-white">
+        <div className="container-custom">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div>
+              <div className="text-4xl font-bold text-primary mb-2">5000+</div>
+              <div className="text-gray-600">Happy Customers</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold text-primary mb-2">500+</div>
+              <div className="text-gray-600">Unique Designs</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold text-primary mb-2">99%</div>
+              <div className="text-gray-600">Customer Satisfaction</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold text-primary mb-2">24/7</div>
+              <div className="text-gray-600">Support Available</div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-          <h3>Our Products:</h3>
-          <p>
-            We offer a wide variety of products, sourced from the best manufacturers and suppliers in the industry.
-            Our products are carefully selected to ensure that we provide our customers with items that are not only high-quality but also affordable.
-          </p>
+      {/* Quality Commitment Section */}
+      <div className="py-16 bg-gray-50">
+        <div className="container-custom">
+          <div className="max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">Our Commitment to Quality</h2>
+            <div className="prose prose-lg mx-auto text-gray-600">
+              <p className="mb-4">
+                At Satlaa, we believe in delivering nothing but the best to our customers. Every piece of jewelry
+                we create goes through rigorous quality checks and is certified for authenticity. Our commitment
+                to excellence extends beyond our products to every aspect of your shopping experience.
+              </p>
+              <p className="mb-4">
+                We take pride in our craft and stand behind every piece we create. Our jewelry is not just
+                an accessory; it's a statement of elegance and quality that we guarantee will exceed your
+                expectations.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
 
-          <h3>Our Commitment:</h3>
-          <p>
-            Customer satisfaction is our top priority, and we are committed to delivering an unparalleled level of service to our customers.
-            We strive to continuously improve our offerings and stay ahead of industry trends to ensure that we remain the go-to destination for all your shopping needs.
-          </p>
-
-          <h3>Our Promise:</h3>
-          <p>
-            At Satlaa, we believe in building long-lasting relationships with our customers.
-            We are dedicated to providing you with an enjoyable shopping experience, and we will do everything in our power to ensure that you are completely satisfied with your purchases.
-          </p>
-
-          <p>
-            Thank you for choosing Satlaa. We look forward to serving you for years to come!
-          </p>
-
-          <p>
-            If you have any questions or concerns, please feel free to reach out to our customer support team at{" "}
-            <Link href="mailto:support@satlaa.com" className="underline text-blue-600">
-              support@satlaa.com
-            </Link> or call <strong>8239418128</strong>.
-          </p>
-
-          <p>Satlaa - Quality, Value, and Exceptional Service, Every Time</p>
+      {/* Contact Section */}
+      <div className="py-16 bg-white">
+        <div className="container-custom text-center">
+          <h2 className="text-3xl font-bold mb-8">Get In Touch</h2>
+          <div className="max-w-xl mx-auto">
+            <p className="text-gray-600 mb-6">
+              Have questions? We're here to help! Reach out to our customer support team.
+            </p>
+            <div className="flex flex-col sm:flex-row justify-center gap-4">
+              <Link 
+                href="mailto:support@satlaa.com"
+                className="px-8 py-3 bg-primary text-white rounded-lg hover:bg-opacity-90 transition-colors"
+              >
+                Email Us
+              </Link>
+              <Link 
+                href="tel:+918239418128"
+                className="px-8 py-3 bg-secondary text-white rounded-lg hover:bg-opacity-90 transition-colors"
+              >
+                Call Us
+              </Link>
+            </div>
+            <p className="mt-6 text-gray-500">
+              Email: support@satlaa.com<br />
+              Phone: +91 8239418128<br />
+              Address: Satlaa Jewel, Sangaria Bypass, Jodhpur (342013)
+            </p>
+          </div>
         </div>
       </div>
     </div>
