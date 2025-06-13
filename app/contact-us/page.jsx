@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "sonner";
 import { API_URL } from "@/config";
 
 export default function ContactUs() {
@@ -66,7 +65,6 @@ export default function ContactUs() {
 
   return (
     <div className="container-custom text-center items-center pb-14">
-      <ToastContainer />
       <div className="text-center">
         <h1 className="mt-4 mx-auto font-Merriweather text-4xl border-primary border-b-4 w-auto inline-block align-middle mb-5">
           Get In Touch

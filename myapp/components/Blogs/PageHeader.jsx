@@ -1,7 +1,6 @@
 // ./frontend/src/app/[lang]/components/PageHeader.js
 
 import React from "react";
-import PropTypes from 'prop-types';
 
 export default function PageHeader({ heading, text }) {
     return (
@@ -11,8 +10,3 @@ export default function PageHeader({ heading, text }) {
         </div>
     );
 }
-
-PageHeader.propTypes = {
-    heading: PropTypes.string.isRequired,
-    text: PropTypes.string
-};

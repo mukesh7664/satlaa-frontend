@@ -3,8 +3,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { API_URL } from "@/config";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "sonner";
 
 const Warranty = () => {
   const [formData, setFormData] = useState({
@@ -66,7 +65,6 @@ const Warranty = () => {
 
   return (
     <div className="max-w-md mx-auto mt-10">
-      <ToastContainer />
       <h1 className="mb-4 text-2xl">Register Your Product Warranty</h1>
 
       {!showOtpInput ? (

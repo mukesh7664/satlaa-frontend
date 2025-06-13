@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import PropTypes from 'prop-types';
 import { getStrapiMedia, formatDate } from "@/util/strapi-api-helpers";
 
 export default function PostList({ data: articles, children }) {
@@ -55,8 +54,3 @@ export default function PostList({ data: articles, children }) {
         </section>
     );
 }
-
-PostList.propTypes = {
-    data: PropTypes.arrayOf(PropTypes.object).isRequired,
-    children: PropTypes.node
-};
