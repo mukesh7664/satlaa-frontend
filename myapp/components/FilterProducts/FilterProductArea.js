@@ -74,21 +74,21 @@ const FilterProductArea = ({ initialData, category }) => {
   };
 
   return (
-    <div className="container">
+    <div className="container px-4">
       <InfiniteScroll
         dataLength={productData?.products?.length ?? 0}
         scrollThreshold="0.5"
         next={fetchMoreData}
         hasMore={productData?.pagination?.hasMorePages ?? false}
-        loader={<div className="col-span-12">{generateSkeletons(1)}</div>}
-        className="grid grid-cols-12 pb-16"
+        loader={<div className="grid grid-cols-12 gap-6">{generateSkeletons(4)}</div>}
+        className="grid grid-cols-12 gap-6"
       >
         {productData?.products?.map((data, i) => (
           <ProductCard
             key={data?._id ? `${data._id}-${i}` : `product-${i}`}
             data={data}
             category={category}
-            className="xl:col-span-3 lg:col-span-4 border col-span-6 m-2 md:m-3 bg-gray-100 group overflow-hidden pb-0"
+            className="xl:col-span-3 lg:col-span-4 col-span-6 bg-white group overflow-hidden"
           />
         ))}
       </InfiniteScroll>

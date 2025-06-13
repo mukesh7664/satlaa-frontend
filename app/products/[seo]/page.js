@@ -36,6 +36,8 @@ export async function generateMetadata({ params }) {
     const productResponse = await axios.get(`${API_URL}/productspublic/product/${seo}`);
     const product = productResponse?.data?.product?.[0];
 
+    console.log("Product data in metadata generation:", product);
+
     if (!product) return notFound();
 
     return {
@@ -48,6 +50,7 @@ export async function generateMetadata({ params }) {
       },
     };
   } catch (error) {
+    console.error("Error generating metadata in product detail :", error);
     return notFound();
   }
 }

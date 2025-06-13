@@ -26,11 +26,11 @@ const Category = ({ categoryData, productData, category }) => {
   const [visible, setVisible] = useState(false);
   const dispatch = useDispatch();
 
-  // 🔥 Force re-render when filters update
+  // Force re-render when filters update
   const [updateKey, setUpdateKey] = useState(0);
   const { filterProducts } = useSelector(({ filterProducts }) => filterProducts);
 
-  // ✅ Function to force re-render on filter change
+  // Function to force re-render on filter change
   const refreshFilters = () => setUpdateKey((prev) => prev + 1);
 
   useEffect(() => {
@@ -47,7 +47,7 @@ const Category = ({ categoryData, productData, category }) => {
   }, [dispatch]);
 
   useEffect(() => {
-    // ✅ Force re-render when filters change
+    // Force re-render when filters change
     refreshFilters();
   }, [filterProducts]);
 
@@ -87,7 +87,7 @@ const Category = ({ categoryData, productData, category }) => {
           image={categoryData?.image}
         />
 
-        <FilterBar key={updateKey} /> {/* ✅ Ensure filters update */}
+        <FilterBar key={updateKey} /> {/* Ensure filters update */}
         <CategoryDrawer visible={visible} onClose={() => setVisible(false)} />
 
         <div className="ml-2 md:ml-4">
@@ -114,7 +114,7 @@ const Category = ({ categoryData, productData, category }) => {
           </div>
 
           <div className="w-full float-left pb-0">
-            <FilterSelectedTop key={updateKey} category={true} /> {/* ✅ Ensure filters update */}
+            <FilterSelectedTop key={updateKey} category={true} /> {/* Ensure filters update */}
           </div>
 
           <div className="w-full mt-3 float-left">
