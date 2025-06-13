@@ -26,12 +26,6 @@ export default function NotFound() {
           <Link href="/" className="text-white text-lg font-medium hover:text-white">Go Back Home</Link>
         </p>
       </div>
-      <Link
-        href="/"
-        className="mt-6 px-6 py-3 bg-primary text-white text-lg font-medium rounded-lg hover:opacity-90 transition-colors"
-      >
-        Go Back Home
-      </Link>
     </div>
   );
 }
