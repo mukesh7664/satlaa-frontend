@@ -12,29 +12,64 @@ import Categories from "@/myapp/components/Tags";
 import HomeSlider from "@/myapp/components/Home/HomeSlider";
 import Features from "@/myapp/components/Home/Features";
 
+async function fetchWithRetry(url, options, retries = 3) {
+    for (let i = 0; i < retries; i++) {
+        try {
+            const response = await fetch(url, {
+                ...options,
+                signal: AbortSignal.timeout(15000), // 15 second timeout
+            });
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return await response.json();
+        } catch (error) {
+            if (i === retries - 1) throw error;
+            await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1))); // Exponential backoff
+        }
+    }
+}
+
 async function getData() {
-    const response = await fetch(`${API_URL}/homesliderpublic`, { cache: "no-store" });
-    const resData = await response.json();
+    try {
+        const [resData, resProductFirst, resProductSeccond] = await Promise.all([
+            // Fetch home slider data
+            fetchWithRetry(`${API_URL}/homesliderpublic`, { 
+                cache: "no-store"
+            }),
+            
+            // Fetch best selling products
+            fetchWithRetry(`${API_URL}/productspublic/home`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ 
+                    sort: { internal_rating: -1 }, 
+                    limit: 10, 
+                    skip: 0 
+                }),
+                cache: "no-store",
+            }),
+            
+            // Fetch latest products
+            fetchWithRetry(`${API_URL}/productspublic/home`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ 
+                    sort: { createdAt: -1 }, 
+                    limit: 15, 
+                    skip: 0 
+                }),
+                cache: "no-store",
+            })
+        ]);
 
-    const filterObjectFirst = { sort: { internal_rating: -1 }, limit: 10, skip: 0 };
-    const responseProductFirst = await fetch(`${API_URL}/productspublic/home`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(filterObjectFirst),
-        cache: "no-store",
-    });
-    const resProductFirst = await responseProductFirst.json();
-
-    const filterObjectSeccond = { sort: { createdAt: -1 }, limit: 15, skip: 0 };
-    const responseProductSeccond = await fetch(`${API_URL}/productspublic/home`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(filterObjectSeccond),
-        cache: "no-store",
-    });
-    const resProductSeccond = await responseProductSeccond.json();
-
-    return { resData, resProductFirst, resProductSeccond };
+        return { resData, resProductFirst, resProductSeccond };
+    } catch (error) {
+        console.error('Failed to fetch data:', error);
+        return {
+            resData: [],
+            resProductFirst: { products: [] },
+            resProductSeccond: { products: [] }
+        };
+    }
 }
 
 export default async function HomePage() {
